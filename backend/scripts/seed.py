@@ -48,8 +48,8 @@ def main():
         "experiment_id",                      # 'Experiment ID'
         "test_scale",                         # 'Scale of test'
         "simultaneous_excitations_nb",        # 'Number of simultaneous excitations'
-        "applied_excitations_direction",      # 'Directions of applied excitations'
-        "run_results_nb",                       # 'Number of test runs'
+        "applied_excitation_directions",      # 'Directions of applied excitations'
+        "run_results_nb",                     # 'Number of test runs'
         "storeys_nb",                         # 'Number of storeys'
         "total_building_height",              # 'Total building height'
         "diaphragm_material",                 # 'Diaphragm material'
@@ -97,7 +97,7 @@ def main():
         x = x.strip()
         x = "\",\"".join(re.split(r"\n|/", x))
         return f"{{\"{x}\"}}"
-    for col in ["retrofitting_type", "material_characterizations", "material_characterization_refs", "associated_test_types", "experimental_results_reported", "crack_types_observed"]:
+    for col in ["applied_excitation_directions", "retrofitting_type", "material_characterizations", "material_characterization_refs", "associated_test_types", "experimental_results_reported", "crack_types_observed"]:
         experiment[col] = experiment[col].apply(array_formatter)
 
     # Clean number values
@@ -108,8 +108,19 @@ def main():
     for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "masonry_wall_thickness", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
         experiment[col] = experiment[col].apply(number_cleanup)
 
+    # Split open measures data field
+    experiment["link_to_open_measured_data"] = experiment["open_measured_data"].map(lambda x: x if x.startswith("http") else None)
+    
+    # Clean boolean values
+    def yesno_cleanup(x):
+        return x != None and x != "No"
+    for col in ["open_measured_data", "digitalized_data", "internal_walls", "retrofitted"]:
+        experiment[col] = experiment[col].apply(yesno_cleanup)
+
     # References    
     reference = experiment[["reference", "publication_year", "link_to_experimental_paper", "corresponding_author_name", "corresponding_author_email", "link_to_request_data"]].drop_duplicates().copy()
+    reference["request_data_available"] = reference["link_to_request_data"].map(lambda x: x if not x.startswith("http") else "Available on request")
+    reference["link_to_request_data"] = reference["link_to_request_data"].map(lambda x: x if x.startswith("http") else None)
     reference.index = np.arange(1, len(reference)+1)
 
     # Write the DataFrame to the database

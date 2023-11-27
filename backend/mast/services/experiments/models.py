@@ -12,6 +12,7 @@ class Reference(Base):
     link_to_experimental_paper = Column(String)
     corresponding_author_name = Column(String)
     corresponding_author_email = Column(String)
+    request_data_available = Column(String)
     link_to_request_data = Column(String)
 
 class Experiment(Base):
@@ -23,7 +24,7 @@ class Experiment(Base):
     experiment_id = Column(String, unique=True, index=True)
     test_scale = Column(String)
     simultaneous_excitations_nb = Column(Integer)
-    applied_excitations_direction = Column(String)
+    applied_excitation_directions = Column(MutableList.as_mutable(ARRAY(String)))
     run_results_nb = Column(Integer)
     storeys_nb = Column(Integer)
     total_building_height = Column(Integer)
@@ -48,9 +49,10 @@ class Experiment(Base):
     material_characterizations = Column(MutableList.as_mutable(ARRAY(String)))
     associated_test_types = Column(MutableList.as_mutable(ARRAY(String)))
     material_characterization_refs = Column(MutableList.as_mutable(ARRAY(String)))
-    digitalized_data = Column(String) # Column(Boolean, default=False)
+    digitalized_data = Column(Boolean, default=False)
     experimental_results_reported = Column(MutableList.as_mutable(ARRAY(String)))
-    open_measured_data = Column(String)
+    open_measured_data = Column(Boolean, default=False)
+    link_to_open_measured_data = Column(String)
     crack_types_observed = Column(MutableList.as_mutable(ARRAY(String)))
     experimental_campaign_motivation = Column(String)
 

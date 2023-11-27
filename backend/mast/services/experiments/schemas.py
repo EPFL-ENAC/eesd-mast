@@ -30,7 +30,7 @@ class ExperimentBase(BaseModel):
     experiment_id: str | None = None
     test_scale: str | None = None
     simultaneous_excitations_nb: int | None = None
-    applied_excitations_direction: str | None = None
+    applied_excitation_directions: list[str] | None = None
     run_results_nb: int | None = None
     storeys_nb: int | None = None
     total_building_height: int | None = None
@@ -42,10 +42,10 @@ class ExperimentBase(BaseModel):
     masonry_compressive_strength: int | None = None
     masonry_wall_thickness: int | None = None
     wall_leaves_nb: int | None = None
-    internal_walls: str | None # bool = False
+    internal_walls: bool = False
     mechanical_connectors: str | None = None
     connectors_activation: str | None # bool = False
-    retrofitted: str | None # bool = False
+    retrofitted: bool = False
     retrofitting_application: str | None = None
     retrofitting_type: list[str] | None = None
     first_estimated_fundamental_period: float | None = None
@@ -56,14 +56,11 @@ class ExperimentBase(BaseModel):
     associated_test_types: list[str]  | None = None
     material_characterization_refs: list[str] | None = None
     experimental_results_reported: list[str] | None = None
-    open_measured_data: str | None = None
-    link_to_request_data: str | None = None
-    digitalized_data: str | None # bool = False
+    open_measured_data: bool = False
+    link_to_open_measured_data: str | None = None
+    digitalized_data: bool = False
     crack_types_observed: list[str] | None = None
     experimental_campaign_motivation: str | None = None
-    link_to_experimental_paper: str | None = None
-    corresponding_author_name: str | None = None
-    corresponding_author_email: str | None = None
 
 class ExperimentCreate(ExperimentBase):
     pass
@@ -78,6 +75,7 @@ class Experiment(ExperimentBase):
 class ReferenceBase(BaseModel):
     reference: str | None = None
     publication_year: int | None = None
+    request_data_available: str | None = None
     link_to_request_data: str | None = None
     link_to_experimental_paper: str | None = None
     corresponding_author_name: str | None = None
