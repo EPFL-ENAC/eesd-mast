@@ -8,6 +8,8 @@ import pandas as pd
 from math import isnan
 from numbers import Number
 import re
+import numpy as np
+
 from mast.database import engine
 
 def main():
@@ -70,7 +72,7 @@ def main():
         "max_estimated_dg",                   # 'Maximum estimated DG'
         "material_characterizations",         # 'Material characterization available'
         "associated_test_types",              # 'Associated type of test'
-        "material_characterization_refs",      # 'Reference for material characterization'
+        "material_characterization_refs",     # 'Reference for material characterization'
         "experimental_results_reported",      # 'Experimental results reported'
         "open_measured_data",                 # 'Measured data openly available as digital files'
         "link_to_request_data",               # 'Link to request data'
@@ -105,9 +107,21 @@ def main():
         return x
     for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "masonry_wall_thickness", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
         experiment[col] = experiment[col].apply(number_cleanup)
-        
+
+    # References    
+    reference = experiment[["reference", "publication_year", "link_to_experimental_paper", "corresponding_author_name", "corresponding_author_email", "link_to_request_data"]].drop_duplicates().copy()
+    reference.index = np.arange(1, len(reference)+1)
+
     # Write the DataFrame to the database
-    debug(f"writing to {engine.url}")
+    debug(f"writing references to {engine.url}")
+    reference.to_sql("reference", engine, if_exists="append", index=False)
+
+    # Experiments
+    experiment["reference_id"] = experiment["reference"].map(lambda x: reference[reference["reference"] == x].index[0])
+    experiment = experiment.drop(["reference", "publication_year", "link_to_experimental_paper", "corresponding_author_name", "corresponding_author_email", "link_to_request_data"], axis=1)
+
+    # Write the DataFrame to the database
+    debug(f"writing experiments to {engine.url}")
     experiment.to_sql("experiment", engine, if_exists="append", index=False)
 
 

@@ -1,16 +1,24 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Float, Integer, String, ARRAY
 from sqlalchemy.ext.mutable import MutableList
-from sqlalchemy.orm import relationship
 
 from mast.database import Base
+
+class Reference(Base):
+    __tablename__ = "reference"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reference = Column(String, unique=True, index=True)
+    publication_year = Column(Integer)
+    link_to_experimental_paper = Column(String)
+    corresponding_author_name = Column(String)
+    corresponding_author_email = Column(String)
+    link_to_request_data = Column(String)
 
 class Experiment(Base):
     __tablename__ = "experiment"
 
     id = Column(Integer, primary_key=True, index=True)
     # TODO scheme
-    reference = Column(String)
-    publication_year = Column(Integer)
     description = Column(String)
     experiment_id = Column(String, unique=True, index=True)
     test_scale = Column(String)
@@ -40,17 +48,13 @@ class Experiment(Base):
     material_characterizations = Column(MutableList.as_mutable(ARRAY(String)))
     associated_test_types = Column(MutableList.as_mutable(ARRAY(String)))
     material_characterization_refs = Column(MutableList.as_mutable(ARRAY(String)))
+    digitalized_data = Column(String) # Column(Boolean, default=False)
     experimental_results_reported = Column(MutableList.as_mutable(ARRAY(String)))
     open_measured_data = Column(String)
-    link_to_request_data = Column(String)
-    digitalized_data = Column(String) # Column(Boolean, default=False)
     crack_types_observed = Column(MutableList.as_mutable(ARRAY(String)))
     experimental_campaign_motivation = Column(String)
-    link_to_experimental_paper = Column(String)
-    corresponding_author_name = Column(String)
-    corresponding_author_email = Column(String)
 
-    run_results = relationship("RunResult", back_populates="experiment")
+    reference_id = Column(Integer, ForeignKey("reference.id"))
 
 class RunResult(Base):
     __tablename__ = "run_result"
@@ -72,5 +76,3 @@ class RunResult(Base):
     reported_t1_y = Column(Float)
 
     experiment_id = Column(Integer, ForeignKey("experiment.id"))
-
-    experiment = relationship("Experiment", back_populates="run_results")

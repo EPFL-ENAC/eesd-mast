@@ -11,7 +11,7 @@ from mast import __version__
 from mast.config import CORS_ENABLED, root_path
 from mast.routers import ping, root
 from mast.services.files import api as filesApi
-from mast.services.tests import api as testsApi
+from mast.services.experiments import api as expApi
 
 app = FastAPI(
     title=title,
@@ -37,4 +37,4 @@ else:
 app.include_router(root.router)
 app.include_router(ping.router)
 app.include_router(filesApi.router)
-app.include_router(testsApi.router)
+app.include_router(expApi.router)

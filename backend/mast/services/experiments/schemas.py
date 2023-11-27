@@ -70,8 +70,24 @@ class ExperimentCreate(ExperimentBase):
 
 class Experiment(ExperimentBase):
     id: int
+    reference_id: int
 
-    run_results: list[RunResult] = []
+    class Config:
+        orm_mode = True
+
+class ReferenceBase(BaseModel):
+    reference: str | None = None
+    publication_year: int | None = None
+    link_to_request_data: str | None = None
+    link_to_experimental_paper: str | None = None
+    corresponding_author_name: str | None = None
+    corresponding_author_email: str | None = None
+
+class ReferenceCreate(ReferenceBase):
+    pass
+
+class Reference(ReferenceBase):
+    id: int
 
     class Config:
         orm_mode = True
