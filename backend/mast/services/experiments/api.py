@@ -39,7 +39,7 @@ def read_experiment(experiment_id: int, db: Session = Depends(get_db)):
 
 @router.get("/experiments/{experiment_id}/run_results/", response_model=list[schemas.RunResult])
 def get_run_results_by_experiment(
-    experiment_id: int, db: Session = Depends(get_db)
+    experiment_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ):
     return service.get_run_results_by_experiment(db=db, experiment_id=experiment_id)
 

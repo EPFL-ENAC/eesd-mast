@@ -1,17 +1,19 @@
 from pydantic import BaseModel
 
 class RunResultBase(BaseModel):
-    name: str
+    run_id: str
     nominal_pga_x: float | None = None
     nominal_pga_y: float | None = None
     nominal_pga_z: float | None = None
     actual_pga_x: float | None = None
     actual_pga_y: float | None = None
     actual_pga_z: float | None = None
-    reported_dg: float | None = None
-    derived_dg: float | None = None
-    max_top_drift: float | None = None
-    residual_top_drift: float | None = None
+    dg_reported: float | None = None
+    dg_derived: float | None = None
+    max_top_drift_x: float | None = None
+    max_top_drift_y: float | None = None
+    residual_top_drift_x: float | None = None
+    residual_top_drift_y: float | None = None
     base_shear_coef: float | None = None
     reported_t1_x: float | None = None
     reported_t1_y: float | None = None
@@ -44,7 +46,7 @@ class ExperimentBase(BaseModel):
     wall_leaves_nb: int | None = None
     internal_walls: bool = False
     mechanical_connectors: str | None = None
-    connectors_activation: str | None # bool = False
+    connectors_activation: str | None
     retrofitted: bool = False
     retrofitting_application: str | None = None
     retrofitting_type: list[str] | None = None
