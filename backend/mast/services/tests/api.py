@@ -6,32 +6,32 @@ from mast.database import get_db
 
 router = APIRouter()
 
-@router.post("/test_summaries",
+@router.post("/experiments",
              status_code=200,
-             description="-- Test summaries --"
+             description="-- Experiments --"
              )
-def create_test_summary(test_summary: schemas.TestSummaryCreate, db: Session = Depends(get_db)):
-    return service.create_test_summary(db=db, test_summary=test_summary)
+def create_experiment(experiment: schemas.ExperimentCreate, db: Session = Depends(get_db)):
+    return service.create_experiment(db=db, experiment=experiment)
 
-@router.get("/test_summaries/", response_model=list[schemas.TestSummary])
-def read_test_summaries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    test_summaries = service.get_test_summaries(db, skip=skip, limit=limit)
-    return test_summaries
+@router.get("/experiments/", response_model=list[schemas.Experiment])
+def read_experiments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    experiments = service.get_experiments(db, skip=skip, limit=limit)
+    return experiments
 
-@router.get("/test_summaries/{test_summary_id}", response_model=schemas.TestSummary)
-def read_test_summary(test_summary_id: int, db: Session = Depends(get_db)):
-    db_test_summary = service.get_test_summary(db, test_summary_id=test_summary_id)
-    if db_test_summary is None:
-        raise HTTPException(status_code=404, detail="Test summary not found")
-    return db_test_summary
+@router.get("/experiments/{experiment_id}", response_model=schemas.Experiment)
+def read_experiment(experiment_id: int, db: Session = Depends(get_db)):
+    db_experiment = service.get_experiment(db, experiment_id=experiment_id)
+    if db_experiment is None:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+    return db_experiment
 
-@router.post("/test_summaries/{test_summary_id}/test_runs/", response_model=schemas.TestRun)
-def create_test_run_for_test_summary(
-    test_summary_id: int, test_run: schemas.TestRunCreate, db: Session = Depends(get_db)
+@router.post("/experiments/{experiment_id}/run_results/", response_model=schemas.RunResult)
+def create_run_result_for_experiment(
+    experiment_id: int, run_result: schemas.RunResultCreate, db: Session = Depends(get_db)
 ):
-    return service.create_test_summary_test_run(db=db, test_run=test_run, test_summary_id=test_summary_id)
+    return service.create_experiment_run_result(db=db, run_result=run_result, experiment_id=experiment_id)
 
-@router.get("/test_runs/", response_model=list[schemas.TestRun])
-def read_test_runs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    test_runs = service.get_test_runs(db, skip=skip, limit=limit)
-    return test_runs
+@router.get("/run_results/", response_model=list[schemas.RunResult])
+def read_run_results(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    run_results = service.get_run_results(db, skip=skip, limit=limit)
+    return run_results

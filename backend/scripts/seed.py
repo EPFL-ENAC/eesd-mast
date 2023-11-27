@@ -5,6 +5,9 @@ from argparse import ArgumentParser
 from logging import DEBUG, INFO, basicConfig, debug
 
 import pandas as pd
+from math import isnan
+from numbers import Number
+import re
 from mast.database import engine
 
 def main():
@@ -30,11 +33,11 @@ def main():
         data_summary.append(row)
         
     # Convert the collected data to a new DataFrame
-    test_summary = pd.DataFrame(data_summary)
+    experiment = pd.DataFrame(data_summary)
 
     # Rename the columns
-    debug(f"test_summary.columns: {test_summary.columns}")
-    test_summary.columns = [
+    debug(f"experiment.columns: {experiment.columns}")
+    experiment.columns = [
         "id",                                 # 'Building ID'
         "scheme",                             # 'Scheme'
         "reference",                          # 'Reference',
@@ -44,7 +47,7 @@ def main():
         "test_scale",                         # 'Scale of test'
         "simultaneous_excitations_nb",        # 'Number of simultaneous excitations'
         "applied_excitations_direction",      # 'Directions of applied excitations'
-        "test_runs_nb",                       # 'Number of test runs'
+        "run_results_nb",                       # 'Number of test runs'
         "storeys_nb",                         # 'Number of storeys'
         "total_building_height",              # 'Total building height'
         "diaphragm_material",                 # 'Diaphragm material'
@@ -67,7 +70,7 @@ def main():
         "max_estimated_dg",                   # 'Maximum estimated DG'
         "material_characterizations",         # 'Material characterization available'
         "associated_test_types",              # 'Associated type of test'
-        "material_characterization_ref",      # 'Reference for material characterization'
+        "material_characterization_refs",      # 'Reference for material characterization'
         "experimental_results_reported",      # 'Experimental results reported'
         "open_measured_data",                 # 'Measured data openly available as digital files'
         "link_to_request_data",               # 'Link to request data'
@@ -77,20 +80,35 @@ def main():
         "link_to_experimental_paper",         # 'Link to experimental paper'
         "corresponding_author_name",          # 'Corresponding author'
     ]
-
+    
     # Drop some columns
-    del test_summary["id"]
-    del test_summary["scheme"] # do not handle scheme image yet
+    del experiment["id"]
+    del experiment["scheme"] # do not handle scheme image yet
 
     # Split author string
-    test_summary[["corresponding_author_name", "corresponding_author_email"]] = test_summary["corresponding_author_name"].str.rsplit("\n", n=1, expand=True)
+    experiment[["corresponding_author_name", "corresponding_author_email"]] = experiment["corresponding_author_name"].str.rsplit("\n", n=1, expand=True)
     
     # Prepare array values
-    test_summary["retrofitting_type"] = test_summary.agg("{0[retrofitting_type]}".format, axis=1)
+    def array_formatter(x):
+        if isinstance(x, Number) and isnan(x):
+            return None
+        x = x.strip()
+        x = "\",\"".join(re.split(r"\n|/", x))
+        return f"{{\"{x}\"}}"
+    for col in ["retrofitting_type", "material_characterizations", "material_characterization_refs", "associated_test_types", "experimental_results_reported", "crack_types_observed"]:
+        experiment[col] = experiment[col].apply(array_formatter)
 
+    # Clean number values
+    def number_cleanup(x):
+        if not isinstance(x, Number):
+            return None
+        return x
+    for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "masonry_wall_thickness", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
+        experiment[col] = experiment[col].apply(number_cleanup)
+        
     # Write the DataFrame to the database
     debug(f"writing to {engine.url}")
-    test_summary.to_sql("test_summary", engine, if_exists="append", index=False)
+    experiment.to_sql("experiment", engine, if_exists="append", index=False)
 
 
 if __name__ == "__main__":

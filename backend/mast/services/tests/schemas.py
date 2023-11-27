@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class TestRunBase(BaseModel):
+class RunResultBase(BaseModel):
     name: str
     nominal_pga_x: float | None = None
     nominal_pga_y: float | None = None
@@ -16,22 +16,22 @@ class TestRunBase(BaseModel):
     reported_t1_x: float | None = None
     reported_t1_y: float | None = None
 
-class TestRunCreate(TestRunBase):
+class RunResultCreate(RunResultBase):
     pass
 
-class TestRun(TestRunBase):
+class RunResult(RunResultBase):
     id: int
-    test_summary_id: int
+    experiment_id: int
 
     class Config:
         orm_mode = True
 
-class TestSummaryBase(BaseModel):
-    experiment_id: str
+class ExperimentBase(BaseModel):
+    experiment_id: str | None = None
     test_scale: str | None = None
     simultaneous_excitations_nb: int | None = None
     applied_excitations_direction: str | None = None
-    test_runs_nb: int | None = None
+    run_results_nb: int | None = None
     storeys_nb: int | None = None
     total_building_height: int | None = None
     diaphragm_material: str | None = None
@@ -47,31 +47,31 @@ class TestSummaryBase(BaseModel):
     connectors_activation: str | None # bool = False
     retrofitted: str | None # bool = False
     retrofitting_application: str | None = None
-    retrofitting_type: list[str] = []
+    retrofitting_type: list[str] | None = None
     first_estimated_fundamental_period: float | None = None
     last_estimated_fundamental_period: float | None = None
     max_horizontal_pga: float | None = None
     max_estimated_dg: float | None = None
-    material_characterizations: list[str] = []
-    associated_test_types: list[str] = []
-    material_characterization_ref: str | None = None
-    experimental_results_reported: list[str] = []
+    material_characterizations: list[str] | None = None
+    associated_test_types: list[str]  | None = None
+    material_characterization_refs: list[str] | None = None
+    experimental_results_reported: list[str] | None = None
     open_measured_data: str | None = None
     link_to_request_data: str | None = None
     digitalized_data: str | None # bool = False
-    crack_types_observed: list[str] = []
+    crack_types_observed: list[str] | None = None
     experimental_campaign_motivation: str | None = None
     link_to_experimental_paper: str | None = None
     corresponding_author_name: str | None = None
     corresponding_author_email: str | None = None
 
-class TestSummaryCreate(TestSummaryBase):
+class ExperimentCreate(ExperimentBase):
     pass
 
-class TestSummary(TestSummaryBase):
+class Experiment(ExperimentBase):
     id: int
 
-    test_runs: list[TestRun] = []
+    run_results: list[RunResult] = []
 
     class Config:
         orm_mode = True

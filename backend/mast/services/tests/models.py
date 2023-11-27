@@ -4,8 +4,8 @@ from sqlalchemy.orm import relationship
 
 from mast.database import Base
 
-class TestSummary(Base):
-    __tablename__ = "test_summary"
+class Experiment(Base):
+    __tablename__ = "experiment"
 
     id = Column(Integer, primary_key=True, index=True)
     # TODO scheme
@@ -16,7 +16,7 @@ class TestSummary(Base):
     test_scale = Column(String)
     simultaneous_excitations_nb = Column(Integer)
     applied_excitations_direction = Column(String)
-    test_runs_nb = Column(Integer)
+    run_results_nb = Column(Integer)
     storeys_nb = Column(Integer)
     total_building_height = Column(Integer)
     diaphragm_material = Column(String)
@@ -39,7 +39,7 @@ class TestSummary(Base):
     max_estimated_dg = Column(Float)
     material_characterizations = Column(MutableList.as_mutable(ARRAY(String)))
     associated_test_types = Column(MutableList.as_mutable(ARRAY(String)))
-    material_characterization_ref = Column(String)
+    material_characterization_refs = Column(MutableList.as_mutable(ARRAY(String)))
     experimental_results_reported = Column(MutableList.as_mutable(ARRAY(String)))
     open_measured_data = Column(String)
     link_to_request_data = Column(String)
@@ -50,10 +50,10 @@ class TestSummary(Base):
     corresponding_author_name = Column(String)
     corresponding_author_email = Column(String)
 
-    test_runs = relationship("TestRun", back_populates="test")
+    run_results = relationship("RunResult", back_populates="experiment")
 
-class TestRun(Base):
-    __tablename__ = "test_run"
+class RunResult(Base):
+    __tablename__ = "run_result"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
@@ -71,6 +71,6 @@ class TestRun(Base):
     reported_t1_x = Column(Float)
     reported_t1_y = Column(Float)
 
-    test_summary_id = Column(Integer, ForeignKey("test_summary.id"))
+    experiment_id = Column(Integer, ForeignKey("experiment.id"))
 
-    test = relationship("TestSummary", back_populates="test_runs")
+    experiment = relationship("Experiment", back_populates="run_results")
