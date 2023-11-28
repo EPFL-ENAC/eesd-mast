@@ -24,6 +24,7 @@ settings = Dynaconf(
         Validator("POSTGRES_USER", default="postgres"),
         Validator("POSTGRES_PASSWORD", default="password"),
         Validator("POSTGRES_DB", default="postgres"),
+        Validator("API_KEYS", default=""),
     ],
 )
 
