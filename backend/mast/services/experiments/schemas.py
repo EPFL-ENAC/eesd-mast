@@ -30,11 +30,12 @@ class RunResult(RunResultBase):
 
 class ExperimentBase(BaseModel):
     experiment_id: str | None = None
-    test_scale: str | None = None
+    test_scale: float | None = None
     simultaneous_excitations_nb: int | None = None
     applied_excitation_directions: list[str] | None = None
     run_results_nb: int | None = None
     storeys_nb: int | None = None
+    building_height: int | None = None
     total_building_height: int | None = None
     diaphragm_material: str | None = None
     roof_material_geometry: str | None = None
@@ -42,7 +43,7 @@ class ExperimentBase(BaseModel):
     masonry_unit_material: str | None = None
     mortar_type: str | None = None
     masonry_compressive_strength: int | None = None
-    masonry_wall_thickness: int | None = None
+    masonry_wall_thickness: list[int] | None = None
     wall_leaves_nb: int | None = None
     internal_walls: bool = False
     mechanical_connectors: str | None = None

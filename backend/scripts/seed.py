@@ -93,10 +93,11 @@ def main():
     def array_formatter(x):
         if isinstance(x, Number) and isnan(x):
             return None
-        x = x.strip()
-        x = "\",\"".join(re.split(r"\n|/", x))
+        if isinstance(x, str):
+            x = x.strip()
+            x = "\",\"".join(re.split(r"\n|/", x))
         return f"{{\"{x}\"}}"
-    for col in ["applied_excitation_directions", "retrofitting_type", "material_characterizations", "material_characterization_refs", "associated_test_types", "experimental_results_reported", "crack_types_observed"]:
+    for col in ["applied_excitation_directions", "masonry_wall_thickness", "retrofitting_type", "material_characterizations", "material_characterization_refs", "associated_test_types", "experimental_results_reported", "crack_types_observed"]:
         experiment[col] = experiment[col].apply(array_formatter)
 
     # Clean number values
@@ -104,7 +105,7 @@ def main():
         if not isinstance(x, Number):
             return None
         return x
-    for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "masonry_wall_thickness", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
+    for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
         experiment[col] = experiment[col].apply(number_cleanup)
 
     # Split open measures data field
