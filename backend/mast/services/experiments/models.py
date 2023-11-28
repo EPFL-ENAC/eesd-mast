@@ -8,6 +8,7 @@ class Reference(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     reference = Column(String, unique=True, index=True)
+    full_reference = Column(String, unique=True, index=True)
     publication_year = Column(Integer)
     link_to_experimental_paper = Column(String)
     corresponding_author_name = Column(String)

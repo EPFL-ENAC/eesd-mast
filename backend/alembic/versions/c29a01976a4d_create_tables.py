@@ -1,4 +1,4 @@
-"""create_experiments
+"""create_tables
 
 Revision ID: c29a01976a4d
 Revises: 
@@ -24,6 +24,7 @@ def upgrade() -> None:
         "reference",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("reference", sa.String(), unique=True, index=True),
+        sa.Column("full_reference", sa.String(), unique=True, index=True),
         sa.Column("publication_year", sa.Integer(), nullable=True),
         sa.Column("request_data_available", sa.String(), nullable=True),
         sa.Column("link_to_request_data", sa.String(), nullable=True),

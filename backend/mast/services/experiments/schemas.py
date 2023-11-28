@@ -76,6 +76,7 @@ class Experiment(ExperimentBase):
 
 class ReferenceBase(BaseModel):
     reference: str | None = None
+    full_reference: str | None = None
     publication_year: int | None = None
     request_data_available: str | None = None
     link_to_request_data: str | None = None
