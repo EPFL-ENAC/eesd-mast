@@ -147,7 +147,7 @@ def main():
     def run_id_check(x):
         if isinstance(x, Number):
             return not isnan(x)
-        return x != None and x.strip() != "-" and x.strip() != "Initial" and x.strip() != "Final"
+        return x != None and x.strip() != "-"# and x.strip() != "Initial" and x.strip() != "Final"
 
     for i in range(1, len(experiment)+1):
         debug(f"reading sheet (B{i})")
@@ -171,7 +171,10 @@ def main():
             "Reported T1X": "reported_t1_x",
             "Reported T1Y": "reported_t1_y",
         }, inplace=True)
+        results["run_id"] = results["run_id"].map(lambda x: x if isinstance(x, Number) else x.strip())
         results["experiment_id"] = np.repeat(i, len(results))
+        for col in ["reported_t1_x", "reported_t1_y"]:
+            results[col] = results[col].apply(number_cleanup)
         debug(f"writing run results from experiment B{i} to {engine.url}")
         results.to_sql("run_result", engine, if_exists="append", index=False)
 
