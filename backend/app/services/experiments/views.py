@@ -52,7 +52,7 @@ async def get_experiments(
             for qry in [query, count_query]:  # Apply filter to both queries
                 if isinstance(value, list):
                     qry = qry.where(getattr(Experiment, field).in_(value))
-                elif field == "id" or field == "experiment_id":
+                elif field == "id" or field == "reference_id":
                     qry = qry.where(getattr(Experiment, field) == value)
                 else:
                     qry = qry.where(
@@ -76,7 +76,7 @@ async def get_experiments(
         for field, value in filter.items():
             if isinstance(value, list):
                 query = query.where(getattr(Experiment, field).in_(value))
-            elif field == "id" or field == "experiment_id":
+            elif field == "id" or field == "reference_id":
                 query = query.where(getattr(Experiment, field) == value)
             else:
                 query = query.where(

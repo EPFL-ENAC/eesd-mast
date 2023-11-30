@@ -52,7 +52,7 @@ async def get_run_results(
             for qry in [query, count_query]:  # Apply filter to both queries
                 if isinstance(value, list):
                     qry = qry.where(getattr(RunResult, field).in_(value))
-                elif field == "id" or field == "run_result_id":
+                elif field == "id" or field == "experiment_id":
                     qry = qry.where(getattr(RunResult, field) == value)
                 else:
                     qry = qry.where(
@@ -76,7 +76,7 @@ async def get_run_results(
         for field, value in filter.items():
             if isinstance(value, list):
                 query = query.where(getattr(RunResult, field).in_(value))
-            elif field == "id" or field == "run_result_id":
+            elif field == "id" or field == "experiment_id":
                 query = query.where(getattr(RunResult, field) == value)
             else:
                 query = query.where(
