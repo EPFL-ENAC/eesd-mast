@@ -2,7 +2,7 @@
 CLI for uploading Excel to database
 """
 from argparse import ArgumentParser
-from logging import DEBUG, INFO, basicConfig, debug
+from logging import DEBUG, INFO, basicConfig, debug, info
 
 import pandas as pd
 from math import isnan
@@ -10,7 +10,10 @@ from numbers import Number
 import re
 import numpy as np
 
-from mast.database import engine
+from app.config import config
+from sqlmodel import create_engine
+
+engine = create_engine(config.DB_URL.replace("+asyncpg",""), echo=True, future=True)
 
 def main():
     parser = ArgumentParser(description="Upload Excel file to database")
@@ -20,7 +23,7 @@ def main():
     filename: str = args.filename
 
     debug(f"connecting to {engine.url}")
-    debug(f"seeding with {filename}")
+    info(f"seeding with {filename}")
 
     Database_summary = pd.read_excel(open(filename, "rb"), sheet_name="Summary")
 
@@ -85,6 +88,7 @@ def main():
     # Drop some columns
     del experiment["id"]
     del experiment["scheme"] # do not handle scheme image yet
+    del experiment["run_results_nb"] # dynamically calculated
 
     # Split author string
     experiment[["corresponding_author_name", "corresponding_author_email"]] = experiment["corresponding_author_name"].str.rsplit("\n", n=1, expand=True)
@@ -105,7 +109,7 @@ def main():
         if not isinstance(x, Number):
             return None
         return x
-    for col in ["publication_year", "run_results_nb", "storeys_nb", "total_building_height", "masonry_compressive_strength", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
+    for col in ["publication_year", "storeys_nb", "total_building_height", "masonry_compressive_strength", "wall_leaves_nb", "first_estimated_fundamental_period", "last_estimated_fundamental_period", "max_horizontal_pga", "max_estimated_dg"]:
         experiment[col] = experiment[col].apply(number_cleanup)
 
     # Split open measures data field
@@ -136,11 +140,11 @@ def main():
     reference = pd.merge(reference, full_reference, left_index=True, right_on="reference_id").drop("reference_id", axis=1)
 
     # Write the DataFrame to the database
-    debug(f"writing references to {engine.url}")
+    info("writing references")
     reference.to_sql("reference", engine, if_exists="append", index=False)
 
     # Write the DataFrame to the database
-    debug(f"writing experiments to {engine.url}")
+    info("writing experiments")
     experiment.to_sql("experiment", engine, if_exists="append", index=False)
 
     # Run results
@@ -150,7 +154,7 @@ def main():
         return x != None and x.strip() != "-"# and x.strip() != "Initial" and x.strip() != "Final"
 
     for i in range(1, len(experiment)+1):
-        debug(f"reading sheet (B{i})")
+        info(f"reading sheet (B{i})")
         results = pd.read_excel(open(filename, "rb"), sheet_name=f"B{i}", usecols="F:U", header=2)
         results = results.loc[results["Run ID"].apply(run_id_check)]
         results.rename(columns = {
@@ -175,8 +179,8 @@ def main():
         results["experiment_id"] = np.repeat(i, len(results))
         for col in ["reported_t1_x", "reported_t1_y"]:
             results[col] = results[col].apply(number_cleanup)
-        debug(f"writing run results from experiment B{i} to {engine.url}")
-        results.to_sql("run_result", engine, if_exists="append", index=False)
+        info(f"writing run results from experiment B{i}")
+        results.to_sql("runresult", engine, if_exists="append", index=False)
 
 
 if __name__ == "__main__":

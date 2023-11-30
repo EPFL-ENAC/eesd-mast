@@ -1,42 +1,18 @@
-FROM python:3.10.9-alpine as build-stage
+FROM python:3.11.6-alpine3.18
+ENV POETRY_VERSION=1.6.1
+RUN pip install "poetry==$POETRY_VERSION"
+ENV PYTHONPATH="$PYTHONPATH:/app"
+
 WORKDIR /app
-RUN apk add --no-cache \
-    g++ \
-    gcc \
-    musl-dev \
-    libc-dev \
-    libffi-dev
-RUN pip install poetry
-COPY ./pyproject.toml ./poetry.lock* /app/
-RUN poetry export --output requirements.txt
 
+COPY poetry.lock pyproject.toml /app/
+RUN poetry config installer.max-workers 10
+RUN poetry config virtualenvs.create false
+#RUN apk add --no-cache g++ geos-dev
+RUN poetry install --no-interaction --without dev
 
-FROM python:3.10.9-alpine as production-stage
-LABEL maintainer="<pierre.guilbert@epfl.ch>"
-LABEL description="FastAPI upload via boto3"
+COPY alembic.ini prestart.sh /app
+COPY migrations /app/migrations
+COPY app /app/app
 
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-EXPOSE 5053
-WORKDIR /app
-RUN apk add --no-cache \
-    g++ \
-    gcc \
-    musl-dev \
-    ca-certificates \
-    ffmpeg \
-    libwebp \
-    libwebp-tools
-
-COPY --from=build-stage /app/requirements.txt /app
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY ./pyproject.toml ./README.md /app/
-COPY ./mast /app/mast
-
-RUN pip install --no-cache-dir .
-
-
-CMD [ "uvicorn", "mast.main:app", "--host", "0.0.0.0", "--port", "5053" ]
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=3s --retries=2 CMD wget --no-verbose --tries=1 --spider http://localhost:5050/ping || exit 1
+ENTRYPOINT sh prestart.sh
