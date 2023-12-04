@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, Depends, HTTPException
+from fastapi import FastAPI, status, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import config
 from app.db import get_session, AsyncSession
@@ -8,7 +8,7 @@ from app.services.runresults.views import router as run_results_router
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 
-app = FastAPI()
+app = FastAPI(root_path=config.PATH_PREFIX)
 
 origins = ["*"]
 
@@ -25,7 +25,6 @@ class HealthCheck(BaseModel):
     """Response model to validate and return when performing a health check."""
 
     status: str = "OK"
-
 
 @app.get(
     "/healthz",

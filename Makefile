@@ -37,5 +37,12 @@ setup:
 	echo "nothing to see here"
 
 run:
-	docker compose -f docker-compose.yml -f docker-compose.prod.yml  up  --pull=always -d --remove-orphans
+	docker compose -f docker-compose.yml pull
+	docker compose -f docker-compose.yml build --parallel --no-cache
+	docker compose -f docker-compose.yml up -d --remove-orphans
 
+stop:
+	docker compose -f docker-compose.yml stop
+
+logs:
+	docker compose logs -f $(service)

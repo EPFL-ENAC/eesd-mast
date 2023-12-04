@@ -11,11 +11,12 @@ class Config(BaseSettings):
     DB_PASSWORD: str
 
     DB_NAME: str  # postgres
-    DB_PREFIX: str  # "postgresql+asyncpg"
+    DB_PREFIX: str = "postgresql+asyncpg"
 
     DB_URL: str | None = None
 
     API_KEYS: str
+    PATH_PREFIX: str = "/api"
 
     @root_validator(pre=True)
     def form_db_url(cls, values: dict) -> dict:

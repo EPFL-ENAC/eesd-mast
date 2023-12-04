@@ -1,4 +1,4 @@
-env_path=.env
+env_path=../.env
 data="./scripts/Shake_Table_Tests_Database_v01.xlsx"
 
 install:

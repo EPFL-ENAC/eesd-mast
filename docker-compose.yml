@@ -1,86 +1,64 @@
 version: '3.9'
 services:
   reverse-proxy:
-    image: traefik:v2.9
+    image: traefik:v2.10
     command:
       - "--accesslog=true"
       - "--providers.docker"
       - "--providers.file.directory=/configuration/"
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--entrypoints.websecure.address=:443"
+      #- "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      #- "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      #- "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      #- "--entrypoints.websecure.address=:443"
     environment:
       - SSL_CERT_CRT=${SSL_CERT_CRT}
       - SSL_CERT_KEY=${SSL_CERT_KEY}
     ports:
       - "80:80"
-      - "443:443"
+      #- "443:443"
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/configuration/traefik.yml
       - /etc/ssl:/etc/ssl
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        - API_URL
-        - API_PATH
-    expose:
-      - 80
-    labels:
-      - "traefik.http.routers.frontend.priority=101"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.frontend.middlewares=frontend-middleware"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.frontend-middleware.stripprefix.prefixes=/"
-    restart: unless-stopped
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     args:
+  #       - API_URL
+  #       - API_PATH
+  #   expose:
+  #     - 80
+  #   labels:
+  #     - "traefik.http.routers.frontend.priority=101"
+  #     - "traefik.http.routers.frontend.tls=true"
+  #     - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  #     - "traefik.http.routers.frontend.middlewares=frontend-middleware"
+  #     - "traefik.http.services.frontend.loadbalancer.server.port=80"
+  #     - "traefik.http.middlewares.frontend-middleware.stripprefix.prefixes=/"
+  #   restart: unless-stopped
   backend:
     build: ./backend
     environment:
-      - S3_ENDPOINT_HOSTNAME=${S3_ENDPOINT_HOSTNAME}
-      - S3_ENDPOINT_PROTOCOL=${S3_ENDPOINT_PROTOCOL}
-      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
-      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
-      - S3_REGION=${S3_REGION} 
-      - S3_Bucket=${S3_Bucket} 
-      - S3_Key=${S3_Key} 
-      - CORS_ENABLED=${CORS_ENABLED} 
-      - ROOT_PATH=
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
-      - POSTGRES_HOST=${DATABASE_HOST}
+      - DB_HOST=postgres
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PREFIX=${DB_PREFIX}
+      - API_KEYS=${API_KEYS}
+      - PATH_PREFIX=${PATH_PREFIX}
     expose:
-      - 5053
+      - 8000
     labels:
       - "traefik.http.routers.backend.priority=1001"
-      - "traefik.http.routers.backend.tls=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/upload-api`)"
-      - "traefik.http.services.backend.loadbalancer.server.port=5053"
+      #- "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.backend.middlewares=backend-middleware"
-      - "traefik.http.middlewares.backend-middleware.stripprefix.prefixes=/upload-api"
+      - "traefik.http.middlewares.backend-middleware.stripprefix.prefixes=/api"
     restart: unless-stopped
-  s3_server:
-    build: ./s3_server
-    restart: unless-stopped
-    environment:
-      - DNS=${DNS}
-      - S3_ENDPOINT_HOSTNAME=${S3_ENDPOINT_HOSTNAME}
-      - S3_ENDPOINT_PROTOCOL=${S3_ENDPOINT_PROTOCOL}
-      - S3_BUCKET_NAME=${S3_Bucket}
-    labels:
-      - "traefik.http.routers.s3Server.priority=1002"
-      - "traefik.http.routers.s3Server.tls=true"
-      - "traefik.http.routers.s3Server.rule=PathPrefix(`/s3`)"
-      - "traefik.http.routers.s3Server.middlewares=s3Server-stripprefix"
-      - "traefik.http.middlewares.s3Server-stripprefix.stripprefix.prefixes=/s3"
-      - "traefik.http.services.s3Server.loadbalancer.server.port=5660"
-    expose:
-      - 5660
   postgres:
     image: postgres:15.5-alpine
     expose:
