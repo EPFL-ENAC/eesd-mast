@@ -13,18 +13,22 @@ import json
 
 router = APIRouter()
 
-
 @router.get("/{reference_id}", response_model=ReferenceRead)
 async def get_reference(
     session: AsyncSession = Depends(get_session),
     *,
-    reference_id: int,
+    reference_id: int | str,
 ) -> ReferenceRead:
-    """Get an reference by id"""
-    res = await session.exec(
-        select(Reference).where(Reference.id == reference_id)
-    )
+    """Get a reference by id or short name"""
+    sel = select(Reference)
+    if isinstance(reference_id, str):
+        sel = sel.where(Reference.reference == reference_id)
+    else:
+        sel = sel.where(Reference.id == reference_id)
+    res = await session.exec(sel)
     reference = res.one_or_none()
+    if not reference:
+        raise HTTPException(status_code=404, detail="Reference not found")
 
     return reference
 
