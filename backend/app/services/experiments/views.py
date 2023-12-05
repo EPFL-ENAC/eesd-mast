@@ -10,6 +10,7 @@ from app.services.experiments.models import (
 )
 from sqlalchemy import func
 import json
+from logging import debug
 
 router = APIRouter()
 
@@ -25,6 +26,8 @@ async def get_experiment(
         select(Experiment).where(Experiment.id == experiment_id)
     )
     experiment = res.one_or_none()
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
 
     return experiment
 
@@ -106,7 +109,6 @@ async def create_experiment(
     api_key: str = Security(get_api_key),
 ) -> ExperimentRead:
     """Creates an experiment"""
-    print(experiment)
     experiment = Experiment.from_orm(experiment)
     session.add(experiment)
     await session.commit()
@@ -133,7 +135,7 @@ async def update_experiment(
 
     # Update the fields from the request
     for field, value in experiment_data.items():
-        print(f"Updating: {field}, {value}")
+        debug(f"Updating: {field}, {value}")
         setattr(experiment_db, field, value)
 
     session.add(experiment_db)

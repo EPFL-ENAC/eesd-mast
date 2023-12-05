@@ -1,3 +1,4 @@
+
 from fastapi import Depends, Security, APIRouter, Query, Response, Body, HTTPException
 from sqlmodel import select
 from app.db import get_session, AsyncSession
@@ -10,6 +11,7 @@ from app.services.runresults.models import (
 )
 from sqlalchemy import func
 import json
+from logging import debug
 
 router = APIRouter()
 
@@ -25,6 +27,8 @@ async def get_run_result(
         select(RunResult).where(RunResult.id == run_result_id)
     )
     run_result = res.one_or_none()
+    if not run_result:
+        raise HTTPException(status_code=404, detail="RunResult not found")
 
     return run_result
 
@@ -106,7 +110,6 @@ async def create_run_result(
     api_key: str = Security(get_api_key),
 ) -> RunResultRead:
     """Creates a run result"""
-    print(run_result)
     run_result = RunResult.from_orm(run_result)
     session.add(run_result)
     await session.commit()
@@ -133,7 +136,7 @@ async def update_run_result(
 
     # Update the fields from the request
     for field, value in run_result_data.items():
-        print(f"Updating: {field}, {value}")
+        debug(f"Updating: {field}, {value}")
         setattr(run_result_db, field, value)
 
     session.add(run_result_db)

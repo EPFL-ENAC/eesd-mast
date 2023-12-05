@@ -10,6 +10,7 @@ from app.services.references.models import (
 )
 from sqlalchemy import func
 import json
+from logging import debug
 
 router = APIRouter()
 
@@ -110,7 +111,6 @@ async def create_reference(
     api_key: str = Security(get_api_key),
 ) -> ReferenceRead:
     """Creates an reference"""
-    print(reference)
     reference = Reference.from_orm(reference)
     session.add(reference)
     await session.commit()
@@ -137,7 +137,7 @@ async def update_reference(
 
     # Update the fields from the request
     for field, value in reference_data.items():
-        print(f"Updating: {field}, {value}")
+        debug(f"Updating: {field}, {value}")
         setattr(reference_db, field, value)
 
     session.add(reference_db)
