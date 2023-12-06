@@ -18,6 +18,14 @@ class Config(BaseSettings):
     API_KEYS: str
     PATH_PREFIX: str = "/api"
 
+    S3_ENDPOINT_PROTOCOL: str
+    S3_ENDPOINT_HOSTNAME: str
+    S3_ACCESS_KEY_ID: str
+    S3_SECRET_ACCESS_KEY: str
+    S3_REGION: str
+    S3_BUCKET: str
+    S3_Key: str
+
     @root_validator(pre=True)
     def form_db_url(cls, values: dict) -> dict:
         """Form the DB URL from the settings"""
