@@ -24,7 +24,7 @@ class Config(BaseSettings):
     S3_SECRET_ACCESS_KEY: str
     S3_REGION: str
     S3_BUCKET: str
-    S3_Key: str
+    S3_PATH_PREFIX: str
 
     @root_validator(pre=True)
     def form_db_url(cls, values: dict) -> dict:
