@@ -19,18 +19,69 @@ class S3_SERVICE(object):
         self.s3_endpoint_url = s3_endpoint_url
         self.s3_access_key_id = s3_access_key_id
         self.s3_secret_access_key = s3_secret_access_key
-        self.prefix = "/s3/"
         self.region = region
+        self.with_webp = False
 
-    async def convert_image(self, uploadFile: UploadFile):
-        request_object_content = await uploadFile.read()
+    async def get_file(self, file_path: str):
+        # get file from file path
+        if file_path.startswith(config.S3_PATH_PREFIX):
+            session = get_session()
+            async with session.create_client(
+                    's3',
+                    region_name=self.region,
+                    endpoint_url=self.s3_endpoint_url,
+                    aws_secret_access_key=self.s3_secret_access_key,
+                    aws_access_key_id=self.s3_access_key_id) as client:
+                try:
+                    response = await client.get_object(
+                        Bucket=config.S3_BUCKET, Key=file_path)
+                    if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+                        # Read the content of the S3 object
+                        file_content = await response['Body'].read()
+                        return file_content, response["ContentType"]
+                except Exception as e:
+                    return False, False
+        return False, False
+
+    async def upload_file(self, upload_file: UploadFile):
+        # if mimetype is image upload image
+        if upload_file.content_type in image_mimetypes:
+            return await self._upload_image(upload_file)
+        elif upload_file.content_type in pdf_mimetypes:
+            return await self._upload_with_type(upload_file, "Report")
+        return await self._upload_with_type(upload_file, "Other")
+
+    async def delete_file(self, file_path: str):
+        if file_path.startswith(config.S3_PATH_PREFIX):
+            # delete file_path
+            session = get_session()
+            async with session.create_client(
+                    's3',
+                    region_name=self.region,
+                    endpoint_url=self.s3_endpoint_url,
+                    aws_secret_access_key=self.s3_secret_access_key,
+                    aws_access_key_id=self.s3_access_key_id) as client:
+                response = await client.delete_object(
+                    Bucket=config.S3_BUCKET, Key=file_path)
+                if response["ResponseMetadata"]["HTTPStatusCode"] == 204:
+                    logger.info(
+                        f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{file_path}")
+                    return file_path
+        return False
+
+    #
+    # Private methods
+    #
+
+    async def _convert_image(self, upload_file: UploadFile):
+        request_object_content = await upload_file.read()
         origin_BytesIo = BytesIO(request_object_content)
         image = Image.open(origin_BytesIo)
         data = BytesIO()
         image.save(data, format="webp", quality=60)
         return (data, origin_BytesIo)
 
-    async def get_unique_filename(self,
+    async def _get_unique_filename(self,
                                   filename: str,
                                   ext: str = "") -> Tuple[str, str]:
         current_time = datetime.datetime.now()
@@ -42,87 +93,75 @@ class S3_SERVICE(object):
         uri_component_encoded = split_file_name[0]
         return (f"{unique_name}{uri_component_encoded}{ext}", name)
 
-    async def upload_image(self, uploadFile: UploadFile):
-        (data, origin_data) = await self.convert_image(uploadFile)
-        mimetype = "image/webp"
-        (unique_name,
-         name) = await self.get_unique_filename(uploadFile.filename, ".webp")
+    async def _upload_image(self, upload_file: UploadFile):
+        # convert to bytes
+        (data, origin_data) = await self._convert_image(upload_file)
 
-        key = f"{config.S3_PATH_PREFIX}{unique_name}"
-        uploads3 = await self.upload_fileobj(bucket=config.S3_BUCKET,
-                                             key=key,
-                                             data=data.getvalue(),
-                                             mimetype=mimetype)
+        # Webp converted image
+        if self.with_webp:
+            mimetype = "image/webp"
+            (unique_name,
+            name) = await self._get_unique_filename(upload_file.filename, ".webp")
+
+            key = f"{config.S3_PATH_PREFIX}{unique_name}"
+            uploads3 = await self._upload_fileobj(bucket=config.S3_BUCKET,
+                                                key=key,
+                                                data=data.getvalue(),
+                                                mimetype=mimetype)
+            
+            if not uploads3:
+                raise HTTPException(status_code=500,
+                                detail="Failed to upload image to S3")
+        
+        # Original image
         (unique_origin_name,
-         origin_name) = await self.get_unique_filename(uploadFile.filename)
+         origin_name) = await self._get_unique_filename(upload_file.filename)
         key_origin = f"{config.S3_PATH_PREFIX}{unique_origin_name}"
-        uploads3Origin = await self.upload_fileobj(
+        uploads3Origin = await self._upload_fileobj(
             bucket=config.S3_BUCKET,
             key=key_origin,
             data=origin_data.getvalue(),
-            mimetype=uploadFile.content_type)
+            mimetype=upload_file.content_type)
+        
+        if not uploads3Origin:
+            raise HTTPException(status_code=500,
+                                    detail="Failed to upload image to S3")
 
-        if uploads3 and uploads3Origin:
-            s3_url = f"{self.prefix}{key}"
-            s3_origin_url = f"{self.prefix}{key_origin}"
+        if self.with_webp:
             # response http to be used by the frontend
             return {
-                "url": urllib.parse.quote(s3_url),
-                "origin_url": urllib.parse.quote(s3_origin_url),
+                "path": urllib.parse.quote(key),
+                "origin_path": urllib.parse.quote(key_origin),
                 "name": name,
                 "type": "Image"
             }
         else:
-            raise HTTPException(status_code=500,
-                                detail="Failed to upload image to S3")
+            # response http to be used by the frontend
+            return {
+                "path": urllib.parse.quote(key_origin),
+                "name": origin_name,
+                "type": "Image"
+            }
 
-    async def upload_with_type(self,
-                               uploadFile: UploadFile,
+    async def _upload_with_type(self,
+                               upload_file: UploadFile,
                                type: str = "Other"):
         # only four types allowed: Image / Drawing / Report / Other
-        (filename, name) = await self.get_unique_filename(uploadFile.filename)
+        (filename, name) = await self._get_unique_filename(upload_file.filename)
         key = f"{config.S3_PATH_PREFIX}{filename}"
-        uploads3 = await self.upload_fileobj(bucket=config.S3_BUCKET,
+        uploads3 = await self._upload_fileobj(bucket=config.S3_BUCKET,
                                              key=key,
-                                             data=uploadFile.file._file,
-                                             mimetype=uploadFile.content_type)
+                                             data=upload_file.file._file,
+                                             mimetype=upload_file.content_type)
         if uploads3:
-            s3_url = f"{self.prefix}{key}"
             # response http to be used by the frontend
-            return {"url": urllib.parse.quote(s3_url), "name": name, "type": type}
+            return {"path": urllib.parse.quote(key), "name": name, "type": type}
         else:
             raise HTTPException(
                 status_code=500,
                 detail="Failed to upload file to S3 EPFL server")
 
-    async def upload_file(self, uploadFile: UploadFile):
-        # if mimetype is image upload image
-        if uploadFile.content_type in image_mimetypes:
-            return await self.upload_image(uploadFile)
-        elif uploadFile.content_type in pdf_mimetypes:
-            return await self.upload_with_type(uploadFile, "Report")
-        return await self.upload_with_type(uploadFile, "Other")
-
-    async def delete_file(self, filePath: str):
-        # delete filePath
-        session = get_session()
-        async with session.create_client(
-                's3',
-                region_name=self.region,
-                endpoint_url=self.s3_endpoint_url,
-                aws_secret_access_key=self.s3_secret_access_key,
-                aws_access_key_id=self.s3_access_key_id) as client:
-            key = filePath.removeprefix(self.prefix)
-            file_delete_response = await client.delete_object(
-                Bucket=config.S3_BUCKET, Key=key)
-            if file_delete_response["ResponseMetadata"][
-                    "HTTPStatusCode"] == 204:
-                logger.info(
-                    f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{filePath}")
-                return filePath
-        return False
-
-    async def upload_fileobj(self, data: BytesIO, bucket: str, key: str,
+    async def _upload_fileobj(self, data: BytesIO, bucket: str, key: str,
                              mimetype: str):
         session = get_session()
         async with session.create_client(

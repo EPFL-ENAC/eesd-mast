@@ -40,6 +40,7 @@ def upgrade() -> None:
     op.create_table(
         "experiment",
         sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("scheme", sa.JSON(), nullable=True),
         sa.Column("description", sa.String(), nullable=True),
         sa.Column("experiment_id", sa.String, index=True),
         sa.Column("test_scale", sa.Float(), nullable=True),

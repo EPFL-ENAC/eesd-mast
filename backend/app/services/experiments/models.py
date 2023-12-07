@@ -1,8 +1,8 @@
-from sqlmodel import SQLModel, Field, ARRAY, UniqueConstraint, Column, Integer, String
-from typing import List
+from sqlmodel import SQLModel, Field, ARRAY, UniqueConstraint, Column, Integer, String, JSON
+from typing import List, Dict
 
 class ExperimentBase(SQLModel):
-    # TODO scheme
+    scheme: Dict | None = Field(sa_column=Column(JSON))
     description: str | None
     experiment_id: str | None
     test_scale: float | None
