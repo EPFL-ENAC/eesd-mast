@@ -6,8 +6,8 @@ from fastapi.datastructures import UploadFile
 from fastapi.param_functions import File
 from app.services.files.s3client import S3_SERVICE
 
-from fastapi import Depends, Security, APIRouter, HTTPException
-from fastapi.responses import StreamingResponse, Response
+from fastapi import Depends, Security, Query, APIRouter, HTTPException
+from fastapi.responses import Response
 
 from app.utils.mimetype import image_mimetypes
 from app.services.files.size import size_checker
@@ -29,15 +29,15 @@ s3_client = S3_SERVICE(config.S3_ENDPOINT_PROTOCOL + config.S3_ENDPOINT_HOSTNAME
 @router.get("/{file_path:path}",
              status_code=200,
              description="-- Download jpg/png/pdf or any assets from S3 --")
-async def get_file(file_path: str):
+async def get_file(file_path: str, download: bool = Query(False, alias="d", description="Download file instead of inline display")):
     (body, content_type) = await s3_client.get_file(file_path)
     if body:
-      if content_type in image_mimetypes:
-        # inline image
-        return Response(content=body)
-      else:
+      if download:
         # download file 
         return Response(content=body, media_type=content_type)
+      else:
+        # inline image
+        return Response(content=body)
     else:
       raise HTTPException(status_code=404, detail="File not found")
 
