@@ -7,7 +7,7 @@ on:
       - dev
 
 env:
-  IMAGE_NAME: mast-api-dev
+  IMAGE_NAME: mast-api
 
 jobs:
   # Push image to GitHub Packages.
@@ -34,9 +34,6 @@ jobs:
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "dev" ] && VERSION=latest
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
