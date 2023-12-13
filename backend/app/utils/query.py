@@ -37,7 +37,7 @@ class QueryBuilder:
             if sort_order == "ASC":
                 query = query.order_by(getattr(model, sort_field))
             else:
-                query = query.order_by(getattr(model, sort_field), getattr(model, sort_field).desc())
+                query = query.order_by(getattr(model, sort_field).desc())
         return query
 
     def _apply_range(self, range, total_count, query):
