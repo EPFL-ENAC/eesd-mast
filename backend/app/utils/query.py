@@ -23,7 +23,7 @@ class QueryBuilder:
             for field, value in filter.items():
                 if isinstance(value, list):
                     query = query.where(getattr(model, field).in_(value))
-                elif field == "id" or field == "reference_id":
+                elif field == "id" or field == "reference_id" or isinstance(value, int):
                     query = query.where(getattr(model, field) == value)
                 else:
                     query = query.where(

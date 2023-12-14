@@ -13,4 +13,9 @@ export default {
   publication_year: 'Publication Year',
   corresponding_author: 'Corresponding Author',
   full_reference: 'Full Reference',
+  scheme: 'Scheme',
+  description: 'Description',
+  filters: 'Filters',
+  paper: 'Paper',
+  data: 'Data',
 };
