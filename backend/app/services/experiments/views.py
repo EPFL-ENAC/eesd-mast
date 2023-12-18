@@ -38,7 +38,7 @@ async def get_experiments(
     sort: str = Query(None),
     range: str = Query(None),
     session: AsyncSession = Depends(get_session),
-):
+) -> list[ExperimentRead]:
     """Get all experiments"""
 
     builder = QueryBuilder(Experiment, filter, sort, range)
@@ -50,10 +50,6 @@ async def get_experiments(
 
     # Main query
     start, end, query = builder.build_query(total_count)
-
-    # Execute query
-    results = await session.exec(query)
-    references = results.all()
 
     # Execute query
     results = await session.exec(query)

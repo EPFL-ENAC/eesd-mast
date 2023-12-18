@@ -39,7 +39,7 @@ async def get_run_results(
     sort: str = Query(None),
     range: str = Query(None),
     session: AsyncSession = Depends(get_session),
-):
+) -> list[RunResultRead]:
     """Get all run results"""
 
     builder = QueryBuilder(RunResult, filter, sort, range)

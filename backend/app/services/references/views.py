@@ -40,7 +40,7 @@ async def get_references(
     sort: str = Query(None),
     range: str = Query(None),
     session: AsyncSession = Depends(get_session),
-):
+) -> list[ReferenceRead]:
     """Get all references"""
 
     builder = QueryBuilder(Reference, filter, sort, range)
