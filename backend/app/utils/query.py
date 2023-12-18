@@ -1,10 +1,10 @@
-from sqlmodel import select
+from sqlmodel import SQLModel, select
 from sqlalchemy import func
 import json
 
 class QueryBuilder:
     
-    def __init__(self, model, filter: str, sort: str, range: str):
+    def __init__(self, model: SQLModel, filter: str, sort: str, range: str):
         self.model = model
         self.filter = json.loads(filter) if filter else {}
         self.sort = json.loads(sort) if sort else []

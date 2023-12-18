@@ -77,40 +77,7 @@
             $t('filters')
           }}</q-item-label>
         </q-list>
-        <q-tree
-          class="col-12 col-sm-6"
-          :nodes="filterNodes"
-          node-key="key"
-          no-connectors
-          tick-strategy="leaf"
-          v-model:ticked="filters.selections"
-          @update:ticked="onFilterTicked"
-        >
-          <template v-slot:body-storeys>
-            <q-input
-              v-show="filters.selections.indexOf('storeys_nb') !== -1"
-              :disable="filters.selections.indexOf('storeys_nb') === -1"
-              v-model.number="filters.storeysNb"
-              type="number"
-              dense
-              style="max-width: 200px"
-              class="q-ml-lg"
-              :rules="[(val) => val > -1 || 'Positive number expected']"
-            />
-          </template>
-          <template v-slot:body-wall_leaves>
-            <q-input
-              v-show="filters.selections.indexOf('wall_leaves_nb') !== -1"
-              :disable="filters.selections.indexOf('wall_leaves_nb') === -1"
-              v-model.number="filters.wallLeavesNb"
-              type="number"
-              dense
-              style="max-width: 200px"
-              class="q-ml-lg"
-              :rules="[(val) => val > -1 || 'Positive number expected']"
-            />
-          </template>
-        </q-tree>
+        <experiment-filters></experiment-filters>
       </div>
     </q-drawer>
 
@@ -138,10 +105,9 @@ import { useRoute } from 'vue-router';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
-import { useFiltersStore } from 'src/stores/filters';
+import ExperimentFilters from 'src/components/ExperimentFilters.vue';
 
 const route = useRoute();
-const filters = useFiltersStore();
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(() => route.path.startsWith('/buildings'));
@@ -167,107 +133,8 @@ const essentialLinks: EssentialLinkProps[] = [
     link: 'https://github.com/EPFL-ENAC/eesd-mast-cli',
   },
 ];
-
-const filterNodes = computed(() => [
-  {
-    label: 'Masonry unit material',
-    key: 'masonry_unit_material',
-    children: masonryUnitMaterial.map((label) => ({
-      label: label,
-      key: `masonry_unit_material:${label}`,
-    })),
-  },
-  {
-    label: 'Masonry unit type',
-    key: 'masonry_unit_type',
-    children: masonryUnitType.map((label) => ({
-      label: label,
-      key: `masonry_unit_type:${label}`,
-    })),
-  },
-  {
-    label: 'Number of storeys',
-    key: 'storeys_nb',
-    body: 'storeys',
-  },
-  {
-    label: 'Number of wall leaves',
-    key: 'wall_leaves_nb',
-    body: 'wall_leaves',
-  },
-  {
-    label: 'Diaphragm material',
-    key: 'diaphragm_material',
-    children: diaphragmMaterial.map((label) => ({
-      label: label,
-      key: `diaphragm_material:${label}`,
-    })),
-  },
-  {
-    label: 'Applied excitation direction',
-    key: 'applied_excitation_direction',
-    children: appliedExcitationDirections.map((label) => ({
-      label: label,
-      key: `applied_excitation_direction:${label}`,
-    })),
-  },
-  {
-    label: 'Retrofitting application',
-    key: 'retrofitting_application',
-    children: retrofittingApplication.map((label) => ({
-      label: label,
-      key: `retrofitting_application:${label}`,
-    })),
-  },
-]);
-
-const masonryUnitMaterial = [
-  'Clay',
-  'Calcareous sandstone',
-  'Calcium silicate',
-  'Granite',
-  'Limestone',
-  'Tuff stone',
-  'Concrete',
-  'Adobe',
-  'Calcareous tuff stone',
-  'Neopolitan tuff stone',
-];
-
-const masonryUnitType = [
-  'Hollow brick',
-  'Solid brick',
-  'Dressed stone',
-  'Undressed stone',
-];
-
-const diaphragmMaterial = [
-  'RC',
-  'Timber',
-  'RC & Timber',
-  'Steel & bricks',
-  'Hollow tile slab',
-];
-
-const retrofittingApplication = [
-  'Not present',
-  'From beginning',
-  'After damage',
-];
-
-const appliedExcitationDirections = ['N-S', 'E-W'];
-
 const leftDrawerOpen = ref(false);
 const rightDrawerOpen = ref(false);
-
-function onFilterTicked() {
-  if (filters.selections.indexOf('storeys_nb') === -1) {
-    filters.storeysNb = 1;
-  }
-  if (filters.selections.indexOf('wall_leaves_nb') === -1) {
-    filters.wallLeavesNb = 1;
-  }
-}
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

@@ -8,6 +8,7 @@ from app.services.experiments.models import (
     ExperimentRead,
     ExperimentUpdate,
 )
+from app.services.references.models import Reference
 from app.utils.query import QueryBuilder
 from logging import debug
 
@@ -27,6 +28,16 @@ async def get_experiment(
     experiment = res.one_or_none()
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found")
+    experiment = ExperimentRead.from_orm(experiment)
+
+    # Get reference
+    res = await session.exec(
+        select(Reference.id, Reference.reference).where(Reference.id == experiment.reference_id)
+    )
+    reference = res.one_or_none()
+    reference_reference = reference.reference if reference else None
+
+    experiment.reference = reference_reference
 
     return experiment
 
@@ -54,6 +65,20 @@ async def get_experiments(
     # Execute query
     results = await session.exec(query)
     experiments = results.all()
+    # Cast to ExperimentRead
+    experiments = [ExperimentRead.from_orm(experiment) for experiment in experiments]
+
+    # Reference IDs
+    reference_ids = [experiment.reference_id for experiment in experiments]
+    res = await session.exec(
+        select(Reference.id, Reference.reference).where(Reference.id.in_(reference_ids))
+    )
+    references = res.all()
+    reference_dict = {reference.id: reference.reference for reference in references}
+
+    # Add reference short name to each experiment
+    for experiment in experiments:
+        experiment.reference = reference_dict[experiment.reference_id]
 
     response.headers[
         "Content-Range"

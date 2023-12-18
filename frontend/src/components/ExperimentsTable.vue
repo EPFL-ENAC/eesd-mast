@@ -39,14 +39,18 @@
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3">
           <q-card flat bordered class="q-ma-md">
-            <q-card-section class="q-pa-none">
+            <q-card-section class="q-pa-none" @click="onExperiment(props.row)">
               <q-img
                 :src="`${baseUrl}/files/${props.row.scheme.path}`"
+                :alt="`${props.row.description} [${props.row.reference}]`"
                 spinner-color="grey-6"
                 height="250px"
               >
                 <div class="absolute-bottom text-subtitle1 text-center">
-                  {{ props.row.description }}
+                  <div>
+                    {{ props.row.description }}
+                  </div>
+                  <div>{{ props.row.reference }}</div>
                 </div>
               </q-img>
             </q-card-section>
@@ -54,6 +58,22 @@
         </div>
       </template>
     </q-table>
+
+    <q-dialog
+      v-model="showExperiment"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-bar class="bg-white q-pt-lg">
+          <q-space />
+          <q-btn dense flat size="xl" icon="close" v-close-popup />
+        </q-bar>
+        <q-card-section>
+          <experiment-view :experiment="experiment"></experiment-view>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -67,6 +87,7 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
+import ExperimentView from 'components/ExperimentView.vue';
 import {
   makePaginationRequestHandler,
   QueryParams,
@@ -87,6 +108,8 @@ const pagination = ref({
   rowsPerPage: 12,
   rowsNumber: 12,
 });
+const showExperiment = ref(false);
+const experiment = ref({});
 
 const columns = [
   {
@@ -163,6 +186,11 @@ function fetchFromServer(
 filters.$subscribe(() => {
   tableRef.value?.requestServerInteraction();
 });
+
+function onExperiment(selected: any) {
+  experiment.value = selected;
+  showExperiment.value = true;
+}
 
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
