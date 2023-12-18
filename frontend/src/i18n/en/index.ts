@@ -18,4 +18,5 @@ export default {
   filters: 'Filters',
   paper: 'Paper',
   data: 'Data',
+  resources: 'Resources',
 };

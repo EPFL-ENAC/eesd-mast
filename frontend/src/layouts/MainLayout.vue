@@ -16,16 +16,33 @@
         </q-toolbar-title>
       </q-toolbar>
       <q-toolbar inset style="min-height: 20px">
-        <q-btn flat dense :label="$t('overview')" no-caps to="/" />
+        <q-btn
+          flat
+          dense
+          :label="$t('overview')"
+          no-caps
+          to="/"
+          :class="isHome ? 'bg-grey-3' : ''"
+          class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
+        />
         <q-btn
           flat
           dense
           :label="$t('tested_buildings')"
           no-caps
           to="/buildings"
-          class="on-left on-right"
+          :class="isBuildings ? 'bg-grey-3' : ''"
+          class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
         />
-        <q-btn flat dense :label="$t('data_submission')" no-caps to="/submit" />
+        <q-btn
+          flat
+          dense
+          :label="$t('data_submission')"
+          no-caps
+          to="/submit"
+          :class="isSubmit ? 'bg-grey-3' : ''"
+          class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
+        />
       </q-toolbar>
     </q-header>
 
@@ -42,8 +59,11 @@
           </a>
         </div>
       </div>
-      <div v-if="isHome">
+      <div v-if="!isBuildings">
         <q-list>
+          <q-item-label header class="text-h5">{{
+            $t('resources')
+          }}</q-item-label>
           <EssentialLink
             v-for="link in essentialLinks"
             :key="link.title"
@@ -125,6 +145,7 @@ const filters = useFiltersStore();
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(() => route.path.startsWith('/buildings'));
+const isSubmit = computed(() => route.path.startsWith('/submit'));
 
 const essentialLinks: EssentialLinkProps[] = [
   {
