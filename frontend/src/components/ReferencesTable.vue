@@ -6,12 +6,24 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
+      selection="multiple"
+      v-model:selected="filters.references"
       v-model:pagination="pagination"
       :loading="loading"
       :filter="filter"
       binary-state-sort
       @request="onRequest"
     >
+      <template v-slot:top-left>
+        <q-btn
+          v-if="filters.references.length"
+          flat
+          no-caps
+          :label="$t('clear_all_selections')"
+          color="grey-8"
+          @click="filters.references = []"
+        />
+      </template>
       <template v-slot:top-right>
         <q-input
           borderless
@@ -97,6 +109,9 @@ import {
   makePaginationRequestHandler,
   QueryParams,
 } from 'src/utils/pagination';
+import { useFiltersStore } from 'src/stores/filters';
+
+const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
 
 const tableRef = ref();

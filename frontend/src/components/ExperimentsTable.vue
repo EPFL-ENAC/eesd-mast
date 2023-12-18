@@ -13,6 +13,16 @@
       binary-state-sort
       @request="onRequest"
     >
+      <template v-slot:top-left>
+        <q-chip
+          removable
+          v-for="sel in filters.references"
+          :key="sel.id"
+          @remove="onRemoveReferenceFilter(sel)"
+        >
+          {{ sel.reference }}
+        </q-chip>
+      </template>
       <template v-slot:top-right>
         <q-input
           borderless
@@ -49,6 +59,9 @@
                 <div class="absolute-bottom text-subtitle1 text-center">
                   <div>
                     {{ props.row.description }}
+                    <span v-if="props.row.experiment_id">
+                      - {{ props.row.experiment_id }}
+                    </span>
                   </div>
                   <div>{{ props.row.reference }}</div>
                 </div>
@@ -85,7 +98,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
 import ExperimentView from 'components/ExperimentView.vue';
 import {
@@ -190,6 +203,10 @@ filters.$subscribe(() => {
 function onExperiment(selected: any) {
   experiment.value = selected;
   showExperiment.value = true;
+}
+
+function onRemoveReferenceFilter(reference: any) {
+  filters.references = filters.references.filter((r) => r.id !== reference.id);
 }
 
 onMounted(() => {

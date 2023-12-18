@@ -2,6 +2,9 @@
   <div>
     <div class="text-h5">
       {{ experiment.description }}
+      <span v-if="experiment.experiment_id">
+        - {{ experiment.experiment_id }}
+      </span>
     </div>
     <div class="text-subtitle1 q-mb-md">{{ experiment.reference }}</div>
     <div class="text-subtitle1 text-grey-8">
@@ -79,9 +82,6 @@ withDefaults(defineProps<ExperimentViewProps>(), {
 const imageDisplay = ref('fitted');
 
 const items = [
-  {
-    field: 'experiment_id',
-  },
   {
     field: 'storeys_nb',
   },

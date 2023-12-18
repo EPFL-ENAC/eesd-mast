@@ -4,6 +4,7 @@ interface State {
   selections: string[];
   storeysNb: number;
   wallLeavesNb: number;
+  references: any[];
 }
 
 export const useFiltersStore = defineStore('filters', {
@@ -11,6 +12,7 @@ export const useFiltersStore = defineStore('filters', {
     selections: [],
     storeysNb: 1,
     wallLeavesNb: 1,
+    references: [],
   }),
   getters: {
     dbFilters: (state) => {
@@ -36,6 +38,9 @@ export const useFiltersStore = defineStore('filters', {
       }
       if (state.selections.indexOf('wall_leaves_nb') > -1) {
         dbFilters['wall_leaves_nb'] = state.wallLeavesNb;
+      }
+      if (state.references.length > 0) {
+        dbFilters['reference_id'] = state.references.map((ref) => ref.id);
       }
       return dbFilters;
     },
