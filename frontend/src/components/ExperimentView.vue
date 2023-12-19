@@ -46,9 +46,11 @@
     <q-list separator>
       <q-item clickable v-ripple v-for="item in items" :key="item.field">
         <q-item-section>
-          <q-item-label overline class="q-mb-sm">
+          <q-item-label overline>
             {{ $t(item.field) }}
           </q-item-label>
+        </q-item-section>
+        <q-item-section>
           <q-item-label>
             <span v-if="item.html" v-html="item.html(experiment)"></span>
             <span v-else-if="item.format">{{ item.format(experiment) }}</span>
