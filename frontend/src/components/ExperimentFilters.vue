@@ -44,13 +44,16 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import { useFiltersStore } from 'src/stores/filters';
+
+const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
 
 const filterNodes = computed(() => [
   {
-    label: 'Masonry unit material',
+    label: t('masonry_unit_material'),
     key: 'masonry_unit_material',
     children: masonryUnitMaterial.map((label) => ({
       label: label,
@@ -58,7 +61,7 @@ const filterNodes = computed(() => [
     })),
   },
   {
-    label: 'Masonry unit type',
+    label: t('masonry_unit_type'),
     key: 'masonry_unit_type',
     children: masonryUnitType.map((label) => ({
       label: label,
@@ -66,17 +69,17 @@ const filterNodes = computed(() => [
     })),
   },
   {
-    label: 'Number of storeys',
+    label: t('storeys_nb'),
     key: 'storeys_nb',
     body: 'storeys',
   },
   {
-    label: 'Number of wall leaves',
+    label: t('wall_leaves_nb'),
     key: 'wall_leaves_nb',
     body: 'wall_leaves',
   },
   {
-    label: 'Diaphragm material',
+    label: t('diaphragm_material'),
     key: 'diaphragm_material',
     children: diaphragmMaterial.map((label) => ({
       label: label,
@@ -84,15 +87,15 @@ const filterNodes = computed(() => [
     })),
   },
   {
-    label: 'Applied excitation direction',
-    key: 'applied_excitation_direction',
+    label: t('applied_excitation_directions'),
+    key: 'applied_excitation_directions',
     children: appliedExcitationDirections.map((label) => ({
       label: label,
-      key: `applied_excitation_direction:${label}`,
+      key: `applied_excitation_directions:${label}`,
     })),
   },
   {
-    label: 'Retrofitting application',
+    label: t('retrofitting_application'),
     key: 'retrofitting_application',
     children: retrofittingApplication.map((label) => ({
       label: label,

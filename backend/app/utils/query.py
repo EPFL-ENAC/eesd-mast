@@ -21,23 +21,25 @@ class QueryBuilder:
     def _apply_filter(self, model, filter, query):
         if len(filter):
             for field, value in filter.items():
+                attr = getattr(model, field)
                 if isinstance(value, list):
-                    query = query.where(getattr(model, field).in_(value))
+                    query = query.where(attr.in_(value))
                 elif field == "id" or field == "reference_id" or isinstance(value, int):
-                    query = query.where(getattr(model, field) == value)
+                    query = query.where(attr == value)
                 else:
                     query = query.where(
-                        getattr(model, field).ilike(f"%{value}%")
+                        attr.ilike(f"%{value}%")
                     )
         return query
 
     def _apply_sort(self, model, sort, query):
         if len(sort) == 2:
             sort_field, sort_order = sort
+            attr = getattr(model, sort_field)
             if sort_order == "ASC":
-                query = query.order_by(getattr(model, sort_field))
+                query = query.order_by(attr)
             else:
-                query = query.order_by(getattr(model, sort_field).desc())
+                query = query.order_by(attr.desc())
         return query
 
     def _apply_range(self, range, total_count, query):
@@ -47,4 +49,3 @@ class QueryBuilder:
             return start, end, query
         else:
             return 0, total_count, query
-  #
