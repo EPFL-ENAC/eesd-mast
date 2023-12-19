@@ -11,7 +11,7 @@
       {{ experiment.experimental_campaign_motivation }}
     </div>
     <q-card flat class="q-mt-md q-mb-md">
-      <q-card-section class="text-center">
+      <q-card-section>
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"
