@@ -128,14 +128,14 @@ const pagination = ref({
 });
 
 const columns = [
-  {
+  /*{
     name: 'id',
     required: true,
     label: t('id'),
     align: 'left',
     field: 'id',
     sortable: true,
-  },
+  },*/
   {
     name: 'reference',
     required: true,

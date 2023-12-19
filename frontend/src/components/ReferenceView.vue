@@ -5,14 +5,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 export default defineComponent({
   components: { FieldsList },
   name: 'ReferenceView',
 });
 </script>
 <script setup lang="ts">
-import { defineProps, withDefaults, onMounted, ref } from 'vue';
+import { defineProps, withDefaults, onMounted, ref, watch } from 'vue';
 import { useReferencesStore } from 'src/stores/references';
 import { Experiment } from 'src/components/models';
 import FieldsList from './FieldsList.vue';
@@ -66,7 +66,11 @@ const items = [
   },
 ];
 
-onMounted(() => {
+watch(() => props.experiment, updateReference);
+
+onMounted(updateReference);
+
+function updateReference() {
   if (props.experiment) {
     referencesStore
       .fetchReference(props.experiment.reference_id)
@@ -74,5 +78,5 @@ onMounted(() => {
         reference.value = res;
       });
   }
-});
+}
 </script>

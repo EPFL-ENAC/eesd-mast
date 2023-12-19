@@ -1,29 +1,40 @@
 <template>
-  <div>
+  <div v-if="selected">
     <div class="text-h5">
-      {{ experiment.description }}
-      <span v-if="experiment.experiment_id">
-        - {{ experiment.experiment_id }}
+      {{ selected.description }}
+      <span v-if="selected.experiment_id">
+        - {{ selected.experiment_id }}
       </span>
     </div>
-    <div class="text-subtitle1 q-mb-md">{{ experiment.reference }}</div>
+    <div class="q-mb-md">
+      <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
+      <q-chip
+        v-for="exp in other_experiments"
+        :key="exp.id"
+        :label="exp.experiment_id"
+        :title="exp.description"
+        clickable
+        @click="onExperiment(exp)"
+      />
+    </div>
+
     <div class="text-subtitle1 text-grey-8">
-      {{ experiment.experimental_campaign_motivation }}
+      {{ selected.experimental_campaign_motivation }}
     </div>
     <q-card flat class="q-mt-md q-mb-md">
       <q-card-section>
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"
-            :src="`${baseUrl}/files/${experiment.scheme.path}`"
-            :alt="`${experiment.description} [${experiment.reference}]`"
+            :src="`${baseUrl}/files/${selected.scheme.path}`"
+            :alt="`${selected.description} [${selected.reference}]`"
             spinner-color="grey-6"
             width="250px"
           />
           <img
             v-else
-            :src="`${baseUrl}/files/${experiment.scheme.path}`"
-            :alt="`${experiment.description} [${experiment.reference}]`"
+            :src="`${baseUrl}/files/${selected.scheme.path}`"
+            :alt="`${selected.description} [${selected.reference}]`"
             spinner-color="grey-6"
           />
         </div>
@@ -69,15 +80,15 @@
 
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="details">
-        <fields-list :items="items" :dbobject="experiment" />
+        <fields-list :items="items" :dbobject="selected" />
       </q-tab-panel>
 
       <q-tab-panel name="reference">
-        <reference-view :experiment="experiment" />
+        <reference-view :experiment="selected" />
       </q-tab-panel>
 
       <q-tab-panel name="run_results">
-        <run-results-view :experiment="experiment" />
+        <run-results-view :experiment="selected" />
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -90,22 +101,27 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { defineProps, withDefaults, ref } from 'vue';
+import { defineProps, withDefaults, ref, onMounted, computed } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
 import FieldsList from './FieldsList.vue';
 import { Experiment } from 'src/components/models';
+import { useReferencesStore } from 'src/stores/references';
+
+const referencesStore = useReferencesStore();
 
 export interface ExperimentViewProps {
   experiment: Experiment;
 }
-withDefaults(defineProps<ExperimentViewProps>(), {
+const props = withDefaults(defineProps<ExperimentViewProps>(), {
   experiment: undefined,
 });
 
 const imageDisplay = ref('fitted');
 const tab = ref('details');
+const selected = ref();
+const reference_experiments = ref([]);
 
 const items = [
   {
@@ -241,4 +257,25 @@ const items = [
       val.crack_types_observed ? val.crack_types_observed.join(' / ') : '-',
   },
 ];
+
+const other_experiments = computed(() => {
+  return selected.value
+    ? reference_experiments.value.filter((e: any) => e.id !== selected.value.id)
+    : [];
+});
+
+const onExperiment = (exp: Experiment) => {
+  selected.value = exp;
+};
+
+onMounted(() => {
+  if (props.experiment) {
+    referencesStore
+      .fetchExperiments(props.experiment.reference_id)
+      .then((res) => {
+        reference_experiments.value = res;
+      });
+    selected.value = props.experiment;
+  }
+});
 </script>

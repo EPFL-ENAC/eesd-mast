@@ -18,7 +18,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { defineProps, withDefaults, onMounted, ref } from 'vue';
+import { defineProps, withDefaults, onMounted, ref, watch } from 'vue';
 import { useRunResultsStore } from 'src/stores/run_results';
 import { Experiment } from 'src/components/models';
 
@@ -62,11 +62,15 @@ const columns = [
   };
 });
 
-onMounted(() => {
+watch(() => props.experiment, updateRunResults);
+
+onMounted(updateRunResults);
+
+function updateRunResults() {
   if (props.experiment) {
     runResultsStore.fetchRunResults(props.experiment.id).then((res) => {
       runResults.value = res;
     });
   }
-});
+}
 </script>
