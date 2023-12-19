@@ -7,6 +7,7 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
+      :rows-per-page-options="[12, 25, 50, 0]"
       v-model:pagination="pagination"
       :loading="loading"
       :filter="filter"
@@ -74,10 +75,11 @@
 
     <q-dialog
       v-model="showExperiment"
+      :maximized="$q.screen.lt.md"
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card style="width: 700px; max-width: 80vw">
+      <q-card :style="$q.screen.lt.md ? '' : 'width: 1000px; max-width: 90vw'">
         <q-bar class="bg-white q-pt-lg">
           <q-space />
           <q-btn dense flat size="xl" icon="close" v-close-popup />
@@ -98,7 +100,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { computed, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
 import ExperimentView from 'components/ExperimentView.vue';
 import {

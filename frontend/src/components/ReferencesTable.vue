@@ -6,6 +6,7 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
+      :rows-per-page-options="[10, 25, 50, 0]"
       selection="multiple"
       v-model:selected="filters.references"
       v-model:pagination="pagination"

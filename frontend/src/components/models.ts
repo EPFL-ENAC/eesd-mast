@@ -1,8 +1,4 @@
-export interface Todo {
+export interface Experiment {
   id: number;
-  content: string;
-}
-
-export interface Meta {
-  totalCount: number;
+  reference_id: string;
 }

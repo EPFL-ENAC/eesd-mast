@@ -90,6 +90,8 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "useFiltersStore": true
+    "useFiltersStore": true,
+    "useReferencesStore": true,
+    "useRunResultsStore": true
   }
 }

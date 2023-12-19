@@ -51,25 +51,35 @@
         </div>
       </q-card-section>
     </q-card>
-    <q-list separator>
-      <q-item clickable v-ripple v-for="item in items" :key="item.field">
-        <q-item-section>
-          <q-item-label overline>
-            {{ $t(item.field) }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>
-            <span v-if="item.html" v-html="item.html(experiment)"></span>
-            <span v-else-if="item.format">{{ item.format(experiment) }}</span>
-            <span v-else>
-              {{ experiment[item.field] ? experiment[item.field] : '-' }}
-            </span>
-            {{ item.unit }}
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <q-tabs
+      v-model="tab"
+      dense
+      class="text-grey"
+      active-color="primary"
+      indicator-color="primary"
+      align="justify"
+      narrow-indicator
+    >
+      <q-tab name="details" :label="$t('details')" />
+      <q-tab name="reference" :label="$t('reference')" />
+      <q-tab name="run_results" :label="$t('run_results')" />
+    </q-tabs>
+
+    <q-separator />
+
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="details">
+        <fields-list :items="items" :dbobject="experiment" />
+      </q-tab-panel>
+
+      <q-tab-panel name="reference">
+        <reference-view :experiment="experiment" />
+      </q-tab-panel>
+
+      <q-tab-panel name="run_results">
+        <run-results-view :experiment="experiment" />
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
@@ -82,14 +92,20 @@ export default defineComponent({
 <script setup lang="ts">
 import { defineProps, withDefaults, ref } from 'vue';
 import { baseUrl } from 'src/boot/axios';
+import ReferenceView from './ReferenceView.vue';
+import RunResultsView from './RunResultsView.vue';
+import FieldsList from './FieldsList.vue';
+import { Experiment } from 'src/components/models';
+
 export interface ExperimentViewProps {
-  experiment: any;
+  experiment: Experiment;
 }
 withDefaults(defineProps<ExperimentViewProps>(), {
-  experiment: {},
+  experiment: undefined,
 });
 
 const imageDisplay = ref('fitted');
+const tab = ref('details');
 
 const items = [
   {
