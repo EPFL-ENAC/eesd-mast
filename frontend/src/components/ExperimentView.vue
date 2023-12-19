@@ -8,14 +8,17 @@
     </div>
     <div class="q-mb-md">
       <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
-      <q-chip
-        v-for="exp in other_experiments"
-        :key="exp.id"
-        :label="exp.experiment_id"
-        :title="exp.description"
-        clickable
-        @click="onExperiment(exp)"
-      />
+      <span v-if="reference_experiments.length > 1">
+        <q-chip
+          v-for="exp in reference_experiments"
+          :key="exp.id"
+          :label="exp.experiment_id || exp.id"
+          :title="exp.description"
+          :clickable="exp.id !== selected.id"
+          :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
+          @click="onExperiment(exp)"
+        />
+      </span>
     </div>
 
     <div class="text-subtitle1 text-grey-8">
@@ -121,7 +124,7 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
 const imageDisplay = ref('fitted');
 const tab = ref('details');
 const selected = ref();
-const reference_experiments = ref([]);
+const reference_experiments = ref<Experiment[]>([]);
 
 const items = [
   {
@@ -257,12 +260,6 @@ const items = [
       val.crack_types_observed ? val.crack_types_observed.join(' / ') : '-',
   },
 ];
-
-const other_experiments = computed(() => {
-  return selected.value
-    ? reference_experiments.value.filter((e: any) => e.id !== selected.value.id)
-    : [];
-});
 
 const onExperiment = (exp: Experiment) => {
   selected.value = exp;
