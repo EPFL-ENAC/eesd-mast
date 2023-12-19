@@ -10,39 +10,47 @@
     <div class="text-subtitle1 text-grey-8">
       {{ experiment.experimental_campaign_motivation }}
     </div>
-    <div class="q-mt-md">
-      <q-img
-        v-if="imageDisplay === 'fitted'"
-        :src="`${baseUrl}/files/${experiment.scheme.path}`"
-        :alt="`${experiment.description} [${experiment.reference}]`"
-        spinner-color="grey-6"
-        width="250px"
-      />
-      <img
-        v-else
-        :src="`${baseUrl}/files/${experiment.scheme.path}`"
-        :alt="`${experiment.description} [${experiment.reference}]`"
-        spinner-color="grey-6"
-      />
-    </div>
-    <div>
-      <q-btn
-        :disable="imageDisplay === 'fitted'"
-        :label="$t('fitted_size')"
-        dense
-        flat
-        no-caps
-        @click="imageDisplay = 'fitted'"
-      />
-      <q-btn
-        :disable="imageDisplay !== 'fitted'"
-        :label="$t('original_size')"
-        dense
-        flat
-        no-caps
-        @click="imageDisplay = 'full'"
-      />
-    </div>
+    <q-card flat class="q-mt-md q-mb-md">
+      <q-card-section class="text-center">
+        <div>
+          <q-img
+            v-if="imageDisplay === 'fitted'"
+            :src="`${baseUrl}/files/${experiment.scheme.path}`"
+            :alt="`${experiment.description} [${experiment.reference}]`"
+            spinner-color="grey-6"
+            width="250px"
+          />
+          <img
+            v-else
+            :src="`${baseUrl}/files/${experiment.scheme.path}`"
+            :alt="`${experiment.description} [${experiment.reference}]`"
+            spinner-color="grey-6"
+          />
+        </div>
+        <div>
+          <span class="text-caption">{{ $t('image_size') }}</span>
+          <q-btn
+            :disable="imageDisplay === 'fitted'"
+            :label="$t('fitted_size')"
+            dense
+            flat
+            no-caps
+            size="sm"
+            @click="imageDisplay = 'fitted'"
+            class="on-left on-right"
+          />
+          <q-btn
+            :disable="imageDisplay !== 'fitted'"
+            :label="$t('original_size')"
+            dense
+            flat
+            no-caps
+            size="sm"
+            @click="imageDisplay = 'full'"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
     <q-list separator>
       <q-item clickable v-ripple v-for="item in items" :key="item.field">
         <q-item-section>

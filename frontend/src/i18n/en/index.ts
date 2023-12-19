@@ -56,4 +56,5 @@ export default {
   link_to_open_measured_data: 'Link to Open Measured Data',
   crack_types_observed: 'Crack Types Observed',
   clear_all_selections: 'Clear all selections',
+  image_size: 'Image size:',
 };
