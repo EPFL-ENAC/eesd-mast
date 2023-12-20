@@ -108,7 +108,7 @@ import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
-import FieldsList from './FieldsList.vue';
+import FieldsList, { FieldItem } from './FieldsList.vue';
 import { Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -126,7 +126,7 @@ const tab = ref('details');
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 
-const items = [
+const items: FieldItem<Experiment>[] = [
   {
     field: 'storeys_nb',
   },

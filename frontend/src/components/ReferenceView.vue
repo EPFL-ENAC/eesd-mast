@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<ReferenceViewProps>(), {
 const referencesStore = useReferencesStore();
 const reference = ref();
 
-const items: FieldItem[] = [
+const items: FieldItem<Reference>[] = [
   {
     field: 'reference',
   },

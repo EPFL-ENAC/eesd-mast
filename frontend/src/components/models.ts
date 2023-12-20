@@ -1,5 +1,6 @@
 export interface DBModel {
   id: number;
+  [Key: string]: unknown;
 }
 
 export interface Reference extends DBModel {

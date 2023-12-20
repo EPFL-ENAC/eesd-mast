@@ -30,16 +30,16 @@ export default defineComponent({
 import { withDefaults } from 'vue';
 import { DBModel, Experiment, Reference } from './models';
 
-export interface FieldItem {
+export interface FieldItem<T extends DBModel> {
   field: string;
   unit?: string;
-  format?: (val: DBModel) => string;
-  html?: (val: DBModel) => string;
+  format?: (val: T) => string;
+  html?: (val: T) => string;
 }
 
 export interface FieldsListProps {
   dbobject: Experiment | Reference;
-  items: FieldItem[];
+  items: FieldItem<Experiment | Reference>[];
 }
 
 withDefaults(defineProps<FieldsListProps>(), {
