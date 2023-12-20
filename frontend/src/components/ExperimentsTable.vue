@@ -2,7 +2,7 @@
   <div>
     <q-table
       flat
-      grid
+      :grid="view === 'grid'"
       ref="tableRef"
       :rows="rows"
       :columns="columns"
@@ -13,6 +13,7 @@
       :filter="filter"
       binary-state-sort
       @request="onRequest"
+      @row-click="onRowClick"
     >
       <template v-slot:top-left>
         <q-chip
@@ -26,17 +27,33 @@
       </template>
       <template v-slot:top-right>
         <q-input
-          borderless
           dense
           clearable
           debounce="300"
           v-model="filter"
           :placeholder="$t('search')"
+          class="on-left"
         >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
+        <div>
+          <q-btn-group flat :class="$q.screen.lt.sm ? 'q-mt-md' : ''">
+            <q-btn
+              flat
+              icon="grid_view"
+              :class="view === 'grid' ? 'bg-grey-4' : ''"
+              @click="view = 'grid'"
+            />
+            <q-btn
+              flat
+              icon="table_view"
+              :class="view === 'table' ? 'bg-grey-4' : ''"
+              @click="view = 'table'"
+            />
+          </q-btn-group>
+        </div>
       </template>
       <template v-slot:body-cell-scheme="props">
         <q-td :props="props">
@@ -50,7 +67,11 @@
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3">
           <q-card flat bordered class="q-ma-md">
-            <q-card-section class="q-pa-none" @click="onExperiment(props.row)">
+            <q-card-section
+              class="q-pa-none"
+              style="cursor: pointer"
+              @click="onExperiment(props.row)"
+            >
               <q-img
                 :src="`${baseUrl}/files/${props.row.scheme.path}`"
                 :alt="`${props.row.description} [${props.row.reference}]`"
@@ -112,6 +133,7 @@ import { useFiltersStore } from 'src/stores/filters';
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
 
+const view = ref('grid');
 const tableRef = ref();
 const rows = ref([]);
 const filter = ref('');
@@ -130,7 +152,7 @@ const columns = [
   {
     name: 'id',
     required: true,
-    label: t('id'),
+    label: '#',
     align: 'left',
     field: 'id',
     sortable: true,
@@ -141,6 +163,14 @@ const columns = [
     label: t('scheme'),
     align: 'left',
     field: 'scheme',
+    sortable: true,
+  },
+  {
+    name: 'experiment_id',
+    required: true,
+    label: t('experiment_id'),
+    align: 'left',
+    field: 'experiment_id',
     sortable: true,
   },
   {
@@ -156,10 +186,15 @@ const columns = [
     required: true,
     label: t('reference'),
     align: 'left',
-    field: 'reference_id',
+    field: 'reference',
     sortable: true,
   },
 ];
+
+const onRowClick = (evt: any, row: any) => {
+  experiment.value = row;
+  showExperiment.value = true;
+};
 
 const onRequest = makePaginationRequestHandler(fetchFromServer, pagination);
 

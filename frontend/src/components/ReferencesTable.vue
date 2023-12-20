@@ -21,13 +21,17 @@
           flat
           no-caps
           :label="$t('clear_all_selections')"
-          color="grey-8"
+          color="primary"
+          outline
           @click="filters.references = []"
-        />
+        >
+          <q-badge color="orange" floating transparent>{{
+            filters.references.length
+          }}</q-badge>
+        </q-btn>
       </template>
       <template v-slot:top-right>
         <q-input
-          borderless
           dense
           clearable
           debounce="300"
@@ -128,14 +132,14 @@ const pagination = ref({
 });
 
 const columns = [
-  /*{
+  {
     name: 'id',
     required: true,
-    label: t('id'),
+    label: '#',
     align: 'left',
     field: 'id',
     sortable: true,
-  },*/
+  },
   {
     name: 'reference',
     required: true,
