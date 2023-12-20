@@ -7,35 +7,25 @@ services:
       - "--providers.docker"
       - "--providers.file.directory=/configuration/"
       - "--entrypoints.web.address=:80"
-      #- "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      #- "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      #- "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      #- "--entrypoints.websecure.address=:443"
-    environment:
-      - SSL_CERT_CRT=${SSL_CERT_CRT}
-      - SSL_CERT_KEY=${SSL_CERT_KEY}
     ports:
       - "80:80"
-      #- "443:443"
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik.yaml:/configuration/traefik.yml
-      - /etc/ssl:/etc/ssl
   frontend:
     build:
       context: ./frontend
       args:
         - API_URL=${API_URL}
-        - API_PATH=${PATH_PREFIX}
+        - API_PATH=/api
     expose:
       - 80
+    ports:
+      - '8080:80'
     labels:
-      - "traefik.http.routers.frontend.priority=101"
-      - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.frontend.middlewares=frontend-middleware"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend.middlewares=frontend-middleware"
       - "traefik.http.middlewares.frontend-middleware.stripprefix.prefixes=/"
     restart: unless-stopped
   backend:
@@ -48,23 +38,31 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_PREFIX=${DB_PREFIX}
       - API_KEYS=${API_KEYS}
-      - PATH_PREFIX=${PATH_PREFIX}
+      - PATH_PREFIX=/api
+      - S3_ENDPOINT_HOSTNAME=${S3_ENDPOINT_HOSTNAME}
+      - S3_ENDPOINT_PROTOCOL=${S3_ENDPOINT_PROTOCOL}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - S3_REGION=${S3_REGION}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_PATH_PREFIX=${S3_PATH_PREFIX}
     expose:
       - 8000
+    ports:
+      - '8000:8000'
     labels:
-      - "traefik.http.routers.backend.priority=1001"
-      #- "traefik.http.routers.backend.tls=true"
       - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
       - "traefik.http.routers.backend.middlewares=backend-middleware"
       - "traefik.http.middlewares.backend-middleware.stripprefix.prefixes=/api"
     restart: unless-stopped
+    links:
+      - postgres
   postgres:
     image: postgres:15.5-alpine
     expose:
       - 5432
     ports:
-      # Expose Postgres port we need it for dev purposes should not be exposed publicly
       - '5432:5432'
     restart: always
     environment:
