@@ -1,9 +1,10 @@
 import { api } from 'src/boot/axios';
 import { defineStore } from 'pinia';
+import { Reference, Experiment } from 'src/components/models';
 
 interface State {
-  references: any;
-  reference_experiments: any;
+  references: { [Key: number]: Reference };
+  reference_experiments: { [Key: number]: Experiment[] };
 }
 
 export const useReferencesStore = defineStore('references', {

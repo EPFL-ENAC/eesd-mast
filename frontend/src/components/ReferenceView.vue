@@ -5,17 +5,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent } from 'vue';
 export default defineComponent({
   components: { FieldsList },
   name: 'ReferenceView',
 });
 </script>
 <script setup lang="ts">
-import { defineProps, withDefaults, onMounted, ref, watch } from 'vue';
+import { withDefaults, onMounted, ref, watch } from 'vue';
 import { useReferencesStore } from 'src/stores/references';
-import { Experiment } from 'src/components/models';
-import FieldsList from './FieldsList.vue';
+import { Experiment, Reference } from 'src/components/models';
+import FieldsList, { FieldItem } from './FieldsList.vue';
 
 export interface ReferenceViewProps {
   experiment: Experiment;
@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<ReferenceViewProps>(), {
 const referencesStore = useReferencesStore();
 const reference = ref();
 
-const items = [
+const items: FieldItem[] = [
   {
     field: 'reference',
   },
@@ -39,7 +39,7 @@ const items = [
   },
   {
     field: 'link_to_experimental_paper',
-    html: (val: any) =>
+    html: (val: Reference) =>
       val.link_to_experimental_paper
         ? `<a href="${val.link_to_experimental_paper}" target="_blank">${val.link_to_experimental_paper}</a>`
         : '-',
@@ -49,7 +49,7 @@ const items = [
   },
   {
     field: 'corresponding_author_email',
-    html: (val: any) =>
+    html: (val: Reference) =>
       val.corresponding_author_email
         ? `<a href="mailto:${val.corresponding_author_email}" target="_blank">${val.corresponding_author_email}</a>`
         : '-',
@@ -59,7 +59,7 @@ const items = [
   },
   {
     field: 'link_to_request_data',
-    html: (val: any) =>
+    html: (val: Reference) =>
       val.link_to_request_data
         ? `<a href="${val.link_to_request_data}" target="_blank">${val.link_to_request_data}</a>`
         : '-',

@@ -27,15 +27,23 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { defineProps, withDefaults } from 'vue';
+import { withDefaults } from 'vue';
+import { DBModel, Experiment, Reference } from './models';
+
+export interface FieldItem {
+  field: string;
+  unit?: string;
+  format?: (val: DBModel) => string;
+  html?: (val: DBModel) => string;
+}
 
 export interface FieldsListProps {
-  dbobject: any;
-  items: any;
+  dbobject: Experiment | Reference;
+  items: FieldItem[];
 }
 
 withDefaults(defineProps<FieldsListProps>(), {
   dbobject: undefined,
-  items: [],
+  items: undefined,
 });
 </script>

@@ -123,7 +123,8 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
-import ExperimentView from 'components/ExperimentView.vue';
+import { Experiment, Reference } from 'src/components/models';
+import ExperimentView from 'src/components/ExperimentView.vue';
 import {
   makePaginationRequestHandler,
   QueryParams,
@@ -191,7 +192,7 @@ const columns = [
   },
 ];
 
-const onRowClick = (evt: any, row: any) => {
+const onRowClick = (evt: unknown, row: Experiment) => {
   experiment.value = row;
   showExperiment.value = true;
 };
@@ -237,12 +238,12 @@ filters.$subscribe(() => {
   tableRef.value?.requestServerInteraction();
 });
 
-function onExperiment(selected: any) {
+function onExperiment(selected: Experiment) {
   experiment.value = selected;
   showExperiment.value = true;
 }
 
-function onRemoveReferenceFilter(reference: any) {
+function onRemoveReferenceFilter(reference: Reference) {
   filters.references = filters.references.filter((r) => r.id !== reference.id);
 }
 

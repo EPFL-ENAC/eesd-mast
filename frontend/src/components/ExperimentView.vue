@@ -104,7 +104,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { defineProps, withDefaults, ref, onMounted, computed } from 'vue';
+import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
@@ -146,7 +146,7 @@ const items = [
   },
   {
     field: 'applied_excitation_directions',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.applied_excitation_directions
         ? val.applied_excitation_directions.join(' / ')
         : '-',
@@ -172,7 +172,7 @@ const items = [
   },
   {
     field: 'masonry_wall_thickness',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.masonry_wall_thickness ? val.masonry_wall_thickness.join(' / ') : '-',
     unit: 'mm',
   },
@@ -181,7 +181,7 @@ const items = [
   },
   {
     field: 'internal_walls',
-    format: (val: any) => (val.open_measured_data ? 'Yes' : 'No'),
+    format: (val: Experiment) => (val.internal_walls ? 'Yes' : 'No'),
   },
   {
     field: 'mechanical_connectors',
@@ -191,14 +191,14 @@ const items = [
   },
   {
     field: 'retrofitted',
-    format: (val: any) => (val.open_measured_data ? 'Yes' : 'No'),
+    format: (val: Experiment) => (val.retrofitted ? 'Yes' : 'No'),
   },
   {
     field: 'retrofitting_application',
   },
   {
     field: 'retrofitting_type',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.retrofitting_type ? val.retrofitting_type.join(' / ') : '-',
   },
   {
@@ -215,48 +215,48 @@ const items = [
   },
   {
     field: 'material_characterizations',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.material_characterizations
         ? val.material_characterizations.join(' / ')
         : '-',
   },
   {
     field: 'associated_test_types',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.associated_test_types ? val.associated_test_types.join(' / ') : '-',
   },
   {
     field: 'material_characterization_refs',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.material_characterization_refs
         ? val.material_characterization_refs.join(' / ')
         : '-',
   },
   {
     field: 'digitalized_data',
-    format: (val: any) => (val.open_measured_data ? 'Yes' : 'No'),
+    format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
   },
   {
     field: 'experimental_results_reported',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.experimental_results_reported
         ? val.experimental_results_reported.join(' / ')
         : '-',
   },
   {
     field: 'open_measured_data',
-    format: (val: any) => (val.open_measured_data ? 'Yes' : 'No'),
+    format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
   },
   {
     field: 'link_to_open_measured_data',
-    html: (val: any) =>
+    html: (val: Experiment) =>
       val.link_to_open_measured_data
         ? `<a href="${val.link_to_open_measured_data}" target="_blank">${val.link_to_open_measured_data}</a>`
         : '-',
   },
   {
     field: 'crack_types_observed',
-    format: (val: any) =>
+    format: (val: Experiment) =>
       val.crack_types_observed ? val.crack_types_observed.join(' / ') : '-',
   },
 ];

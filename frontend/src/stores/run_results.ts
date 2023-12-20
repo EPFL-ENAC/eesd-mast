@@ -1,8 +1,9 @@
 import { api } from 'src/boot/axios';
 import { defineStore } from 'pinia';
+import { RunResult } from 'src/components/models';
 
 interface State {
-  run_results: any;
+  run_results: { [Key: number]: RunResult };
 }
 
 export const useRunResultsStore = defineStore('run_results', {

@@ -18,7 +18,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { defineProps, withDefaults, onMounted, ref, watch } from 'vue';
+import { withDefaults, onMounted, ref, watch } from 'vue';
 import { useRunResultsStore } from 'src/stores/run_results';
 import { Experiment } from 'src/components/models';
 

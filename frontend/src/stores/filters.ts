@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
+import { Reference } from 'src/components/models';
 
 interface State {
   selections: string[];
   storeysNb: number;
   wallLeavesNb: number;
-  references: any[];
+  references: Reference[];
 }
 
 export const useFiltersStore = defineStore('filters', {
