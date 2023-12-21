@@ -3,6 +3,7 @@ from fastapi import Depends, Security, APIRouter, Query, Response, Body, HTTPExc
 from sqlmodel import select
 from app.db import get_session, AsyncSession
 from app.auth import get_api_key
+from app.services.runresults.service import RunResultsService
 from app.services.runresults.models import (
     RunResult,
     RunResultCreate,
@@ -22,13 +23,8 @@ async def get_run_result(
     run_result_id: int,
 ) -> RunResultRead:
     """Get a run result by id"""
-    res = await session.exec(
-        select(RunResult).where(RunResult.id == run_result_id)
-    )
-    run_result = res.one_or_none()
-    if not run_result:
-        raise HTTPException(status_code=404, detail="RunResult not found")
-
+    service = RunResultsService(session)
+    run_result = await service.get(run_result_id)
     return run_result
 
 
@@ -41,20 +37,8 @@ async def get_run_results(
     session: AsyncSession = Depends(get_session),
 ) -> list[RunResultRead]:
     """Get all run results"""
-
-    builder = QueryBuilder(RunResult, filter, sort, range)
-
-    # Do a query to satisfy total count for "Content-Range" header
-    count_query = builder.build_count_query()
-    total_count_query = await session.exec(count_query)
-    total_count = total_count_query.one()
-
-    # Main query
-    start, end, query = builder.build_query(total_count)
-
-    # Execute query
-    results = await session.exec(query)
-    run_results = results.all()
+    service = RunResultsService(session)
+    start, end, total_count, run_results = await service.find(filter, sort, range)
 
     response.headers[
         "Content-Range"
@@ -69,11 +53,8 @@ async def create_run_result(
     api_key: str = Security(get_api_key),
 ) -> RunResultRead:
     """Creates a run result"""
-    run_result = RunResult.from_orm(run_result)
-    session.add(run_result)
-    await session.commit()
-    await session.refresh(run_result)
-
+    service = RunResultsService(session)
+    run_result = await service.create(RunResult.from_orm(run_result))
     return run_result
 
 
@@ -84,25 +65,9 @@ async def update_run_result(
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key)
 ) -> RunResultRead:
-    res = await session.exec(
-        select(RunResult).where(RunResult.id == run_result_id)
-    )
-    run_result_db = res.one()
-    run_result_data = run_result_update.dict(exclude_unset=True)
-
-    if not run_result_db:
-        raise HTTPException(status_code=404, detail="RunResult not found")
-
-    # Update the fields from the request
-    for field, value in run_result_data.items():
-        debug(f"Updating: {field}, {value}")
-        setattr(run_result_db, field, value)
-
-    session.add(run_result_db)
-    await session.commit()
-    await session.refresh(run_result_db)
-
-    return run_result_db
+    service = RunResultsService(session)
+    run_result = await service.patch(run_result_id, run_result_update)
+    return run_result
 
 
 @router.delete("/{run_result_id}")
@@ -112,11 +77,5 @@ async def delete_run_result(
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete a run result by id"""
-    res = await session.exec(
-        select(RunResult).where(RunResult.id == run_result_id)
-    )
-    run_result = res.one_or_none()
-
-    if run_result:
-        await session.delete(run_result)
-        await session.commit()
+    service = RunResultsService(session)
+    service.delete(run_result_id)

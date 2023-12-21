@@ -4,11 +4,11 @@ import json
 
 class QueryBuilder:
     
-    def __init__(self, model: SQLModel, filter: str, sort: str, range: str):
+    def __init__(self, model: SQLModel, filter: dict | str, sort: list | str, range: list | str):
         self.model = model
-        self.filter = json.loads(filter) if filter else {}
-        self.sort = json.loads(sort) if sort else []
-        self.range = json.loads(range) if range else []
+        self.filter = json.loads(filter) if filter and type(filter) == str else {}
+        self.sort = json.loads(sort) if sort and type(sort) == str else []
+        self.range = json.loads(range) if range and type(range) == str else []
         
     def build_count_query(self):
         return self._apply_filter(self.model, self.filter, select(func.count(self.model.id)))

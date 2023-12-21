@@ -66,10 +66,10 @@ services:
       - '5432:5432'
     restart: always
     environment:
-      - POSTGRES_USER=${DATABASE_USERNAME}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
-      - POSTGRES_HOST=${DATABASE_HOST}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=postgres
   pgadmin:
       container_name: pgadmin4_mast
       image: dpage/pgadmin4
