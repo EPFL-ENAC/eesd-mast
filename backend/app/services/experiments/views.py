@@ -9,6 +9,7 @@ from app.services.experiments.models import (
     ExperimentUpdate,
 )
 from app.services.references.models import Reference
+from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from logging import debug
 
@@ -133,7 +134,6 @@ async def update_experiment(
 async def delete_experiment(
     experiment_id: int,
     session: AsyncSession = Depends(get_session),
-    filter: dict[str, str] | None = None,
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete an experiment by id"""
@@ -143,5 +143,9 @@ async def delete_experiment(
     experiment = res.one_or_none()
 
     if experiment:
+        # Delete associated files
+        if experiment.scheme:
+            await s3_client.delete_file(experiment.scheme.path)
+        # Delete experiment
         await session.delete(experiment)
         await session.commit()

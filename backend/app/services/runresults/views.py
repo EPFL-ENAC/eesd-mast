@@ -109,7 +109,6 @@ async def update_run_result(
 async def delete_run_result(
     run_result_id: int,
     session: AsyncSession = Depends(get_session),
-    filter: dict[str, str] | None = None,
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete a run result by id"""

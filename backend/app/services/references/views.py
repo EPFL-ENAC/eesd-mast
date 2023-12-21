@@ -110,7 +110,6 @@ async def update_reference(
 async def delete_reference(
     reference_id: int,
     session: AsyncSession = Depends(get_session),
-    filter: dict[str, str] | None = None,
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete an reference by id"""

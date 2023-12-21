@@ -11,7 +11,6 @@ from fastapi.datastructures import UploadFile
 import os
 import urllib.parse
 
-
 class S3_SERVICE(object):
 
     def __init__(self, s3_endpoint_url, s3_access_key_id, s3_secret_access_key, region, *args,
@@ -183,3 +182,8 @@ class S3_SERVICE(object):
                     f"File uploaded path : {self.s3_endpoint_url}/{bucket}/{key}")
                 return True
         return False
+    
+
+s3_client = S3_SERVICE(config.S3_ENDPOINT_PROTOCOL + config.S3_ENDPOINT_HOSTNAME,
+                       config.S3_ACCESS_KEY_ID,
+                       config.S3_SECRET_ACCESS_KEY, config.S3_REGION)

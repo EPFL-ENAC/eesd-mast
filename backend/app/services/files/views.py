@@ -1,10 +1,9 @@
 """
 Handle / uploads
 """
-from app.config import config
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import File
-from app.services.files.s3client import S3_SERVICE
+from app.services.files.s3client import s3_client
 
 from fastapi import Depends, Security, Query, APIRouter, HTTPException
 from fastapi.responses import Response
@@ -15,16 +14,11 @@ from app.auth import get_api_key
 
 from pydantic import BaseModel
 
-
 class FilePath(BaseModel):
     paths: list[str]
 
 
 router = APIRouter()
-
-s3_client = S3_SERVICE(config.S3_ENDPOINT_PROTOCOL + config.S3_ENDPOINT_HOSTNAME,
-                       config.S3_ACCESS_KEY_ID,
-                       config.S3_SECRET_ACCESS_KEY, config.S3_REGION)
 
 @router.get("/{file_path:path}",
              status_code=200,
