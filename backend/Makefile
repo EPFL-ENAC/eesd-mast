@@ -1,5 +1,4 @@
 env_path=../.env
-data="./scripts/Shake_Table_Tests_Database_v01.xlsx"
 
 install:
 	poetry install
@@ -18,6 +17,3 @@ db-downgrade:
 
 db-revision:
 	poetry run dotenv -f "$(env_path)" run alembic revision --autogenerate -m "$(name)"
-
-db-seed:
-	poetry run dotenv -f "$(env_path)" run python scripts/seed.py $(data)
