@@ -1,6 +1,6 @@
 <template>
   <q-list v-if="dbobject" separator>
-    <q-item clickable v-ripple v-for="item in items" :key="item.field">
+    <q-item v-for="item in items" :key="item.field">
       <q-item-section>
         <q-item-label overline>
           {{ $t(item.field) }}
