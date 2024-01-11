@@ -138,7 +138,7 @@ const retrofittingApplication = [
   'After damage',
 ];
 
-const appliedExcitationDirections = ['N-S', 'E-W'];
+const appliedExcitationDirections = ['N-S', 'E-W', 'V'];
 
 function onFilterTicked() {
   if (filters.selections.indexOf('storeys_nb') === -1) {
