@@ -2,6 +2,7 @@ from fastapi import FastAPI, status, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import config
 from app.db import get_session, AsyncSession
+from app.services.files.views import router as files_router
 from app.services.references.views import router as references_router
 from app.services.experiments.views import router as experiments_router
 from app.services.runresults.views import router as run_results_router
@@ -18,6 +19,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Range"],
 )
 
 
@@ -50,6 +52,11 @@ async def get_health(
     return HealthCheck(status="OK")
 
 
+app.include_router(
+    files_router,
+    prefix="/files",
+    tags=["Files"],
+)
 app.include_router(
     references_router,
     prefix="/references",

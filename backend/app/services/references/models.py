@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, UniqueConstraint, Relationship
+from sqlmodel import SQLModel, Field, UniqueConstraint
 
 
 class ReferenceBase(SQLModel):

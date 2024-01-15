@@ -1,5 +1,4 @@
-from fastapi import Depends, Security, APIRouter, Query, Response, Body, HTTPException
-from sqlmodel import select
+from fastapi import Depends, Security, APIRouter, Query, Response, Body
 from app.db import get_session, AsyncSession
 from app.auth import get_api_key
 from app.services.references.models import (
@@ -8,24 +7,19 @@ from app.services.references.models import (
     ReferenceRead,
     ReferenceUpdate,
 )
-from sqlalchemy import func
-import json
+from app.services.references.service import ReferenceService
 
 router = APIRouter()
-
 
 @router.get("/{reference_id}", response_model=ReferenceRead)
 async def get_reference(
     session: AsyncSession = Depends(get_session),
     *,
-    reference_id: int,
+    reference_id: int | str,
 ) -> ReferenceRead:
-    """Get an reference by id"""
-    res = await session.exec(
-        select(Reference).where(Reference.id == reference_id)
-    )
-    reference = res.one_or_none()
-
+    """Get a reference by id or short name"""
+    service = ReferenceService(session)
+    reference = await service.get(reference_id)
     return reference
 
 
@@ -36,62 +30,10 @@ async def get_references(
     sort: str = Query(None),
     range: str = Query(None),
     session: AsyncSession = Depends(get_session),
-):
+) -> list[ReferenceRead]:
     """Get all references"""
-
-    sort = json.loads(sort) if sort else []
-    range = json.loads(range) if range else []
-    filter = json.loads(filter) if filter else {}
-
-    query = select(Reference)
-
-    # Do a query to satisfy total count for "Content-Range" header
-    count_query = select(func.count(Reference.id))
-    if len(filter):  # Have to filter twice for some reason? SQLModel state?
-        for field, value in filter.items():
-            for qry in [query, count_query]:  # Apply filter to both queries
-                if isinstance(value, list):
-                    qry = qry.where(getattr(Reference, field).in_(value))
-                elif field == "id" or field == "reference_id":
-                    qry = qry.where(getattr(Reference, field) == value)
-                else:
-                    qry = qry.where(
-                        getattr(Reference, field).like(f"%{value}%")
-                    )
-
-    # Execute total count query (including filter)
-    total_count_query = await session.exec(count_query)
-    total_count = total_count_query.one()
-
-    # Order by sort field params ie. ["name","ASC"]
-    if len(sort) == 2:
-        sort_field, sort_order = sort
-        if sort_order == "ASC":
-            query = query.order_by(getattr(Reference, sort_field))
-        else:
-            query = query.order_by(getattr(Reference, sort_field), getattr(Reference, sort_field).desc())
-
-    # Filter by filter field params ie. {"name":"bar"}
-    if len(filter):
-        for field, value in filter.items():
-            if isinstance(value, list):
-                query = query.where(getattr(Reference, field).in_(value))
-            elif field == "id" or field == "reference_id":
-                query = query.where(getattr(Reference, field) == value)
-            else:
-                query = query.where(
-                    getattr(Reference, field).like(f"%{value}%")
-                )
-
-    if len(range) == 2:
-        start, end = range
-        query = query.offset(start).limit(end - start + 1)
-    else:
-        start, end = [0, total_count]  # For content-range header
-
-    # Execute query
-    results = await session.exec(query)
-    references = results.all()
+    service = ReferenceService(session)
+    start, end, total_count, references = await service.find(filter, sort, range)
 
     response.headers[
         "Content-Range"
@@ -106,12 +48,8 @@ async def create_reference(
     api_key: str = Security(get_api_key),
 ) -> ReferenceRead:
     """Creates an reference"""
-    print(reference)
-    reference = Reference.from_orm(reference)
-    session.add(reference)
-    await session.commit()
-    await session.refresh(reference)
-
+    service = ReferenceService(session)
+    reference = await service.create(Reference.from_orm(reference))
     return reference
 
 
@@ -122,40 +60,18 @@ async def update_reference(
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key)
 ) -> ReferenceRead:
-    res = await session.exec(
-        select(Reference).where(Reference.id == reference_id)
-    )
-    reference_db = res.one()
-    reference_data = reference_update.dict(exclude_unset=True)
-
-    if not reference_db:
-        raise HTTPException(status_code=404, detail="Reference not found")
-
-    # Update the fields from the request
-    for field, value in reference_data.items():
-        print(f"Updating: {field}, {value}")
-        setattr(reference_db, field, value)
-
-    session.add(reference_db)
-    await session.commit()
-    await session.refresh(reference_db)
-
-    return reference_db
+    service = ReferenceService(session)
+    reference = await service.patch(reference_id, reference_update)
+    return reference
 
 
 @router.delete("/{reference_id}")
 async def delete_reference(
     reference_id: int,
+    recursive: bool = Query(None),
     session: AsyncSession = Depends(get_session),
-    filter: dict[str, str] | None = None,
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete an reference by id"""
-    res = await session.exec(
-        select(Reference).where(Reference.id == reference_id)
-    )
-    reference = res.one_or_none()
-
-    if reference:
-        await session.delete(reference)
-        await session.commit()
+    service = ReferenceService(session)
+    await service.delete(reference_id, recursive)
