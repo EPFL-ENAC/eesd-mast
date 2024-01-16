@@ -2,7 +2,6 @@ from aiobotocore.session import get_session
 from io import BytesIO
 from fastapi.logger import logger
 from typing import Tuple
-import datetime
 from PIL import Image
 from fastapi.exceptions import HTTPException
 from app.config import config
@@ -19,7 +18,7 @@ class S3_SERVICE(object):
         self.s3_access_key_id = s3_access_key_id
         self.s3_secret_access_key = s3_secret_access_key
         self.region = region
-        self.with_webp = False
+        self.with_webp = True
 
     async def get_file(self, file_path: str):
         # get file from file path
@@ -42,13 +41,11 @@ class S3_SERVICE(object):
                     return False, False
         return False, False
 
-    async def upload_file(self, upload_file: UploadFile):
+    async def upload_file(self, upload_file: UploadFile, folder: str = ""):
         # if mimetype is image upload image
         if upload_file.content_type in image_mimetypes:
-            return await self._upload_image(upload_file)
-        elif upload_file.content_type in pdf_mimetypes:
-            return await self._upload_with_type(upload_file, "Report")
-        return await self._upload_with_type(upload_file, "Other")
+            return await self._upload_image(upload_file, folder)
+        return await self._upload_file(upload_file, folder)
 
     async def delete_file(self, file_path: str):
         if file_path.startswith(config.S3_PATH_PREFIX):
@@ -82,27 +79,24 @@ class S3_SERVICE(object):
 
     async def _get_unique_filename(self,
                                   filename: str,
-                                  ext: str = "") -> Tuple[str, str]:
-        current_time = datetime.datetime.now()
-        # generate unique name for the file
-        unique_name = str(current_time.timestamp()).replace('.', '')
+                                  ext: str = "",
+                                  folder: str = "") -> Tuple[str, str]:
         split_file_name = os.path.splitext(filename)
         ext = ext if ext != "" else split_file_name[1]
         name = split_file_name[0]
         uri_component_encoded = split_file_name[0]
-        return (f"{unique_name}{uri_component_encoded}{ext}", name)
+        return (f"{folder}/{uri_component_encoded}{ext}", f"{name}{ext}")
 
-    async def _upload_image(self, upload_file: UploadFile):
+    async def _upload_image(self, upload_file: UploadFile, folder: str = ""):
         # convert to bytes
         (data, origin_data) = await self._convert_image(upload_file)
 
         # Webp converted image
         if self.with_webp:
             mimetype = "image/webp"
-            (unique_name,
-            name) = await self._get_unique_filename(upload_file.filename, ".webp")
+            (unique_file_name, name) = await self._get_unique_filename(upload_file.filename, ".webp", folder = folder)
 
-            key = f"{config.S3_PATH_PREFIX}{unique_name}"
+            key = f"{config.S3_PATH_PREFIX}{unique_file_name}"
             uploads3 = await self._upload_fileobj(bucket=config.S3_BUCKET,
                                                 key=key,
                                                 data=data.getvalue(),
@@ -113,9 +107,8 @@ class S3_SERVICE(object):
                                 detail="Failed to upload image to S3")
         
         # Original image
-        (unique_origin_name,
-         origin_name) = await self._get_unique_filename(upload_file.filename)
-        key_origin = f"{config.S3_PATH_PREFIX}{unique_origin_name}"
+        (unique_origin_file_name, origin_name) = await self._get_unique_filename(upload_file.filename, folder = folder)
+        key_origin = f"{config.S3_PATH_PREFIX}{unique_origin_file_name}"
         uploads3Origin = await self._upload_fileobj(
             bucket=config.S3_BUCKET,
             key=key_origin,
@@ -130,23 +123,22 @@ class S3_SERVICE(object):
             # response http to be used by the frontend
             return {
                 "path": urllib.parse.quote(key),
-                "origin_path": urllib.parse.quote(key_origin),
                 "name": name,
-                "type": "Image"
+                "alt_path": urllib.parse.quote(key_origin),
+                "alt_name": origin_name
             }
         else:
             # response http to be used by the frontend
             return {
                 "path": urllib.parse.quote(key_origin),
-                "name": origin_name,
-                "type": "Image"
+                "name": origin_name
             }
 
-    async def _upload_with_type(self,
+    async def _upload_file(self,
                                upload_file: UploadFile,
-                               type: str = "Other"):
+                               folder: str = ""):
         # only four types allowed: Image / Drawing / Report / Other
-        (filename, name) = await self._get_unique_filename(upload_file.filename)
+        (filename, name) = await self._get_unique_filename(upload_file.filename, folder = folder)
         key = f"{config.S3_PATH_PREFIX}{filename}"
         uploads3 = await self._upload_fileobj(bucket=config.S3_BUCKET,
                                              key=key,
@@ -154,7 +146,7 @@ class S3_SERVICE(object):
                                              mimetype=upload_file.content_type)
         if uploads3:
             # response http to be used by the frontend
-            return {"path": urllib.parse.quote(key), "name": name, "type": type}
+            return {"path": urllib.parse.quote(key), "name": name}
         else:
             raise HTTPException(
                 status_code=500,

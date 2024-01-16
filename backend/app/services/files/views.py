@@ -1,6 +1,8 @@
 """
 Handle / uploads
 """
+import datetime
+
 from fastapi.datastructures import UploadFile
 from fastapi.param_functions import File
 from app.services.files.s3client import s3_client
@@ -41,7 +43,10 @@ async def get_file(file_path: str, download: bool = Query(False, alias="d", desc
              dependencies=[Depends(size_checker)])
 async def upload_files(
         files: list[UploadFile] = File(description="multiple file upload"), api_key: str = Security(get_api_key)):
-    return {"files": [await s3_client.upload_file(file) for file in files]}
+    current_time = datetime.datetime.now()
+    # generate unique name for the files
+    unique_name = str(current_time.timestamp()).replace('.', '')
+    return {"files": [await s3_client.upload_file(file, folder = unique_name) for file in files]}
 
 
 @router.delete("",
