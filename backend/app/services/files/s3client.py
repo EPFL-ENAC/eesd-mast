@@ -97,21 +97,63 @@ class S3_SERVICE(object):
         Returns:
             Any: File path if deleted, False otherwise
         """
-        if file_path.startswith(config.S3_PATH_PREFIX):
-            # delete file_path
-            session = get_session()
-            async with session.create_client(
-                    's3',
-                    region_name=self.region,
-                    endpoint_url=self.s3_endpoint_url,
-                    aws_secret_access_key=self.s3_secret_access_key,
-                    aws_access_key_id=self.s3_access_key_id) as client:
-                response = await client.delete_object(
-                    Bucket=config.S3_BUCKET, Key=file_path)
-                if response["ResponseMetadata"]["HTTPStatusCode"] == 204:
-                    logger.info(
-                        f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{file_path}")
-                    return file_path
+        key = file_path
+        if not file_path.startswith(config.S3_PATH_PREFIX):
+            key = f"{config.S3_PATH_PREFIX}{file_path}"
+
+        # delete file_path
+        session = get_session()
+        async with session.create_client(
+                's3',
+                region_name=self.region,
+                endpoint_url=self.s3_endpoint_url,
+                aws_secret_access_key=self.s3_secret_access_key,
+                aws_access_key_id=self.s3_access_key_id) as client:
+            response = await client.delete_object(
+                Bucket=config.S3_BUCKET, Key=key)
+            if response["ResponseMetadata"]["HTTPStatusCode"] == 204:
+                logger.info(
+                    f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{key}")
+                return key
+        return False
+
+    async def delete_files(self, file_path: str):
+        """Delete files recursively from S3 storage
+
+        Args:
+            file_path (str): Path of the file in S3
+
+        Returns:
+            Any: File path if deleted, False otherwise
+        """
+        folder_key = file_path
+        if not file_path.startswith(config.S3_PATH_PREFIX):
+            folder_key = f"{config.S3_PATH_PREFIX}{file_path}"
+
+        # delete file_path
+        session = get_session()
+        async with session.create_client(
+                's3',
+                region_name=self.region,
+                endpoint_url=self.s3_endpoint_url,
+                aws_secret_access_key=self.s3_secret_access_key,
+                aws_access_key_id=self.s3_access_key_id) as client:
+            # delete content, if any
+            paginator = client.get_paginator('list_objects_v2')
+            async for result in paginator.paginate(Bucket=config.S3_BUCKET, Prefix=folder_key):
+                for content in result.get('Contents', []):
+                    object_key = content['Key']
+                    response = await client.delete_object(Bucket=config.S3_BUCKET, Key=object_key)
+                    if response["ResponseMetadata"]["HTTPStatusCode"] == 204:
+                        logger.info(
+                            f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{object_key}")
+
+            # delete object
+            response = await client.delete_object(Bucket=config.S3_BUCKET, Key=folder_key)
+            if response["ResponseMetadata"]["HTTPStatusCode"] == 204:
+                logger.info(
+                    f"File deleted path : {self.s3_endpoint_url}/{config.S3_BUCKET}/{folder_key}")
+                return folder_key
         return False
 
     #
@@ -188,15 +230,15 @@ class S3_SERVICE(object):
                                     detail="Failed to upload image to S3")
 
             # Original image
-            (unique_origin_file_name, origin_name) = await self._get_unique_filename(upload_file.filename, s3_folder=s3_folder)
-            key_origin = f"{config.S3_PATH_PREFIX}{unique_origin_file_name}"
-            uploads3Origin = await self._upload_fileobj(
+            (unique_alt_file_name, alt_name) = await self._get_unique_filename(upload_file.filename, s3_folder=s3_folder)
+            alt_key = f"{config.S3_PATH_PREFIX}{unique_alt_file_name}"
+            alt_uploads3 = await self._upload_fileobj(
                 bucket=config.S3_BUCKET,
-                key=key_origin,
+                key=alt_key,
                 data=origin_data.getvalue(),
                 mimetype=upload_file.content_type)
 
-            if not uploads3Origin:
+            if not alt_uploads3:
                 raise HTTPException(status_code=500,
                                     detail="Failed to upload image to S3")
 
@@ -204,8 +246,10 @@ class S3_SERVICE(object):
             return {
                 "path": urllib.parse.quote(key),
                 "name": name,
-                "alt_path": urllib.parse.quote(key_origin),
-                "alt_name": origin_name
+                "size": uploads3,
+                "alt_path": urllib.parse.quote(alt_key),
+                "alt_name": alt_name,
+                "alt_size": alt_uploads3
             }
 
     async def _upload_file(self, upload_file: UploadFile, s3_folder: str = "") -> dict:
@@ -231,7 +275,8 @@ class S3_SERVICE(object):
             # response http to be used by the frontend
             return {
                 "path": urllib.parse.quote(key),
-                "name": name
+                "name": name,
+                "size": uploads3
             }
         else:
             raise HTTPException(
@@ -264,7 +309,8 @@ class S3_SERVICE(object):
             # response http to be used by the frontend
             return {
                 "path": urllib.parse.quote(key),
-                "name": name
+                "name": name,
+                "size": uploads3
             }
         else:
             raise HTTPException(
@@ -281,7 +327,7 @@ class S3_SERVICE(object):
             mimetype (str): Object mimetype
 
         Returns:
-            bool: True if upload was successful, False otherwise
+            bool: True if upload was successful, the object size in bytes otherwise
         """
         session = get_session()
         async with session.create_client(
@@ -290,18 +336,20 @@ class S3_SERVICE(object):
                 endpoint_url=self.s3_endpoint_url,
                 aws_secret_access_key=self.s3_secret_access_key,
                 aws_access_key_id=self.s3_access_key_id) as client:
-            file_upload_response = await client.put_object(
+            resp = await client.put_object(
                 Bucket=bucket,
                 Key=key,
                 Body=data,
                 ACL="public-read",
                 ContentType=mimetype)
 
-            if file_upload_response["ResponseMetadata"][
+            if resp["ResponseMetadata"][
                     "HTTPStatusCode"] == 200:
                 logger.info(
                     f"File uploaded path : {self.s3_endpoint_url}/{bucket}/{key}")
-                return True
+                resp = await client.head_object(Bucket=bucket, Key=key)
+                object_size = resp.get("ContentLength", 0)
+                return object_size
         return False
 
     def _get_mime_type(self, file_name):

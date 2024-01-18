@@ -128,6 +128,10 @@ async def upload_experiment_files(
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
 
+    if experiment.files:
+        raise HTTPException(
+            status_code=400, detail="Experiment already has files")
+
     if files.content_type not in zip_mimetypes:
         raise HTTPException(
             status_code=415, detail="Only zip archives are allowed")
@@ -135,6 +139,7 @@ async def upload_experiment_files(
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
     source_dir = temp_dir
+    # real zip content is inside the first directory
     dirs = [f.path for f in os.scandir(temp_dir) if f.is_dir()]
     if len(dirs) == 1:
         source_dir = dirs[0]
@@ -144,27 +149,34 @@ async def upload_experiment_files(
     # generate unique name for the files
     unique_name = str(current_time.timestamp()).replace('.', '')
     s3_folder = f"experiments/{experiment_id}/{unique_name}"
-
     # list files recursively from source directory
     file_relative_paths = list_files_recursively(source_dir, relative=True)
-
     files = [await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder) for file_path in file_relative_paths]
-
-    # create file tree
-    root_node = FileNode(name=unique_name)
-    for file in files:
-        root_node.add_file(file)
-
-    experiment_update = ExperimentUpdate(
-        files=root_node.to_dict(), reference_id=experiment.reference_id)
 
     # clean up
     shutil.rmtree(temp_dir)
 
     # update experiment
+    # create file tree
+    root_node = FileNode(name=unique_name)
+    for file in files:
+        root_node.add_file(file)
+    experiment_update = ExperimentUpdate(
+        files=root_node.to_dict(), reference_id=experiment.reference_id)
     experiment = await service.patch(experiment_id, experiment_update)
 
     return experiment
+
+
+@router.delete("/{experiment_id}/files")
+async def delete_experiment_files(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+) -> None:
+    """Delete files of an experiment by id"""
+    service = ExperimentsService(session)
+    await service.delete_files(experiment_id)
 
 
 @router.delete("/{experiment_id}")
@@ -177,4 +189,3 @@ async def delete_experiment(
     """Delete an experiment by id"""
     service = ExperimentsService(session)
     await service.delete(experiment_id, recursive)
-    # TODO delete files from S3

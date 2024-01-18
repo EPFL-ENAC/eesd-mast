@@ -8,6 +8,7 @@ from sqlmodel import select
 from fastapi import HTTPException
 from app.db import AsyncSession
 
+
 class ExperimentsService:
 
     def __init__(self, session: AsyncSession):
@@ -25,7 +26,8 @@ class ExperimentsService:
 
         # Get reference
         res = await self.session.exec(
-            select(Reference.id, Reference.reference).where(Reference.id == experiment.reference_id)
+            select(Reference.id, Reference.reference).where(
+                Reference.id == experiment.reference_id)
         )
         reference = res.one_or_none()
         reference_reference = reference.reference if reference else None
@@ -33,7 +35,7 @@ class ExperimentsService:
         experiment.reference = reference_reference
 
         return experiment
-    
+
     async def find(self, filter: dict | str, sort: list | str, range: list | str) -> list[int, int, int, ExperimentRead]:
         """Get all experiments matching filter and range"""
         builder = QueryBuilder(Experiment, filter, sort, range)
@@ -50,22 +52,24 @@ class ExperimentsService:
         results = await self.session.exec(query)
         experiments = results.all()
         # Cast to ExperimentRead
-        experiments = [ExperimentRead.from_orm(experiment) for experiment in experiments]
+        experiments = [ExperimentRead.from_orm(
+            experiment) for experiment in experiments]
 
         # Reference IDs
         reference_ids = [experiment.reference_id for experiment in experiments]
         res = await self.session.exec(
-            select(Reference.id, Reference.reference).where(Reference.id.in_(reference_ids))
+            select(Reference.id, Reference.reference).where(
+                Reference.id.in_(reference_ids))
         )
         references = res.all()
-        reference_dict = {reference.id: reference.reference for reference in references}
+        reference_dict = {
+            reference.id: reference.reference for reference in references}
 
         # Add reference short name to each experiment
         for experiment in experiments:
             experiment.reference = reference_dict[experiment.reference_id]
 
         return [start, end, total_count, experiments]
-    
 
     async def create(self, experiment: Experiment) -> Experiment:
         """Creates an experiment"""
@@ -73,7 +77,6 @@ class ExperimentsService:
         await self.session.commit()
         await self.session.refresh(experiment)
         return experiment
-
 
     async def patch(self, experiment_id: int, experiment: ExperimentUpdate) -> ExperimentRead:
         """Updates an experiment"""
@@ -93,18 +96,21 @@ class ExperimentsService:
 
         return experiment_db
 
-
     async def delete(self, experiment_id: int, recursive: bool = False) -> Experiment:
         """Delete an experiment by id"""
         res = await self.session.exec(
             select(Experiment).where(Experiment.id == experiment_id)
         )
         experiment = res.one_or_none()
-        
+
         if experiment:
             # Delete associated files
             if experiment.scheme:
                 await s3_client.delete_file(experiment.scheme['path'])
+            if experiment.files:
+                key = experiment.files['name']
+                s3_folder = f"experiments/{experiment_id}/{key}"
+                await s3_client.delete_files(s3_folder)
             # Delete run results
             if recursive:
                 run_results_service = RunResultsService(self.session)
@@ -112,11 +118,27 @@ class ExperimentsService:
             # Delete experiment
             await self.session.delete(experiment)
             await self.session.commit()
-        
+
         return experiment
-    
+
+    async def delete_files(self, experiment_id: int) -> None:
+        """Delete files of an experiment by id"""
+        res = await self.session.exec(
+            select(Experiment).where(Experiment.id == experiment_id)
+        )
+        experiment = res.one_or_none()
+
+        if experiment and experiment.files:
+            if experiment.files:
+                key = experiment.files['name']
+                s3_folder = f"experiments/{experiment_id}/{key}"
+                deleted = await s3_client.delete_files(s3_folder)
+                if deleted:
+                    experiment.files = None
+                    await self.session.commit()
+
     async def delete_by_reference(self, reference_id: int, recursive: bool = False) -> None:
         """Delete all experiments by reference id"""
-        start, stop, total_count, experiments = await self.find(filter={ "reference_id": reference_id }, sort=None, range=None)
+        start, stop, total_count, experiments = await self.find(filter={"reference_id": reference_id}, sort=None, range=None)
         if experiments:
             [await self.delete(experiment.id, recursive) for experiment in experiments]
