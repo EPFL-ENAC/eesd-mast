@@ -50,12 +50,12 @@
       <div class="row q-pa-md">
         <div class="col-6">
           <a href="https://epfl.ch" target="_blank">
-            <img src="EPFL.svg" style="width: 100px" />
+            <img src="/EPFL.svg" style="width: 100px" />
           </a>
         </div>
         <div class="col-6">
           <a href="https://www.epfl.ch/labs/eesd/" target="_blank">
-            <img src="EESD.svg" style="width: 105px" class="float-right" />
+            <img src="/EESD.svg" style="width: 105px" class="float-right" />
           </a>
         </div>
       </div>

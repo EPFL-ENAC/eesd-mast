@@ -28,18 +28,12 @@
         </q-tab-panel>
       </q-tab-panels>
     </div>
-    <div class="row">
-      <div class="col-6"></div>
-      <div class="col-6"></div>
-    </div>
-    <div></div>
-    <div class="q-pa-md"></div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-const tab = ref('references');
+const tab = ref('experiments');
 import ReferencesTable from 'components/ReferencesTable.vue';
 import ExperimentsTable from 'components/ExperimentsTable.vue';
 </script>

@@ -77,6 +77,7 @@
       <q-tab name="details" :label="$t('details')" />
       <q-tab name="reference" :label="$t('reference')" />
       <q-tab name="run_results" :label="$t('run_results')" />
+      <q-tab name="files" :label="$t('files')" :alert="hasFiles()" />
     </q-tabs>
 
     <q-separator />
@@ -93,6 +94,10 @@
       <q-tab-panel name="run_results">
         <run-results-view :experiment="selected" />
       </q-tab-panel>
+
+      <q-tab-panel name="files">
+        <experiment-files-view :experiment="selected" />
+      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
@@ -108,6 +113,7 @@ import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
+import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 import { Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
@@ -265,7 +271,19 @@ const onExperiment = (exp: Experiment) => {
   selected.value = exp;
 };
 
-onMounted(() => {
+function hasFiles() {
+  return (
+    selected.value &&
+    selected.value.files !== null &&
+    selected.value.files.children.length > 0
+  );
+}
+
+watch(() => props.experiment, updateExperiment);
+
+onMounted(updateExperiment);
+
+function updateExperiment() {
   if (props.experiment) {
     referencesStore
       .fetchExperiments(props.experiment.reference_id)
@@ -274,5 +292,5 @@ onMounted(() => {
       });
     selected.value = props.experiment;
   }
-});
+}
 </script>

@@ -78,4 +78,8 @@ export default {
   base_shear_coef: 'Base Shear Coefficient',
   reported_t1_x: 'Reported T1 X',
   reported_t1_y: 'Reported T1 Y',
+  download: 'Download',
+  no_files: 'No files',
+  search_files: 'Search files',
+  view_in_page: 'View in page',
 };

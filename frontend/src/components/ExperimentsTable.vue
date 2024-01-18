@@ -106,6 +106,17 @@
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
+          <q-btn
+            v-if="experiment"
+            :label="$t('view_in_page')"
+            no-caps
+            dense
+            flat
+            icon="open_in_new"
+            :to="`../building/${experiment.id}`"
+          />
+        </q-card-section>
+        <q-card-section>
           <experiment-view :experiment="experiment"></experiment-view>
         </q-card-section>
       </q-card>
@@ -147,7 +158,7 @@ const pagination = ref({
   rowsNumber: 12,
 });
 const showExperiment = ref(false);
-const experiment = ref({});
+const experiment = ref<Experiment>();
 
 const columns = [
   {

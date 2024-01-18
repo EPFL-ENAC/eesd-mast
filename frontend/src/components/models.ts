@@ -26,8 +26,17 @@ export interface Experiment extends DBModel {
   experimental_results_reported: string[] | null;
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
+  files: FileNode;
 }
 
 export interface RunResult extends DBModel {
   experiment_id: number;
+}
+
+export interface FileNode {
+  name: string;
+  path: string;
+  size: number | undefined;
+  is_file: boolean;
+  children: FileNode[] | undefined;
 }
