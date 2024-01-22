@@ -81,5 +81,9 @@ export default {
   download: 'Download',
   no_files: 'No files',
   search_files: 'Search files',
-  view_in_page: 'View in page',
+  view_details: 'View details',
+  top_displacement_histories: 'Top Displacement Histories',
+  global_force_displacement_curve: 'Global Force-Displacement Curve',
+  shake_table_accelerations: 'Shake Table Accelerations',
+  crack_maps: 'Crack Maps',
 };

@@ -78,6 +78,7 @@
             v-if="prop.node.name.endsWith('.png')"
             :src="`${baseUrl}/files/${prop.node.path}`"
             spinner-color="grey-6"
+            fit="scale-down"
           />
           <div v-else-if="prop.node.name.endsWith('.txt')">
             <file-node-chart :node="prop.node" height="600px" />

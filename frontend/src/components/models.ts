@@ -40,3 +40,10 @@ export interface FileNode {
   is_file: boolean;
   children: FileNode[] | undefined;
 }
+
+export interface RunResultFileNodes {
+  top_displacement_histories: FileNode | undefined;
+  global_force_displacement_curve: FileNode | undefined;
+  shake_table_accelerations: FileNode | undefined;
+  crack_maps: FileNode | undefined;
+}

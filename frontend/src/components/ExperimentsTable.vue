@@ -106,18 +106,7 @@
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <q-btn
-            v-if="experiment"
-            :label="$t('view_in_page')"
-            no-caps
-            dense
-            flat
-            icon="open_in_new"
-            :to="`../building/${experiment.id}`"
-          />
-        </q-card-section>
-        <q-card-section>
-          <experiment-view :experiment="experiment"></experiment-view>
+          <experiment-summary :experiment="experiment"></experiment-summary>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -135,7 +124,7 @@ import { useI18n } from 'vue-i18n';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
 import { Experiment, Reference } from 'src/components/models';
-import ExperimentView from 'src/components/ExperimentView.vue';
+import ExperimentSummary from 'src/components/ExperimentSummary.vue';
 import {
   makePaginationRequestHandler,
   QueryParams,

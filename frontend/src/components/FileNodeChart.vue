@@ -7,6 +7,7 @@
       :option="option"
       :update-options="updateOptions"
       class="q-ma-md"
+      :loading="loading"
     />
   </div>
 </template>
@@ -54,6 +55,7 @@ const props = withDefaults(defineProps<FileNodeChartProps>(), {
 
 const chart = shallowRef(null);
 const option = ref<EChartsOption>({});
+const loading = ref(false);
 
 watch(
   () => props.node,
@@ -113,11 +115,13 @@ function initChartOptions() {
     ],
   };
   option.value = newOption;
+  loading.value = true;
   api.get(`/files/${props.node.path}`).then((res) => {
     Papa.parse(res.data, {
       header: false,
       dynamicTyping: true,
       complete: (results) => {
+        loading.value = false;
         const data = results.data;
         option.value.series[0].data = data;
         chart.value?.setOption(option.value);

@@ -1,5 +1,15 @@
 <template>
   <div v-if="selected">
+    <div class="q-mb-md">
+      <q-btn
+        v-if="experiment"
+        :label="$t('view_details')"
+        no-caps
+        icon="open_in_new"
+        color="primary"
+        :to="`/building/${selected.id}`"
+      />
+    </div>
     <div class="text-h5">
       {{ selected.description }}
       <span v-if="selected.experiment_id">
@@ -9,17 +19,14 @@
     <div class="q-mb-md">
       <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
       <span v-if="reference_experiments.length > 1">
-        <q-btn
+        <q-chip
           v-for="exp in reference_experiments"
           :key="exp.id"
-          no-caps
-          rounded
           :label="exp.experiment_id || exp.id"
           :title="exp.description"
-          :disable="exp.id === selected.id"
-          class="on-left"
+          :clickable="exp.id !== selected.id"
           :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
-          :to="`/building/${exp.id}`"
+          @click="onExperiment(exp)"
         />
       </span>
     </div>
@@ -27,9 +34,8 @@
     <div class="text-subtitle1 text-grey-8">
       {{ selected.experimental_campaign_motivation }}
     </div>
-
-    <div class="row q-gutter-md q-mt-md q-mb-md">
-      <div class="col-12 col-md-auto">
+    <q-card flat class="q-mt-md q-mb-md">
+      <q-card-section>
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"
@@ -67,70 +73,27 @@
             @click="imageDisplay = 'full'"
           />
         </div>
-      </div>
-      <div class="col">
-        <div v-for="file in getPeriodDGEvolutionFiles()" :key="file.path">
-          <q-img
-            :src="`${baseUrl}/files/${file.path}`"
-            spinner-color="grey-6"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="q-ma-md"></div>
-    <div class="q-ma-md"></div>
-    <q-tabs
-      v-model="tab"
-      dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
-      align="justify"
-      narrow-indicator
-    >
-      <q-tab name="details" :label="$t('details')" />
-      <q-tab name="run_results" :label="$t('run_results')" />
-      <q-tab name="files" :label="$t('files')" :alert="hasFiles()" />
-      <q-tab name="reference" :label="$t('reference')" />
-    </q-tabs>
+      </q-card-section>
+      <q-card-section>
+        <fields-list :items="items" :dbobject="selected" />
+      </q-card-section>
+    </q-card>
 
     <q-separator />
-
-    <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="details">
-        <fields-list :items="items" :dbobject="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="reference">
-        <reference-view :experiment="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="run_results">
-        <run-results-view :experiment="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="files">
-        <experiment-files-view :experiment="selected" />
-      </q-tab-panel>
-    </q-tab-panels>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'ExperimentView',
+  name: 'ExperimentSummary',
 });
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
-import ReferenceView from './ReferenceView.vue';
-import RunResultsView from './RunResultsView.vue';
-import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
-import { Experiment, FileNode } from 'src/components/models';
+import { Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
@@ -143,7 +106,6 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
 });
 
 const imageDisplay = ref('fitted');
-const tab = ref('details');
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 
@@ -282,13 +244,9 @@ const items: FieldItem<Experiment>[] = [
   },
 ];
 
-function hasFiles() {
-  return (
-    selected.value &&
-    selected.value.files !== null &&
-    selected.value.files.children.length > 0
-  );
-}
+const onExperiment = (exp: Experiment) => {
+  selected.value = exp;
+};
 
 watch(() => props.experiment, updateExperiment);
 
@@ -303,17 +261,5 @@ function updateExperiment() {
       });
     selected.value = props.experiment;
   }
-}
-
-function getPeriodDGEvolutionFiles(): FileNode[] {
-  const nodes: FileNode[] = [];
-  if (selected.value.files && selected.value.files.children) {
-    selected.value.files.children.forEach((element: FileNode) => {
-      if (element.name === 'Period and DG evolution' && element.children) {
-        nodes.push(...element.children);
-      }
-    });
-  }
-  return nodes;
 }
 </script>

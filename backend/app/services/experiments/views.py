@@ -3,7 +3,7 @@ import zipfile
 import tempfile
 import shutil
 import os
-import json
+from urllib.parse import unquote
 
 from pathlib import Path
 
@@ -61,6 +61,21 @@ def list_files_recursively(directory, relative=False):
     return paths
 
 
+async def write_files_recursively(directory, files):
+    for file in files:
+        file_path = os.path.join(directory, file["name"])
+        if file["is_file"]:
+            body, content_type = await s3_client.get_file(unquote(file["path"]))
+            if body:
+                with open(file_path, 'wb') as f:
+                    f.write(body)
+            else:
+                pass
+        else:
+            os.makedirs(file_path)
+            await write_files_recursively(file_path, file["children"])
+
+
 @router.get("/{experiment_id}", response_model=ExperimentRead)
 async def get_experiment(
     session: AsyncSession = Depends(get_session),
@@ -114,6 +129,44 @@ async def update_experiment(
     service = ExperimentsService(session)
     experiment = await service.patch(experiment_id, experiment_update)
     return experiment
+
+
+@router.get("/{experiment_id}/files",
+            status_code=200,
+            description="-- Download experiment assets from S3 as a zip archive --")
+async def get_experiment_files(
+        experiment_id: int,
+        session: AsyncSession = Depends(get_session),
+        response: Response = Response(),
+):
+    service = ExperimentsService(session)
+    experiment = await service.get(experiment_id)
+    if experiment.files:
+        # extract from S3 and archive files
+        # Create a temporary directory
+        temp_dir = tempfile.mkdtemp()
+        folder_name = f"{experiment.id}-{experiment.files['name']}"
+        folder_path = os.path.join(temp_dir, folder_name)
+        os.makedirs(folder_path)
+        await write_files_recursively(folder_path, experiment.files["children"])
+        # Create a ZipFile Object
+        zip_file_path = os.path.join(temp_dir, f"{folder_name}.zip")
+        shutil.make_archive(Path(folder_path), 'zip', Path(folder_path))
+        try:
+            with open(zip_file_path, "rb") as file:
+                content = file.read()
+
+            response.headers["Content-Disposition"] = f"attachment; filename={folder_name}.zip"
+            response.headers["Content-Type"] = "application/zip"
+            response.status_code = 200
+            response.body = content
+            return response
+
+        finally:
+            # Clean up the temporary file
+            shutil.rmtree(temp_dir)
+    else:
+        raise HTTPException(status_code=404, detail="Files not found")
 
 
 @router.post("/{experiment_id}/files",

@@ -21,8 +21,13 @@ const route = useRoute();
 
 const experiment = ref();
 
-onMounted(async () => {
-  const response = await api.get(`${baseUrl}/experiments/${route.params.id}`);
-  experiment.value = response.data;
-});
+watch(() => route.params.id, updateExperiment);
+
+onMounted(updateExperiment);
+
+function updateExperiment() {
+  api
+    .get(`${baseUrl}/experiments/${route.params.id}`)
+    .then((response) => (experiment.value = response.data));
+}
 </script>
