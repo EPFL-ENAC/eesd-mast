@@ -1,11 +1,5 @@
 <template>
   <div v-if="selected">
-    <div class="text-h5">
-      {{ selected.description }}
-      <span v-if="selected.experiment_id">
-        - {{ selected.experiment_id }}
-      </span>
-    </div>
     <div class="q-mb-md">
       <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
       <span v-if="reference_experiments.length > 1">
