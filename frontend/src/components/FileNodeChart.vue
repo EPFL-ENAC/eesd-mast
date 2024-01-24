@@ -46,10 +46,14 @@ use([
 
 export interface FileNodeChartProps {
   node: FileNode;
+  xname?: string;
+  yname?: string;
   height?: string;
 }
 const props = withDefaults(defineProps<FileNodeChartProps>(), {
   node: undefined,
+  xname: '',
+  yname: '',
   height: '200px',
 });
 
@@ -78,10 +82,10 @@ function initChartOptions() {
       text: name,
     },
     grid: {
-      left: 30,
-      top: 40,
-      right: 20,
-      bottom: 40,
+      left: 60,
+      top: 60,
+      right: 50,
+      bottom: 100,
     },
     tooltip: {
       trigger: 'axis',
@@ -102,9 +106,23 @@ function initChartOptions() {
     ],
     xAxis: {
       type: 'value',
+      name: props.xname,
+      nameLocation: 'middle',
+      nameTextStyle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        padding: [10, 0, 0, 0],
+      },
     },
     yAxis: {
       type: 'value',
+      name: props.yname,
+      nameLocation: 'middle',
+      nameTextStyle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        padding: [0, 0, 30, 0],
+      },
     },
     series: [
       {

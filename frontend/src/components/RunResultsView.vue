@@ -54,6 +54,8 @@
                       :node="
                         getRunFiles(props.row.run_id).top_displacement_histories
                       "
+                      :xname="$t('time_sec')"
+                      :yname="$t('displacement_mm')"
                       height="600px"
                     />
                   </q-card-section>
@@ -77,6 +79,8 @@
                         getRunFiles(props.row.run_id)
                           .global_force_displacement_curve
                       "
+                      :xname="$t('top_displacement_mm')"
+                      :yname="$t('base_shear_kn')"
                       height="600px"
                     />
                   </q-card-section>
@@ -97,6 +101,8 @@
                       :node="
                         getRunFiles(props.row.run_id).shake_table_accelerations
                       "
+                      :xname="$t('time_sec')"
+                      :yname="$t('acceleration_g')"
                       height="600px"
                     />
                   </q-card-section>

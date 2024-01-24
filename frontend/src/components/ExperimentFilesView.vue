@@ -83,7 +83,12 @@
             fit="scale-down"
           />
           <div v-else-if="prop.node.name.endsWith('.txt')">
-            <file-node-chart :node="prop.node" height="600px" />
+            <file-node-chart
+              :node="prop.node"
+              :xname="$t(getXName(prop.node))"
+              :yname="$t(getYName(prop.node))"
+              height="600px"
+            />
           </div>
           <div
             v-else-if="
@@ -176,6 +181,31 @@ function canBeDisplayed(node: FileNode) {
     node.name.endsWith('.vtp') ||
     node.alt_name?.endsWith('.vtp')
   );
+}
+
+function getXName(node: FileNode) {
+  const folders = decodeURI(node.path).split('/');
+  if (
+    folders.includes('Top displacement histories') ||
+    folders.includes('Shake-table accelerations')
+  ) {
+    return 'time_sec';
+  } else if (folders.includes('Global force-displacement curve')) {
+    return 'top_displacement_mm';
+  }
+  return '';
+}
+
+function getYName(node: FileNode) {
+  const folders = decodeURI(node.path).split('/');
+  if (folders.includes('Top displacement histories')) {
+    return 'displacement_mm';
+  } else if (folders.includes('Shake-table accelerations')) {
+    return 'acceleration_g';
+  } else if (folders.includes('Global force-displacement curve')) {
+    return 'base_shear_kn';
+  }
+  return '';
 }
 
 function displayFile(path: string) {

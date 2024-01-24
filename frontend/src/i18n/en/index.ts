@@ -91,4 +91,9 @@ export default {
   points: 'Points',
   wireframe: 'Wireframe',
   surface: 'Surface',
+  time_sec: 'Time (sec)',
+  displacement_mm: 'Displacement (mm)',
+  top_displacement_mm: 'Top displacement (mm)',
+  base_shear_kn: 'Base shear (kN)',
+  acceleration_g: 'Acceleration (g)',
 };
