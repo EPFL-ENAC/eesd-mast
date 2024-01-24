@@ -4,8 +4,8 @@
       <div class="col-8 col-md-8 col-xs-12">
         <q-btn
           :label="$t('download')"
+          no-caps
           icon="download"
-          size="sm"
           color="primary"
           class="q-mt-md q-mb-md"
           @click="downloadFiles"
@@ -44,7 +44,9 @@
         <div>
           <span>{{ prop.node.name }}</span>
           <q-btn
-            v-if="prop.node.is_file && prop.node.size"
+            v-if="
+              prop.node.is_file && prop.node.size && canBeDisplayed(prop.node)
+            "
             dense
             flat
             no-caps
@@ -83,6 +85,14 @@
           <div v-else-if="prop.node.name.endsWith('.txt')">
             <file-node-chart :node="prop.node" height="600px" />
           </div>
+          <div
+            v-else-if="
+              prop.node.name.endsWith('.vtp') ||
+              prop.node.alt_name?.endsWith('.vtp')
+            "
+          >
+            <vtk-viewer :file="prop.node" :download="false" />
+          </div>
         </div>
       </template>
     </q-tree>
@@ -101,6 +111,7 @@ import { withDefaults, computed, ref, watch } from 'vue';
 
 import { Experiment, FileNode } from 'src/components/models';
 import FileNodeChart from './FileNodeChart.vue';
+import VtkViewer from './VtkViewer.vue';
 
 const displayed = ref<string[]>([]);
 const filter = ref('');
@@ -156,6 +167,15 @@ function downloadFile(path: string) {
 
 function downloadFiles() {
   window.open(`${baseUrl}/experiments/${props.experiment.id}/files`);
+}
+
+function canBeDisplayed(node: FileNode) {
+  return (
+    node.name.endsWith('.png') ||
+    node.name.endsWith('.txt') ||
+    node.name.endsWith('.vtp') ||
+    node.alt_name?.endsWith('.vtp')
+  );
 }
 
 function displayFile(path: string) {

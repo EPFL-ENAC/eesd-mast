@@ -86,4 +86,9 @@ export default {
   global_force_displacement_curve: 'Global Force-Displacement Curve',
   shake_table_accelerations: 'Shake Table Accelerations',
   crack_maps: 'Crack Maps',
+  '3d_model': '3D Model',
+  no_3d_model: 'No 3D Model',
+  points: 'Points',
+  wireframe: 'Wireframe',
+  surface: 'Surface',
 };

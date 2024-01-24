@@ -63,7 +63,7 @@
         </div>
       </div>
       <div class="col">
-        <div v-for="file in getPeriodDGEvolutionFiles()" :key="file.path">
+        <div v-for="file in periodDGEvolutionFiles" :key="file.path">
           <q-img
             :src="`${baseUrl}/files/${file.path}`"
             spinner-color="grey-6"
@@ -84,6 +84,7 @@
       narrow-indicator
     >
       <q-tab name="details" :label="$t('details')" />
+      <q-tab name="3d_model" :label="$t('3d_model')" />
       <q-tab name="run_results" :label="$t('run_results')" />
       <q-tab name="files" :label="$t('files')" :alert="hasFiles()" />
       <q-tab name="reference" :label="$t('reference')" />
@@ -96,8 +97,13 @@
         <fields-list :items="items" :dbobject="selected" />
       </q-tab-panel>
 
-      <q-tab-panel name="reference">
-        <reference-view :experiment="selected" />
+      <q-tab-panel name="3d_model">
+        <div v-if="threeDModelFiles.length === 0" class="text-grey-6">
+          {{ $t('no_3d_model') }}
+        </div>
+        <div v-else v-for="file in threeDModelFiles" :key="file.path">
+          <vtk-viewer :file="file" />
+        </div>
       </q-tab-panel>
 
       <q-tab-panel name="run_results">
@@ -106,6 +112,10 @@
 
       <q-tab-panel name="files">
         <experiment-files-view :experiment="selected" />
+      </q-tab-panel>
+
+      <q-tab-panel name="reference">
+        <reference-view :experiment="selected" />
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -120,6 +130,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
+import VtkViewer from './VtkViewer.vue';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
@@ -299,7 +310,7 @@ function updateExperiment() {
   }
 }
 
-function getPeriodDGEvolutionFiles(): FileNode[] {
+const periodDGEvolutionFiles = computed(() => {
   const nodes: FileNode[] = [];
   if (selected.value.files && selected.value.files.children) {
     selected.value.files.children.forEach((element: FileNode) => {
@@ -309,5 +320,21 @@ function getPeriodDGEvolutionFiles(): FileNode[] {
     });
   }
   return nodes;
-}
+});
+
+const threeDModelFiles = computed(() => {
+  const nodes: FileNode[] = [];
+  if (selected.value.files && selected.value.files.children) {
+    selected.value.files.children.forEach((element: FileNode) => {
+      if (element.name === '3D model' && element.children) {
+        nodes.push(
+          ...element.children.filter(
+            (f) => f.name.endsWith('.vtp') || f.alt_name?.endsWith('.vtp')
+          )
+        );
+      }
+    });
+  }
+  return nodes;
+});
 </script>

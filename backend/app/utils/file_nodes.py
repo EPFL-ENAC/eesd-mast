@@ -38,7 +38,7 @@ class FileNode:
                     new_path = file_ref["path"].split(new_path)[0] + new_path
                 new_size = file_ref["size"] if is_file else None
                 new_node = FileNode(part, new_path, is_file, new_size)
-                if "alt_name" in file_ref:
+                if is_file and "alt_name" in file_ref:
                     new_node.alt_name = file_ref["alt_name"]
                     new_node.alt_path = file_ref["alt_path"]
                     new_node.alt_size = file_ref["alt_size"]

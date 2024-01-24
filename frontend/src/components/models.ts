@@ -37,6 +37,9 @@ export interface FileNode {
   name: string;
   path: string;
   size: number | undefined;
+  alt_name: string | undefined;
+  alt_path: string | undefined;
+  alt_size: number | undefined;
   is_file: boolean;
   children: FileNode[] | undefined;
 }

@@ -6,6 +6,7 @@ from typing import Tuple
 from PIL import Image
 from app.config import config
 from app.utils.mimetype import image_mimetypes, model_mimetypes
+from app.services.files.vtk2p import vtk2p
 from fastapi.datastructures import UploadFile
 import os
 import urllib.parse
@@ -63,11 +64,8 @@ class S3_SERVICE(object):
         """
 
         content_type = self._get_mime_type(file_path)
-        if content_type in image_mimetypes:
-            return await self._upload_local_file(parent_path, file_path, s3_folder)
         if content_type in model_mimetypes:
-            # TODO convert vtk to vtp
-            return await self._upload_local_file(parent_path, file_path, s3_folder)
+            return await self._upload_local_vtk_file(parent_path, file_path, s3_folder)
         return await self._upload_local_file(parent_path, file_path, s3_folder)
 
     async def upload_file(self, upload_file: UploadFile, s3_folder: str = ""):
@@ -83,9 +81,6 @@ class S3_SERVICE(object):
         # if mimetype is image upload image
         if upload_file.content_type in image_mimetypes:
             return await self._upload_image(upload_file, s3_folder)
-        if upload_file.content_type in model_mimetypes:
-            # TODO convert vtk to vtp
-            return await self._upload_file(upload_file, s3_folder)
         return await self._upload_file(upload_file, s3_folder)
 
     async def delete_file(self, file_path: str):
@@ -282,6 +277,56 @@ class S3_SERVICE(object):
             raise HTTPException(
                 status_code=500,
                 detail="Failed to upload file to S3")
+
+    async def _upload_local_vtk_file(self, parent_path, file_path: str, s3_folder: str = "") -> dict:
+        """Upload local file to S3, convert to vtp if necessary
+
+        Args:
+            parent_path (str): Parent path of the file
+            file_path (str): Path to local file relative to parent path
+            s3_folder (str, optional): Relative parent folder in S3. Defaults to "".
+
+        Raises:
+            HTTPException: When S3 upload fails
+
+        Returns:
+            dict: S3 upload reference
+        """
+        if file_path.endswith(".vtp"):
+            # no need to convert to webp
+            return self._upload_local_file(parent_path, file_path, s3_folder)
+        else:
+            vtp_info = None
+            try:
+                # convert to vtp
+                file_path_vtp = self._convert_vtk_file(parent_path, file_path)
+
+                # VTP converted file
+                vtp_info = await self._upload_local_file(
+                    parent_path, file_path_vtp, s3_folder)
+            except Exception as e:
+                logger.error(e)
+
+            # Original file
+            orig_info = await self._upload_local_file(
+                parent_path, file_path, s3_folder)
+
+            # response http to be used by the frontend
+            return {
+                "path": orig_info["path"],
+                "name": orig_info["name"],
+                "size": orig_info["size"],
+                "alt_path": vtp_info["path"],
+                "alt_name": vtp_info["name"],
+                "alt_size": vtp_info["size"]
+            } if vtp_info else orig_info
+
+    def _convert_vtk_file(self, parent_path: str, file_path: str) -> str:
+        split_file_path = os.path.splitext(file_path)
+        file_path_vtp = f"{split_file_path[0]}.vtp"
+        vtk2p(os.path.join(parent_path, file_path),
+              os.path.join(parent_path, file_path_vtp))
+        return file_path_vtp
 
     async def _upload_local_file(self, parent_path, file_path: str, s3_folder: str = "") -> dict:
         """Upload file to S3, as is

@@ -1,4 +1,4 @@
-FROM python:3.11.6-alpine3.18
+FROM python:3.11.7-bullseye
 ENV POETRY_VERSION=1.7.1
 RUN pip install "poetry==$POETRY_VERSION"
 ENV PYTHONPATH="$PYTHONPATH:/app"
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
 RUN poetry config installer.max-workers 10
 RUN poetry config virtualenvs.create false
-RUN apk add --no-cache g++ postgresql-dev
+RUN apt-get install -y g++ libpq-dev
 RUN poetry install --no-interaction --without dev
 
 COPY alembic.ini prestart.sh /app/
