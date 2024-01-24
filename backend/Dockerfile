@@ -8,7 +8,7 @@ WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
 RUN poetry config installer.max-workers 10
 RUN poetry config virtualenvs.create false
-RUN apt-get install -y g++ libpq-dev
+RUN apt-get install -y g++ libpq-dev libgl1
 RUN poetry install --no-interaction --without dev
 
 COPY alembic.ini prestart.sh /app/
