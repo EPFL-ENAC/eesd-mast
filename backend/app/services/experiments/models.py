@@ -66,7 +66,7 @@ class Experiment(ExperimentBase, table=True):
 
 class ExperimentRead(ExperimentBase):
     id: int
-    reference: Optional[str] = None
+    reference: Optional[Dict] = None
 
 
 class ExperimentCreate(ExperimentBase):

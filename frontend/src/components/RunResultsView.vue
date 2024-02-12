@@ -2,7 +2,7 @@
   <div>
     <q-table
       :rows="runResults"
-      :columns="columns"
+      :columns="visibleColummns"
       row-key="run_id"
       hide-pagination
       :rows-per-page-options="[0]"
@@ -19,10 +19,7 @@
         <q-tr :props="props">
           <q-td auto-width v-if="hasFiles()">
             <q-btn
-              v-if="
-                hasRunFiles(props.row.run_id) &&
-                !['Initial', 'Final'].includes(props.row.run_id)
-              "
+              v-if="hasRunFiles(props.row.run_id)"
               size="xs"
               color="secondary"
               round
@@ -137,6 +134,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { toMaxDecimals } from 'src/utils/numbers';
 export default defineComponent({
   name: 'RunResultsView',
 });
@@ -146,7 +144,11 @@ import { useI18n } from 'vue-i18n';
 import { withDefaults, onMounted, ref, watch } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import { useRunResultsStore } from 'src/stores/run_results';
-import { Experiment, RunResultFileNodes } from 'src/components/models';
+import {
+  Experiment,
+  RunResult,
+  RunResultFileNodes,
+} from 'src/components/models';
 import FileNodeChart from './FileNodeChart.vue';
 
 const { t } = useI18n({ useScope: 'global' });
@@ -186,8 +188,22 @@ const columns = [
     label: t(name),
     align: 'left',
     field: name,
+    format: (val: unknown) =>
+      val === null
+        ? '-'
+        : typeof val === 'string'
+        ? val
+        : toMaxDecimals(val as number, 3),
     sortable: true,
   };
+});
+
+const visibleColummns = computed(() => {
+  return columns.filter(
+    (col) =>
+      runResults.value?.filter((run: RunResult) => run[col.name] !== null)
+        .length > 0
+  );
 });
 
 watch(() => props.experiment, updateRunResults);
@@ -196,9 +212,13 @@ onMounted(updateRunResults);
 
 function updateRunResults() {
   if (props.experiment) {
-    runResultsStore.fetchRunResults(props.experiment.id).then((res) => {
-      runResults.value = res;
-    });
+    runResultsStore
+      .fetchRunResults(props.experiment.id)
+      .then((res: RunResult[]) => {
+        runResults.value = res.filter(
+          (run) => !['Initial', 'Final'].includes(run.run_id)
+        );
+      });
   }
 }
 

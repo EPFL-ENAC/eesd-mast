@@ -1,26 +1,28 @@
 <template>
   <div v-if="file">
-    <div class="q-mb-md row">
-      <q-select
-        v-model="representation"
-        :options="representationOptions"
-        map-options
-        @update:model-value="applyRepresentation"
-        style="width: 200px"
-      />
-      <q-space v-if="download" />
-      <q-btn
-        v-if="download"
-        :label="file.name"
-        no-caps
-        color="primary"
-        icon="download"
-        @click="downloadFile(file.path)"
-        class="q-mt-md q-mb-md on-left"
-      />
-    </div>
-    <div>
-      <div ref="vtkContainer" style="height: 600px" />
+    <div class="row">
+      <div class="col-lg-6 col-md-8 col-sm-12">
+        <div class="q-mb-md row">
+          <q-select
+            v-model="representation"
+            :options="representationOptions"
+            map-options
+            @update:model-value="applyRepresentation"
+            style="width: 200px"
+          />
+          <q-space v-if="download" />
+          <q-btn
+            v-if="download"
+            :label="file.name"
+            no-caps
+            color="primary"
+            icon="download"
+            @click="downloadFile(file.path)"
+            class="q-mt-md q-mb-md on-left"
+          />
+        </div>
+        <div ref="vtkContainer" />
+      </div>
     </div>
   </div>
 </template>

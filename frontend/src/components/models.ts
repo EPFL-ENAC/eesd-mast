@@ -7,6 +7,7 @@ export interface Reference extends DBModel {
   reference: string;
   link_to_experimental_paper: string | null;
   corresponding_author_email: string;
+  request_data_available: string | null;
   link_to_request_data: string | null;
 }
 
@@ -30,6 +31,7 @@ export interface Experiment extends DBModel {
 }
 
 export interface RunResult extends DBModel {
+  run_id: string;
   experiment_id: number;
 }
 

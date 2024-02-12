@@ -1,7 +1,37 @@
 <template>
   <div v-if="selected">
     <div class="q-mb-md">
-      <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
+      <span class="text-h6 on-left">{{ selected.reference.reference }}</span>
+      <q-chip
+        v-if="selected.reference.link_to_experimental_paper"
+        icon="article"
+        color="primary"
+        text-color="white"
+        class="on-left"
+      >
+        <a
+          :href="selected.reference.link_to_experimental_paper"
+          target="_blank"
+          style="text-decoration: none; color: white"
+        >
+          {{ $t('paper') }}
+        </a>
+      </q-chip>
+      <q-chip
+        v-if="selected.reference.link_to_request_data"
+        icon="grid_on"
+        color="secondary"
+        text-color="white"
+        class="on-left"
+      >
+        <a
+          :href="selected.reference.link_to_request_data"
+          target="_blank"
+          style="text-decoration: none; color: white"
+        >
+          {{ $t('data') }}
+        </a>
+      </q-chip>
       <span v-if="reference_experiments.length > 1">
         <q-btn
           v-for="exp in reference_experiments"
@@ -19,6 +49,7 @@
     </div>
 
     <div class="text-subtitle1 text-grey-8">
+      {{ $t('test_motivation') }}
       {{ selected.experimental_campaign_motivation }}
     </div>
 
@@ -84,8 +115,8 @@
       narrow-indicator
     >
       <q-tab name="details" :label="$t('details')" />
-      <q-tab name="3d_model" :label="$t('3d_model')" />
       <q-tab name="run_results" :label="$t('run_results')" />
+      <q-tab name="3d_model" :label="$t('3d_model')" />
       <q-tab name="files" :label="$t('files')" :alert="hasFiles()" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
@@ -240,33 +271,10 @@ const items: FieldItem<Experiment>[] = [
     field: 'max_estimated_dg',
   },
   {
-    field: 'material_characterizations',
-    format: (val: Experiment) =>
-      val.material_characterizations
-        ? val.material_characterizations.join(' / ')
-        : '-',
-  },
-  {
-    field: 'associated_test_types',
-    format: (val: Experiment) =>
-      val.associated_test_types ? val.associated_test_types.join(' / ') : '-',
-  },
-  {
     field: 'material_characterization_refs',
     format: (val: Experiment) =>
       val.material_characterization_refs
         ? val.material_characterization_refs.join(' / ')
-        : '-',
-  },
-  {
-    field: 'digitalized_data',
-    format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
-  },
-  {
-    field: 'experimental_results_reported',
-    format: (val: Experiment) =>
-      val.experimental_results_reported
-        ? val.experimental_results_reported.join(' / ')
         : '-',
   },
   {
@@ -279,11 +287,6 @@ const items: FieldItem<Experiment>[] = [
       val.link_to_open_measured_data
         ? `<a href="${val.link_to_open_measured_data}" target="_blank">${val.link_to_open_measured_data}</a>`
         : '-',
-  },
-  {
-    field: 'crack_types_observed',
-    format: (val: Experiment) =>
-      val.crack_types_observed ? val.crack_types_observed.join(' / ') : '-',
   },
 ];
 

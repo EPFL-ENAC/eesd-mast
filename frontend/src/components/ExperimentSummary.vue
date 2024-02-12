@@ -10,14 +10,10 @@
         :to="`/building/${selected.id}`"
       />
     </div>
-    <div class="text-h5">
-      {{ selected.description }}
-      <span v-if="selected.experiment_id">
-        - {{ selected.experiment_id }}
-      </span>
-    </div>
-    <div class="q-mb-md">
-      <span class="text-subtitle1 on-left">{{ selected.reference }}</span>
+    <div>
+      <span class="text-subtitle1 on-left">{{
+        selected.reference.reference
+      }}</span>
       <span v-if="reference_experiments.length > 1">
         <q-chip
           v-for="exp in reference_experiments"
@@ -28,6 +24,12 @@
           :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
           @click="onExperiment(exp)"
         />
+      </span>
+    </div>
+    <div class="text-h5 q-mb-md">
+      {{ selected.description }}
+      <span v-if="selected.experiment_id">
+        - {{ selected.experiment_id }}
       </span>
     </div>
 
@@ -75,7 +77,30 @@
         </div>
       </q-card-section>
       <q-card-section>
-        <fields-list :items="items" :dbobject="selected" />
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="details" :label="$t('details')" />
+          <q-tab name="reference" :label="$t('reference')" />
+        </q-tabs>
+
+        <q-separator />
+
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="details">
+            <fields-list :items="items" :dbobject="selected" />
+          </q-tab-panel>
+
+          <q-tab-panel name="reference">
+            <reference-view :experiment="selected" />
+          </q-tab-panel>
+        </q-tab-panels>
       </q-card-section>
     </q-card>
 
@@ -93,6 +118,7 @@ export default defineComponent({
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
 import FieldsList, { FieldItem } from './FieldsList.vue';
+import ReferenceView from './ReferenceView.vue';
 import { Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -107,6 +133,7 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
 
 const imageDisplay = ref('fitted');
 const selected = ref();
+const tab = ref('details');
 const reference_experiments = ref<Experiment[]>([]);
 
 const items: FieldItem<Experiment>[] = [
@@ -197,33 +224,10 @@ const items: FieldItem<Experiment>[] = [
     field: 'max_estimated_dg',
   },
   {
-    field: 'material_characterizations',
-    format: (val: Experiment) =>
-      val.material_characterizations
-        ? val.material_characterizations.join(' / ')
-        : '-',
-  },
-  {
-    field: 'associated_test_types',
-    format: (val: Experiment) =>
-      val.associated_test_types ? val.associated_test_types.join(' / ') : '-',
-  },
-  {
     field: 'material_characterization_refs',
     format: (val: Experiment) =>
       val.material_characterization_refs
         ? val.material_characterization_refs.join(' / ')
-        : '-',
-  },
-  {
-    field: 'digitalized_data',
-    format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
-  },
-  {
-    field: 'experimental_results_reported',
-    format: (val: Experiment) =>
-      val.experimental_results_reported
-        ? val.experimental_results_reported.join(' / ')
         : '-',
   },
   {
@@ -236,11 +240,6 @@ const items: FieldItem<Experiment>[] = [
       val.link_to_open_measured_data
         ? `<a href="${val.link_to_open_measured_data}" target="_blank">${val.link_to_open_measured_data}</a>`
         : '-',
-  },
-  {
-    field: 'crack_types_observed',
-    format: (val: Experiment) =>
-      val.crack_types_observed ? val.crack_types_observed.join(' / ') : '-',
   },
 ];
 

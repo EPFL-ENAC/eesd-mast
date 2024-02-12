@@ -7,32 +7,8 @@
       no-connectors
       tick-strategy="leaf"
       v-model:ticked="filters.selections"
-      @update:ticked="onFilterTicked"
+      default-expand-all
     >
-      <template v-slot:body-storeys>
-        <q-input
-          v-show="filters.selections.indexOf('storeys_nb') !== -1"
-          :disable="filters.selections.indexOf('storeys_nb') === -1"
-          v-model.number="filters.storeysNb"
-          type="number"
-          dense
-          style="max-width: 200px"
-          class="q-ml-lg"
-          :rules="[(val) => val > -1 || 'Positive number expected']"
-        />
-      </template>
-      <template v-slot:body-wall_leaves>
-        <q-input
-          v-show="filters.selections.indexOf('wall_leaves_nb') !== -1"
-          :disable="filters.selections.indexOf('wall_leaves_nb') === -1"
-          v-model.number="filters.wallLeavesNb"
-          type="number"
-          dense
-          style="max-width: 200px"
-          class="q-ml-lg"
-          :rules="[(val) => val > -1 || 'Positive number expected']"
-        />
-      </template>
     </q-tree>
   </div>
 </template>
@@ -71,12 +47,18 @@ const filterNodes = computed(() => [
   {
     label: t('storeys_nb'),
     key: 'storeys_nb',
-    body: 'storeys',
+    children: storeysNb.map((label) => ({
+      label: label,
+      key: `storeys_nb:${label}`,
+    })),
   },
   {
     label: t('wall_leaves_nb'),
     key: 'wall_leaves_nb',
-    body: 'wall_leaves',
+    children: wallLeavesNb.map((label) => ({
+      label: label,
+      key: `wall_leaves_nb:${label}`,
+    })),
   },
   {
     label: t('diaphragm_material'),
@@ -87,11 +69,11 @@ const filterNodes = computed(() => [
     })),
   },
   {
-    label: t('applied_excitation_directions'),
-    key: 'applied_excitation_directions',
-    children: appliedExcitationDirections.map((label) => ({
+    label: t('simultaneous_excitations_nb'),
+    key: 'simultaneous_excitations_nb',
+    children: simultaneousExcitationsNb.map((label) => ({
       label: label,
-      key: `applied_excitation_directions:${label}`,
+      key: `simultaneous_excitations_nb:${label}`,
     })),
   },
   {
@@ -124,6 +106,10 @@ const masonryUnitType = [
   'Undressed stone',
 ];
 
+const storeysNb = ['1', '2', '3', '4', '5'];
+
+const wallLeavesNb = ['1', '2', '3'];
+
 const diaphragmMaterial = [
   'RC',
   'Timber',
@@ -138,14 +124,5 @@ const retrofittingApplication = [
   'After damage',
 ];
 
-const appliedExcitationDirections = ['N-S', 'E-W', 'V'];
-
-function onFilterTicked() {
-  if (filters.selections.indexOf('storeys_nb') === -1) {
-    filters.storeysNb = 1;
-  }
-  if (filters.selections.indexOf('wall_leaves_nb') === -1) {
-    filters.wallLeavesNb = 1;
-  }
-}
+const simultaneousExcitationsNb = ['1', '2', '3'];
 </script>

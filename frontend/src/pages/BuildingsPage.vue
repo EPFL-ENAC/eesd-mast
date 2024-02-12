@@ -2,38 +2,10 @@
   <q-page>
     <h5 class="q-pa-md q-mt-sm q-mb-sm">{{ $t('tested_buildings') }}</h5>
     <q-separator />
-    <div>
-      <q-tabs
-        v-model="tab"
-        dense
-        class="text-grey"
-        active-color="primary"
-        indicator-color="primary"
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab name="references" :label="$t('references')" />
-        <q-tab name="experiments" :label="$t('experiments')" />
-      </q-tabs>
-
-      <q-separator />
-
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="references">
-          <references-table></references-table>
-        </q-tab-panel>
-
-        <q-tab-panel name="experiments">
-          <experiments-table></experiments-table>
-        </q-tab-panel>
-      </q-tab-panels>
-    </div>
+    <experiments-table></experiments-table>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-const tab = ref('experiments');
-import ReferencesTable from 'components/ReferencesTable.vue';
 import ExperimentsTable from 'components/ExperimentsTable.vue';
 </script>

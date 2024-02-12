@@ -79,18 +79,63 @@
                 height="250px"
               >
                 <div class="absolute-bottom text-subtitle1 text-center">
+                  <div>{{ props.row.reference.reference }}</div>
                   <div>
                     {{ props.row.description }}
                     <span v-if="props.row.experiment_id">
                       - {{ props.row.experiment_id }}
                     </span>
                   </div>
-                  <div>{{ props.row.reference }}</div>
                 </div>
               </q-img>
             </q-card-section>
           </q-card>
         </div>
+      </template>
+
+      <template v-slot:body-cell-full_reference="props">
+        <q-td :props="props">
+          <div
+            style="overflow-wrap: break-word; width: 500px"
+            class="ellipsis"
+            :title="props.value"
+          >
+            {{ props.value }}
+          </div>
+          <div>
+            <q-chip
+              v-if="props.row.reference.link_to_experimental_paper"
+              icon="article"
+              color="primary"
+              text-color="white"
+              size="sm"
+              class="q-ml-none"
+            >
+              <a
+                :href="props.row.reference.link_to_experimental_paper"
+                target="_blank"
+                style="text-decoration: none; color: white"
+              >
+                {{ $t('paper') }}
+              </a>
+            </q-chip>
+            <q-chip
+              v-if="props.row.reference.link_to_request_data"
+              icon="grid_on"
+              color="secondary"
+              text-color="white"
+              size="sm"
+            >
+              <a
+                :href="props.row.reference.link_to_request_data"
+                target="_blank"
+                style="text-decoration: none; color: white"
+              >
+                {{ $t('data') }}
+              </a>
+            </q-chip>
+          </div>
+        </q-td>
       </template>
     </q-table>
 
@@ -188,6 +233,16 @@ const columns = [
     label: t('reference'),
     align: 'left',
     field: 'reference',
+    format: (val: Reference) => val.reference,
+    sortable: true,
+  },
+  {
+    name: 'full_reference',
+    required: true,
+    label: t('full_reference'),
+    align: 'left',
+    field: 'reference',
+    format: (val: Reference) => val.full_reference,
     sortable: true,
   },
 ];

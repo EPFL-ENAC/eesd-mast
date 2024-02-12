@@ -1,6 +1,5 @@
 from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate
-from app.services.references.models import Reference
-from app.services.runresults.models import RunResult
+from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
@@ -26,11 +25,11 @@ class ExperimentsService:
 
         # Get reference
         res = await self.session.exec(
-            select(Reference.id, Reference.reference).where(
+            select(Reference).where(
                 Reference.id == experiment.reference_id)
         )
         reference = res.one_or_none()
-        reference_reference = reference.reference if reference else None
+        reference_reference = ReferenceRead.from_orm(reference)
 
         experiment.reference = reference_reference
 
@@ -58,16 +57,17 @@ class ExperimentsService:
         # Reference IDs
         reference_ids = [experiment.reference_id for experiment in experiments]
         res = await self.session.exec(
-            select(Reference.id, Reference.reference).where(
+            select(Reference).where(
                 Reference.id.in_(reference_ids))
         )
         references = res.all()
         reference_dict = {
-            reference.id: reference.reference for reference in references}
+            reference.id: reference for reference in references}
 
         # Add reference short name to each experiment
         for experiment in experiments:
-            experiment.reference = reference_dict[experiment.reference_id]
+            experiment.reference = ReferenceRead.from_orm(
+                reference_dict[experiment.reference_id])
 
         return [start, end, total_count, experiments]
 
