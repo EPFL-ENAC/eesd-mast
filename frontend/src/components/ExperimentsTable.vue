@@ -44,13 +44,13 @@
               flat
               icon="grid_view"
               :class="view === 'grid' ? 'bg-grey-4' : ''"
-              @click="view = 'grid'"
+              @click="toggleView"
             />
             <q-btn
               flat
               icon="table_view"
               :class="view === 'table' ? 'bg-grey-4' : ''"
-              @click="view = 'table'"
+              @click="toggleView"
             />
           </q-btn-group>
         </div>
@@ -166,6 +166,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { getSettings, saveSettings } from 'src/utils/settings';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
 import { Experiment, Reference } from 'src/components/models';
@@ -178,8 +179,7 @@ import { useFiltersStore } from 'src/stores/filters';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
-
-const view = ref('grid');
+const view = ref(getSettings().experiments_view);
 const tableRef = ref();
 const rows = ref([]);
 const filter = ref('');
@@ -305,4 +305,11 @@ function onRemoveReferenceFilter(reference: Reference) {
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
 });
+
+function toggleView() {
+  view.value = view.value === 'grid' ? 'table' : 'grid';
+  const settings = getSettings();
+  settings.experiments_view = view.value;
+  saveSettings(settings);
+}
 </script>
