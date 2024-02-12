@@ -1,13 +1,36 @@
 <template>
   <div>
+    <q-select
+      filled
+      v-model="filters.referenceSelections"
+      use-chips
+      use-input
+      multiple
+      clearable
+      dense
+      input-debounce="300"
+      :label="$t('references')"
+      :hint="$t('select_references_hint')"
+      :options="references"
+      @filter="filterFn"
+      style="width: 250px"
+      class="q-ml-md q-mb-md"
+    >
+      <template v-slot:no-option>
+        <q-item>
+          <q-item-section class="text-grey">{{
+            $t('no_results')
+          }}</q-item-section>
+        </q-item>
+      </template>
+    </q-select>
     <q-tree
-      class="col-12 col-sm-6"
+      class="col-12 col-sm-6 q-ml-md"
       :nodes="filterNodes"
       node-key="key"
       no-connectors
       tick-strategy="leaf"
       v-model:ticked="filters.selections"
-      default-expand-all
     >
     </q-tree>
   </div>
@@ -23,9 +46,34 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import { useFiltersStore } from 'src/stores/filters';
+import { api } from 'src/boot/axios';
+import { Reference } from './models';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
+const references = ref([]);
+function filterFn(val, update, abort) {
+  const query = {
+    filter: val ? JSON.stringify({ full_reference: val }) : undefined,
+    sort: JSON.stringify(['reference', 'ASC']),
+  };
+  api({
+    method: 'get',
+    url: '/references',
+    params: query,
+  })
+    .then((response) => {
+      references.value = response.data.map((item: Reference) => ({
+        label: item.reference,
+        value: item,
+      }));
+      update();
+    })
+    .catch((error) => {
+      console.error(error);
+      abort();
+    });
+}
 
 const filterNodes = computed(() => [
   {

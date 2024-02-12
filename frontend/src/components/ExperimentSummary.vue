@@ -32,9 +32,13 @@
         - {{ selected.experiment_id }}
       </span>
     </div>
-
-    <div class="text-subtitle1 text-grey-8">
-      {{ selected.experimental_campaign_motivation }}
+    <div v-if="selected.experimental_campaign_motivation">
+      <div class="text-caption">
+        {{ $t('test_motivation') }}
+      </div>
+      <div class="text-subtitle1 text-grey-8">
+        {{ selected.experimental_campaign_motivation }}
+      </div>
     </div>
     <q-card flat class="q-mt-md q-mb-md">
       <q-card-section>

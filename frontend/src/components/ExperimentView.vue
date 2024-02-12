@@ -47,12 +47,14 @@
         />
       </span>
     </div>
-
-    <div class="text-subtitle1 text-grey-8">
-      {{ $t('test_motivation') }}
-      {{ selected.experimental_campaign_motivation }}
+    <div v-if="selected.experimental_campaign_motivation">
+      <div class="text-caption">
+        {{ $t('test_motivation') }}
+      </div>
+      <div class="text-subtitle1 text-grey-8">
+        {{ selected.experimental_campaign_motivation }}
+      </div>
     </div>
-
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div class="col-12 col-md-auto">
         <div>
@@ -117,7 +119,7 @@
       <q-tab name="details" :label="$t('details')" />
       <q-tab name="run_results" :label="$t('run_results')" />
       <q-tab name="3d_model" :label="$t('3d_model')" />
-      <q-tab name="files" :label="$t('files')" :alert="hasFiles()" />
+      <q-tab name="files" :label="$t('files')" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
 
@@ -289,14 +291,6 @@ const items: FieldItem<Experiment>[] = [
         : '-',
   },
 ];
-
-function hasFiles() {
-  return (
-    selected.value &&
-    selected.value.files !== null &&
-    selected.value.files.children.length > 0
-  );
-}
 
 watch(() => props.experiment, updateExperiment);
 

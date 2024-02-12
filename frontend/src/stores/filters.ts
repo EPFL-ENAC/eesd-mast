@@ -1,11 +1,17 @@
 import { defineStore } from 'pinia';
 import { Reference } from 'src/components/models';
 
+interface RefenceSelection {
+  label: string;
+  value: Reference;
+}
+
 interface State {
   selections: string[];
   storeysNb: number;
   wallLeavesNb: number;
   references: Reference[];
+  referenceSelections: RefenceSelection[];
 }
 
 export const useFiltersStore = defineStore('filters', {
@@ -14,6 +20,7 @@ export const useFiltersStore = defineStore('filters', {
     storeysNb: 1,
     wallLeavesNb: 1,
     references: [],
+    referenceSelections: [],
   }),
   getters: {
     dbFilters: (state) => {
@@ -36,8 +43,18 @@ export const useFiltersStore = defineStore('filters', {
           }
         }
       });
-      if (state.references.length > 0) {
-        dbFilters['reference_id'] = state.references.map((ref) => ref.id);
+      if (state.referenceSelections && state.referenceSelections.length > 0) {
+        dbFilters['reference_id'] = state.referenceSelections.map(
+          (ref) => ref.value.id
+        );
+      }
+      if (state.references && state.references.length > 0) {
+        const ids = state.references.map((ref) => ref.id);
+        if (dbFilters['reference_id']) {
+          dbFilters['reference_id'].push(...ids);
+        } else {
+          dbFilters['reference_id'] = ids;
+        }
       }
       return dbFilters;
     },

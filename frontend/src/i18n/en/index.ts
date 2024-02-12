@@ -96,5 +96,7 @@ export default {
   top_displacement_mm: 'Top displacement (mm)',
   base_shear_kn: 'Base shear (kN)',
   acceleration_g: 'Acceleration (g)',
-  test_motivation: 'Motivation of the test:',
+  test_motivation: 'Motivation of the test',
+  no_results: 'No results',
+  select_references_hint: 'Search author or keyword',
 };
