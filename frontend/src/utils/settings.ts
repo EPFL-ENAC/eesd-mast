@@ -11,10 +11,12 @@ export function getSettings(): Settings {
   };
   const settingsSaved = cookies.get('mast_settings');
   // cookies.get() declares to return a string but apparently it automatically parses the JSON string to an object
-  if (typeof settingsSaved === 'string') {
-    settings = JSON.parse(settingsSaved);
-  } else if (typeof settingsSaved === 'object') {
-    settings = settingsSaved as Settings;
+  if (settingsSaved !== null) {
+    if (typeof settingsSaved === 'string') {
+      settings = JSON.parse(settingsSaved);
+    } else if (typeof settingsSaved === 'object') {
+      settings = settingsSaved as Settings;
+    }
   }
   return settings;
 }
