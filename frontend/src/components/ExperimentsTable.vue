@@ -44,13 +44,13 @@
               flat
               icon="grid_view"
               :class="view === 'grid' ? 'bg-grey-4' : ''"
-              @click="toggleView"
+              @click="toggleView('grid')"
             />
             <q-btn
               flat
-              icon="table_view"
+              icon="view_list"
               :class="view === 'table' ? 'bg-grey-4' : ''"
-              @click="toggleView"
+              @click="toggleView('table')"
             />
           </q-btn-group>
         </div>
@@ -306,8 +306,8 @@ onMounted(() => {
   tableRef.value?.requestServerInteraction();
 });
 
-function toggleView() {
-  view.value = view.value === 'grid' ? 'table' : 'grid';
+function toggleView(newView: string) {
+  view.value = newView;
   const settings = getSettings();
   settings.experiments_view = view.value;
   saveSettings(settings);
