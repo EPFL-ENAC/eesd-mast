@@ -62,13 +62,13 @@
           <div class="text-subtitle2">
             <span>{{
               $t('files_count', {
-                count: countFiles(props.experiment?.files),
+                count: filesCount,
               })
             }}</span>
             <span class="on-right text-grey-6 text-caption">
               ({{
                 $t('files_size_uncompressed', {
-                  size: fileSizeLabel(totalFilesSize(props.experiment?.files)),
+                  size: filesSizeLabel,
                 })
               }})
             </span>
@@ -207,6 +207,14 @@ const mdFiles = computed(() =>
   fileNodes.value.filter((node) => node.name.endsWith('.md'))
 );
 
+const filesCount = computed(() => {
+  return countFiles(props.experiment?.files);
+});
+
+const filesSizeLabel = computed(() => {
+  return fileSizeLabel(totalFilesSize(props.experiment?.files));
+});
+
 watch(
   () => props.experiment,
   () => initViewer()
@@ -218,7 +226,7 @@ onMounted(() => {
 
 function initViewer() {
   displayed.value = [];
-  resetFilter();
+  filter.value = '';
   const mds = props.experiment?.files?.children?.filter((node) =>
     node.name.endsWith('.md')
   );
