@@ -294,7 +294,7 @@ class S3_SERVICE(object):
         """
         if file_path.endswith(".vtp"):
             # no need to convert to webp
-            return self._upload_local_file(parent_path, file_path, s3_folder)
+            return await self._upload_local_file(parent_path, file_path, s3_folder)
         else:
             vtp_info = None
             try:
