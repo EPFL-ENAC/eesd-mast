@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <q-card class="q-mb-md">
+      <q-card v-if="mdFiles.length" class="q-mb-md">
         <q-card-section class="bg-grey-3 text-grey-8 q-pa-none">
           <q-tabs v-model="mdTab" align="left">
             <q-tab
@@ -222,10 +222,12 @@ function initViewer() {
   const mds = props.experiment?.files?.children?.filter((node) =>
     node.name.endsWith('.md')
   );
-  if (mds) {
+  if (mds && mds.length) {
     mdTab.value =
       mds.find((md) => md.name.toLocaleLowerCase() === 'readme.md')?.name ||
       mds[0].name;
+  } else {
+    mdTab.value = '';
   }
 }
 
