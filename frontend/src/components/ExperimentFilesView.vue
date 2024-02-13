@@ -133,33 +133,35 @@
               </div>
             </template>
             <template v-slot:default-body="prop">
-              <div v-if="displayed.includes(prop.node.path)">
-                <q-img
-                  v-if="prop.node.name.endsWith('.png')"
-                  :src="`${baseUrl}/files/${prop.node.path}`"
-                  spinner-color="grey-6"
-                  fit="scale-down"
-                />
-                <div v-else-if="prop.node.name.endsWith('.md')">
-                  <file-node-markdown :node="prop.node" />
-                </div>
-                <div v-else-if="prop.node.name.endsWith('.txt')">
-                  <file-node-chart
-                    :node="prop.node"
-                    :xname="$t(getXName(prop.node))"
-                    :yname="$t(getYName(prop.node))"
-                    height="600px"
+              <q-card v-if="displayed.includes(prop.node.path)" flat bordered>
+                <q-card-section>
+                  <q-img
+                    v-if="prop.node.name.endsWith('.png')"
+                    :src="`${baseUrl}/files/${prop.node.path}`"
+                    spinner-color="grey-6"
+                    fit="scale-down"
                   />
-                </div>
-                <div
-                  v-else-if="
-                    prop.node.name.endsWith('.vtp') ||
-                    prop.node.alt_name?.endsWith('.vtp')
-                  "
-                >
-                  <vtk-viewer :file="prop.node" :download="false" />
-                </div>
-              </div>
+                  <div v-else-if="prop.node.name.endsWith('.md')">
+                    <file-node-markdown :node="prop.node" />
+                  </div>
+                  <div v-else-if="prop.node.name.endsWith('.txt')">
+                    <file-node-chart
+                      :node="prop.node"
+                      :xname="$t(getXName(prop.node))"
+                      :yname="$t(getYName(prop.node))"
+                      height="600px"
+                    />
+                  </div>
+                  <div
+                    v-else-if="
+                      prop.node.name.endsWith('.vtp') ||
+                      prop.node.alt_name?.endsWith('.vtp')
+                    "
+                  >
+                    <vtk-viewer :file="prop.node" :download="false" />
+                  </div>
+                </q-card-section>
+              </q-card>
             </template>
           </q-tree>
         </q-card-section>
@@ -262,6 +264,7 @@ function downloadFiles() {
 function canBeDisplayed(node: FileNode) {
   return (
     node.name.endsWith('.png') ||
+    node.name.endsWith('.md') ||
     node.name.endsWith('.txt') ||
     node.name.endsWith('.vtp') ||
     node.alt_name?.endsWith('.vtp')
