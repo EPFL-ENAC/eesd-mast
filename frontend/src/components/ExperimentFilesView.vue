@@ -60,15 +60,11 @@
       <q-card>
         <q-card-section class="bg-grey-3 text-grey-8">
           <div class="text-subtitle2">
-            <span>{{
-              $t('files_count', {
-                count: filesCount,
-              })
-            }}</span>
+            <span>{{ $t('files_count', filesCount) }}</span>
             <span class="on-right text-grey-6 text-caption">
               ({{
                 $t('files_size_uncompressed', {
-                  size: filesSizeLabel,
+                  size: fileSizeLabel(filesSize),
                 })
               }})
             </span>
@@ -207,12 +203,12 @@ const mdFiles = computed(() =>
   fileNodes.value.filter((node) => node.name.endsWith('.md'))
 );
 
-const filesCount = computed(() => {
+const filesCount = computed<number>(() => {
   return countFiles(props.experiment?.files);
 });
 
-const filesSizeLabel = computed(() => {
-  return fileSizeLabel(totalFilesSize(props.experiment?.files));
+const filesSize = computed<number>(() => {
+  return totalFilesSize(props.experiment?.files);
 });
 
 watch(

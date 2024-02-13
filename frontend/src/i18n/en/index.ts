@@ -99,6 +99,6 @@ export default {
   test_motivation: 'Motivation of the test',
   no_results: 'No results',
   select_references_hint: 'Search author or keyword',
-  files_count: 'No files | One file | {count} files',
+  files_count: 'No files | One file | {n} files',
   files_size_uncompressed: '{size} uncompressed',
 };
