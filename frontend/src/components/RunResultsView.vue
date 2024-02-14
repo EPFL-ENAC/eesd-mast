@@ -34,7 +34,7 @@
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
+          <q-td colspan="100%" class="q-pa-none">
             <div class="text-left">
               <q-expansion-item
                 v-if="getRunFiles(props.row.run_id).top_displacement_histories"
@@ -277,3 +277,9 @@ function getRunFiles(run_id: number): RunResultFileNodes {
   return nodes;
 }
 </script>
+
+<style scoped>
+.q-table td.q-pa-none {
+  padding: 0;
+}
+</style>
