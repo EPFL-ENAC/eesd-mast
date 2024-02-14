@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div>
+      <period-chart v-if="runResults" :results="runResults" height="600px" />
+    </div>
     <q-table
       :rows="runResults"
       :columns="visibleColummns"
@@ -150,6 +153,7 @@ import {
   RunResultFileNodes,
 } from 'src/components/models';
 import FileNodeChart from './FileNodeChart.vue';
+import PeriodChart from './PeriodChart.vue';
 
 const { t } = useI18n({ useScope: 'global' });
 

@@ -33,6 +33,12 @@ export interface Experiment extends DBModel {
 export interface RunResult extends DBModel {
   run_id: string;
   experiment_id: number;
+  actual_pga_x: number | null;
+  actual_pga_y: number | null;
+  dg_reported: number | null;
+  dg_derived: number | null;
+  reported_t1_x: number | null;
+  reported_t1_y: number | null;
 }
 
 export interface FileNode {
