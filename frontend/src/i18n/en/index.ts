@@ -101,4 +101,6 @@ export default {
   select_references_hint: 'Search author or keyword',
   files_count: 'No files | One file | {n} files',
   files_size_uncompressed: '{size} uncompressed',
+  show_more: 'Show more',
+  show_less: 'Show less',
 };

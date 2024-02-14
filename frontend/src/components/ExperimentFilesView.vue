@@ -4,38 +4,6 @@
       {{ $t('no_files') }}
     </div>
     <div v-else>
-      <div v-if="fileNodes.length" class="row q-mb-md">
-        <div class="col-8 col-md-8 col-xs-12">
-          <q-btn
-            :label="$t('download')"
-            no-caps
-            icon="download"
-            color="primary"
-            class="q-mt-md q-mb-md"
-            @click="downloadFiles"
-          />
-        </div>
-        <div class="col-4 col-md-4 col-xs-12">
-          <q-input
-            ref="filterRef"
-            dense
-            clearable
-            debounce="300"
-            v-model="filter"
-            :label="$t('search_files')"
-          >
-            <template v-slot:append>
-              <q-icon
-                v-if="filter !== ''"
-                name="clear"
-                class="cursor-pointer"
-                @click="resetFilter"
-              />
-            </template>
-          </q-input>
-        </div>
-      </div>
-
       <q-card v-if="mdFiles.length" class="q-mb-md">
         <q-card-section class="bg-grey-3 text-grey-8 q-pa-none">
           <q-tabs v-model="mdTab" align="left">
@@ -59,15 +27,46 @@
 
       <q-card>
         <q-card-section class="bg-grey-3 text-grey-8">
-          <div class="text-subtitle2">
-            <span>{{ $t('files_count', filesCount) }}</span>
-            <span class="on-right text-grey-6 text-caption">
+          <div class="row">
+            <span class="text-subtitle2 q-mt-sm">{{
+              $t('files_count', filesCount)
+            }}</span>
+            <span class="on-right text-grey-6 text-caption q-mt-sm">
               ({{
                 $t('files_size_uncompressed', {
                   size: fileSizeLabel(filesSize),
                 })
               }})
             </span>
+            <q-space />
+            <q-btn
+              :label="$t('download')"
+              no-caps
+              icon="download"
+              color="primary"
+              dense
+              flat
+              class="on-left"
+              @click="downloadFiles"
+            />
+            <q-input
+              ref="filterRef"
+              dense
+              clearable
+              debounce="300"
+              v-model="filter"
+              style="width: 200px"
+              :label="$t('search_files')"
+            >
+              <template v-slot:append>
+                <q-icon
+                  v-if="filter !== ''"
+                  name="clear"
+                  class="cursor-pointer"
+                  @click="resetFilter"
+                />
+              </template>
+            </q-input>
           </div>
         </q-card-section>
         <q-card-section>
