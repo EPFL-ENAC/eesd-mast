@@ -103,4 +103,6 @@ export default {
   files_size_uncompressed: '{size} uncompressed',
   show_more: 'Show more',
   show_less: 'Show less',
+  contact_us_intro:
+    'To submit a new reference and test data, please contact us:',
 };
