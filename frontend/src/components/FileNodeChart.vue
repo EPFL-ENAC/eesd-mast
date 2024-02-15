@@ -1,5 +1,5 @@
 <template>
-  <div :style="`height: ${height}`">
+  <div :style="`height: ${height + 150}px;`">
     <e-charts
       ref="chart"
       autoresize
@@ -48,13 +48,13 @@ export interface FileNodeChartProps {
   node: FileNode;
   xname?: string;
   yname?: string;
-  height?: string;
+  height?: number;
 }
 const props = withDefaults(defineProps<FileNodeChartProps>(), {
   node: undefined,
   xname: '',
   yname: '',
-  height: '200px',
+  height: 300,
 });
 
 const chart = shallowRef(null);
@@ -73,7 +73,7 @@ onMounted(() => {
 });
 
 function initChartOptions() {
-  if (option.value.series && option.value.series.length > 0) {
+  if (option.value.series) {
     return;
   }
   const name = props.node.name.split('.')[0];
@@ -81,6 +81,8 @@ function initChartOptions() {
     title: {
       text: name,
     },
+    animation: false,
+    height: props.height,
     grid: {
       left: 60,
       top: 60,

@@ -142,6 +142,7 @@ function buildOptions() {
     // title: {
     //   text: `${t(periodColumn)} vs. ${t(pgaColumn)} / ${t(dgColumn)}`,
     // },
+    animation: false,
     height: props.height,
     grid: {
       left: 60,

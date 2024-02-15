@@ -53,7 +53,6 @@
                       "
                       :xname="$t('time_sec')"
                       :yname="$t('displacement_mm')"
-                      height="600px"
                     />
                   </q-card-section>
                 </q-card>
@@ -78,7 +77,6 @@
                       "
                       :xname="$t('top_displacement_mm')"
                       :yname="$t('base_shear_kn')"
-                      height="600px"
                     />
                   </q-card-section>
                 </q-card>
@@ -100,7 +98,6 @@
                       "
                       :xname="$t('time_sec')"
                       :yname="$t('acceleration_g')"
-                      height="600px"
                     />
                   </q-card-section>
                 </q-card>

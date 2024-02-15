@@ -144,7 +144,6 @@
                       :node="prop.node"
                       :xname="$t(getXName(prop.node))"
                       :yname="$t(getYName(prop.node))"
-                      height="600px"
                     />
                   </div>
                   <div
