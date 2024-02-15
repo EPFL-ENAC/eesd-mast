@@ -1,5 +1,5 @@
 <template>
-  <div :style="`height: ${height}`">
+  <div v-if="option.series" :style="`height: ${height + 200}px;`">
     <e-charts
       ref="chart"
       autoresize
@@ -31,8 +31,10 @@ import {
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
+  LegendComponent,
 } from 'echarts/components';
-import { RunResult } from 'src/components/models';
+import { Experiment, RunResult } from 'src/components/models';
+import { useRunResultsStore } from 'src/stores/run_results';
 
 use([
   SVGRenderer,
@@ -41,25 +43,28 @@ use([
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
+  LegendComponent,
 ]);
 
 export interface PeriodChartProps {
-  results: RunResult[];
-  height?: string;
+  experiment: Experiment;
+  height?: number;
 }
 const props = withDefaults(defineProps<PeriodChartProps>(), {
-  results: undefined,
-  height: '200px',
+  experiment: undefined,
+  height: 300,
 });
 
 const { t } = useI18n({ useScope: 'global' });
+const runResultsStore = useRunResultsStore();
 
+const runResults = ref<RunResult[]>([]);
 const chart = shallowRef(null);
 const option = ref<EChartsOption>({});
 const loading = ref(false);
 
 watch(
-  () => props.results,
+  () => props.experiment,
   () => {
     initChartOptions();
   }
@@ -70,12 +75,21 @@ onMounted(() => {
 });
 
 function initChartOptions() {
-  if (option.value.series && option.value.series.length > 0) {
+  option.value = {};
+  if (!props.experiment) {
     return;
   }
-  if (!props.results) {
-    return;
-  }
+  runResultsStore
+    .fetchRunResults(props.experiment.id)
+    .then((res: RunResult[]) => {
+      runResults.value = res.filter(
+        (run) => !['Initial', 'Final'].includes(run.run_id)
+      );
+      buildOptions();
+    });
+}
+
+function buildOptions() {
   loading.value = true;
   const visibleColumns = [
     'nominal_pga_x',
@@ -88,7 +102,7 @@ function initChartOptions() {
     'reported_t1_y',
   ].filter(
     (col) =>
-      props.results.filter((run: RunResult) => run[col] !== null).length > 0
+      runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
   );
   let pgaColumn = visibleColumns.includes('actual_pga_x')
     ? 'actual_pga_x'
@@ -98,21 +112,25 @@ function initChartOptions() {
       ? 'nominal_pga_x'
       : 'nominal_pga_y';
   }
-  let dgColumn = visibleColumns.includes('dg_reported')
+  const dgColumn = visibleColumns.includes('dg_reported')
     ? 'dg_reported'
     : 'dg_derived';
-  let periodColumn = visibleColumns.includes('reported_t1_x')
+  const periodColumn = visibleColumns.includes('reported_t1_x')
     ? 'reported_t1_x'
     : 'reported_t1_y';
+  if (!visibleColumns.includes(periodColumn)) {
+    loading.value = false;
+    return;
+  }
 
-  const datasetPGA = props.results
+  const datasetPGA = runResults.value
     .filter(
       (result) => result[pgaColumn] !== null && result[periodColumn] !== null
     )
     .map((result) => {
       return [result[pgaColumn], result[periodColumn]];
     });
-  const datasetDG = props.results
+  const datasetDG = runResults.value
     .filter(
       (result) => result[dgColumn] !== null && result[periodColumn] !== null
     )
@@ -124,9 +142,10 @@ function initChartOptions() {
     title: {
       text: `${t(periodColumn)} vs. ${t(pgaColumn)} / ${t(dgColumn)}`,
     },
+    height: props.height,
     grid: {
       left: 60,
-      top: 60,
+      top: 120,
       right: 60,
       bottom: 100,
     },
@@ -134,10 +153,9 @@ function initChartOptions() {
       trigger: 'axis',
     },
     legend: {
-      // Try 'horizontal'
       orient: 'horizontal',
-      right: 0,
-      top: 'center',
+      right: 'center',
+      top: 40,
       data: [t(pgaColumn), t(dgColumn)],
     },
     xAxis: [
@@ -189,7 +207,6 @@ function initChartOptions() {
       },
     ],
   };
-  console.debug(newOption);
   option.value = newOption;
   loading.value = false;
 }

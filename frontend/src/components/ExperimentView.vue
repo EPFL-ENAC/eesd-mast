@@ -96,6 +96,9 @@
         </div>
       </div>
       <div class="col">
+        <div>
+          <period-chart :experiment="selected" :height="300" />
+        </div>
         <div v-for="file in periodDGEvolutionFiles" :key="file.path">
           <q-img
             :src="`${baseUrl}/files/${file.path}`"
@@ -168,6 +171,7 @@ import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
+import PeriodChart from './PeriodChart.vue';
 import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
