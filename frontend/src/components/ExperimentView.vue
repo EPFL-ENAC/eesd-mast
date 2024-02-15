@@ -96,15 +96,7 @@
         </div>
       </div>
       <div class="col">
-        <div>
-          <period-chart :experiment="selected" :height="300" />
-        </div>
-        <div v-for="file in periodDGEvolutionFiles" :key="file.path">
-          <q-img
-            :src="`${baseUrl}/files/${file.path}`"
-            spinner-color="grey-6"
-          />
-        </div>
+        <period-chart :experiment="selected" :height="300" />
       </div>
     </div>
 
