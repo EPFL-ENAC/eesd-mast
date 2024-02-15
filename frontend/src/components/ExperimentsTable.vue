@@ -209,7 +209,7 @@ const columns = [
     label: t('scheme'),
     align: 'left',
     field: 'scheme',
-    sortable: true,
+    sortable: false,
   },
   {
     name: 'experiment_id',
@@ -234,7 +234,7 @@ const columns = [
     align: 'left',
     field: 'reference',
     format: (val: Reference) => val.reference,
-    sortable: true,
+    sortable: false,
   },
   {
     name: 'full_reference',
@@ -243,7 +243,7 @@ const columns = [
     align: 'left',
     field: 'reference',
     format: (val: Reference) => val.full_reference,
-    sortable: true,
+    sortable: false,
   },
 ];
 
