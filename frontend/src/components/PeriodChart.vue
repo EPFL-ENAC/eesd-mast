@@ -1,5 +1,5 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height + 200}px;`">
+  <div v-if="option.series" :style="`height: ${height + 150}px;`">
     <e-charts
       ref="chart"
       autoresize
@@ -139,13 +139,13 @@ function buildOptions() {
     });
 
   const newOption: EChartsOption = {
-    title: {
-      text: `${t(periodColumn)} vs. ${t(pgaColumn)} / ${t(dgColumn)}`,
-    },
+    // title: {
+    //   text: `${t(periodColumn)} vs. ${t(pgaColumn)} / ${t(dgColumn)}`,
+    // },
     height: props.height,
     grid: {
       left: 60,
-      top: 120,
+      top: 80,
       right: 60,
       bottom: 100,
     },
@@ -155,7 +155,7 @@ function buildOptions() {
     legend: {
       orient: 'horizontal',
       right: 'center',
-      top: 40,
+      top: 0,
       data: [t(pgaColumn), t(dgColumn)],
     },
     xAxis: [
