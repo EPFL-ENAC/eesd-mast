@@ -35,7 +35,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults } from 'vue';
-import { DBModel, Experiment, Reference } from './models';
+import { DBModel, Experiment, Reference } from '../models';
 
 export interface FieldItem<T extends DBModel> {
   field: string;
@@ -64,3 +64,4 @@ const visibleItems = computed(() => {
   });
 });
 </script>
+./models

@@ -24,7 +24,7 @@ import type { EChartsOption } from 'echarts';
 import { use } from 'echarts/core';
 import { LineChart } from 'echarts/charts';
 import { SVGRenderer } from 'echarts/renderers';
-import { initOptions, updateOptions } from './charts';
+import { initOptions, updateOptions } from '../charts';
 import {
   TitleComponent,
   TooltipComponent,
@@ -44,7 +44,7 @@ use([
   DataZoomComponent,
 ]);
 
-export interface FileNodeChartProps {
+interface FileNodeChartProps {
   node: FileNode;
   xname?: string;
   yname?: string;

@@ -175,7 +175,7 @@ import { baseUrl } from 'src/boot/axios';
 import { withDefaults, computed, ref, watch } from 'vue';
 
 import { Experiment, FileNode } from 'src/components/models';
-import FileNodeChart from './FileNodeChart.vue';
+import FileNodeChart from './charts/FileNodeChart.vue';
 import FileNodeMarkdown from './FileNodeMarkdown.vue';
 import VtkViewer from './VtkViewer.vue';
 
@@ -184,7 +184,7 @@ const filter = ref('');
 const filterRef = ref(null);
 const mdTab = ref<string>('');
 
-export interface ExperimentFilesViewProps {
+interface ExperimentFilesViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<ExperimentFilesViewProps>(), {

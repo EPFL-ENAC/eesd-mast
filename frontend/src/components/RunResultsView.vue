@@ -146,7 +146,7 @@ import {
   RunResult,
   RunResultFileNodes,
 } from 'src/components/models';
-import FileNodeChart from './FileNodeChart.vue';
+import FileNodeChart from './charts/FileNodeChart.vue';
 
 const { t } = useI18n({ useScope: 'global' });
 

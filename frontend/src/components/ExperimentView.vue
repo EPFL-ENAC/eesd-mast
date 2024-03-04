@@ -95,8 +95,11 @@
           />
         </div>
       </div>
-      <div class="col">
-        <period-chart :experiment="selected" :height="300" />
+      <div class="col-12 col-md">
+        <pga-chart :experiment="selected" :height="300" />
+      </div>
+      <div class="col-12 col-md">
+        <dg-chart :experiment="selected" :height="300" />
       </div>
     </div>
 
@@ -163,13 +166,14 @@ import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
-import PeriodChart from './PeriodChart.vue';
+import PgaChart from './charts/PgaChart.vue';
+import DgChart from './charts/DgChart.vue';
 import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
 
-export interface ExperimentViewProps {
+interface ExperimentViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<ExperimentViewProps>(), {
@@ -302,18 +306,6 @@ function updateExperiment() {
     selected.value = props.experiment;
   }
 }
-
-const periodDGEvolutionFiles = computed(() => {
-  const nodes: FileNode[] = [];
-  if (selected.value.files && selected.value.files.children) {
-    selected.value.files.children.forEach((element: FileNode) => {
-      if (element.name === 'Period and DG evolution' && element.children) {
-        nodes.push(...element.children);
-      }
-    });
-  }
-  return nodes;
-});
 
 const threeDModelFiles = computed(() => {
   const nodes: FileNode[] = [];

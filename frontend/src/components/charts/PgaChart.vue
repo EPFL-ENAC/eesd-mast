@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'PeriodChart',
+  name: 'PgaChart',
 });
 </script>
 <script setup lang="ts">
@@ -25,13 +25,12 @@ import type { EChartsOption } from 'echarts';
 import { use } from 'echarts/core';
 import { LineChart } from 'echarts/charts';
 import { SVGRenderer } from 'echarts/renderers';
-import { initOptions, updateOptions } from './charts';
+import { initOptions, updateOptions } from '../charts';
 import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
-  LegendComponent,
 } from 'echarts/components';
 import { Experiment, RunResult } from 'src/components/models';
 import { useRunResultsStore } from 'src/stores/run_results';
@@ -43,14 +42,13 @@ use([
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
-  LegendComponent,
 ]);
 
-export interface PeriodChartProps {
+interface PgaChartProps {
   experiment: Experiment;
   height?: number;
 }
-const props = withDefaults(defineProps<PeriodChartProps>(), {
+const props = withDefaults(defineProps<PgaChartProps>(), {
   experiment: undefined,
   height: 300,
 });
@@ -96,8 +94,6 @@ function buildOptions() {
     'nominal_pga_y',
     'actual_pga_x',
     'actual_pga_y',
-    'dg_reported',
-    'dg_derived',
     'reported_t1_x',
     'reported_t1_y',
   ].filter(
@@ -112,9 +108,6 @@ function buildOptions() {
       ? 'nominal_pga_x'
       : 'nominal_pga_y';
   }
-  const dgColumn = visibleColumns.includes('dg_reported')
-    ? 'dg_reported'
-    : 'dg_derived';
   const periodColumn = visibleColumns.includes('reported_t1_x')
     ? 'reported_t1_x'
     : 'reported_t1_y';
@@ -130,57 +123,37 @@ function buildOptions() {
     .map((result) => {
       return [result[pgaColumn], result[periodColumn]];
     });
-  const datasetDG = runResults.value
-    .filter(
-      (result) => result[dgColumn] !== null && result[periodColumn] !== null
-    )
-    .map((result) => {
-      return [result[dgColumn], result[periodColumn]];
-    });
 
   const newOption: EChartsOption = {
     // title: {
-    //   text: `${t(periodColumn)} vs. ${t(pgaColumn)} / ${t(dgColumn)}`,
+    //   text: `${t(periodColumn)} vs. ${t(pgaColumn)}`,
     // },
     animation: false,
     height: props.height,
     grid: {
       left: 60,
-      top: 80,
+      top: 10,
       right: 60,
-      bottom: 100,
+      bottom: 0,
     },
     tooltip: {
-      trigger: 'axis',
-    },
-    legend: {
-      orient: 'horizontal',
-      right: 'center',
-      top: 0,
-      data: [t(pgaColumn), t(dgColumn)],
-    },
-    xAxis: [
-      {
-        type: 'value',
-        name: `${t(pgaColumn)} (g)`,
-        nameLocation: 'middle',
-        nameTextStyle: {
-          fontWeight: 'bold',
-          fontSize: 16,
-          padding: [10, 0, 0, 0],
-        },
+      trigger: 'item',
+      formatter: (params: unknown) => {
+        return `${t(pgaColumn)}: ${params.value[0]} g<br />${t(
+          periodColumn
+        )}: ${params.value[1]} s`;
       },
-      {
-        type: 'value',
-        name: `${t(dgColumn)} (g)`,
-        nameLocation: 'middle',
-        nameTextStyle: {
-          fontWeight: 'bold',
-          fontSize: 16,
-          padding: [0, 0, 10, 0],
-        },
+    },
+    xAxis: {
+      type: 'value',
+      name: `${t(pgaColumn)} (g)`,
+      nameLocation: 'middle',
+      nameTextStyle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        padding: [20, 0, 0, 0],
       },
-    ],
+    },
     yAxis: {
       type: 'value',
       name: `${t(periodColumn)} (s)`,
@@ -195,14 +168,6 @@ function buildOptions() {
       {
         name: t(pgaColumn),
         data: datasetPGA,
-        xAxisIndex: 0,
-        type: 'line',
-        symbolSize: 5,
-      },
-      {
-        name: t(dgColumn),
-        data: datasetDG,
-        xAxisIndex: 1,
         type: 'line',
         symbolSize: 5,
       },
