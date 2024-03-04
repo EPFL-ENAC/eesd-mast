@@ -7,7 +7,7 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
-      :rows-per-page-options="[12, 25, 50, 0]"
+      :rows-per-page-options="[12, 24, 48, 0]"
       v-model:pagination="pagination"
       :loading="loading"
       :filter="filter"
@@ -65,7 +65,7 @@
         </q-td>
       </template>
       <template v-slot:item="props">
-        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-2">
           <q-card flat bordered class="q-ma-md">
             <q-card-section
               class="q-pa-none"
@@ -188,8 +188,8 @@ const pagination = ref({
   sortBy: 'id',
   descending: false,
   page: 1,
-  rowsPerPage: 12,
-  rowsNumber: 12,
+  rowsPerPage: 24,
+  rowsNumber: 24,
 });
 const showExperiment = ref(false);
 const experiment = ref<Experiment>();
