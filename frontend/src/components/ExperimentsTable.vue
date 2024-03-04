@@ -78,9 +78,11 @@
                 spinner-color="grey-6"
                 height="250px"
               >
-                <div class="absolute-bottom text-subtitle1 text-center">
-                  <div>{{ props.row.reference.reference }}</div>
-                  <div>
+                <div class="absolute-bottom text-center">
+                  <div class="text-subtitle2">
+                    {{ props.row.reference.reference }}
+                  </div>
+                  <div class="text-caption">
                     {{ props.row.description }}
                     <span v-if="props.row.experiment_id">
                       - {{ props.row.experiment_id }}
