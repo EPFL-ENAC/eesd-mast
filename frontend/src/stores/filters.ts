@@ -8,8 +8,6 @@ interface RefenceSelection {
 
 interface State {
   selections: string[];
-  storeysNb: number;
-  wallLeavesNb: number;
   references: Reference[];
   referenceSelections: RefenceSelection[];
 }
@@ -17,8 +15,6 @@ interface State {
 export const useFiltersStore = defineStore('filters', {
   state: (): State => ({
     selections: [],
-    storeysNb: 1,
-    wallLeavesNb: 1,
     references: [],
     referenceSelections: [],
   }),
@@ -59,5 +55,11 @@ export const useFiltersStore = defineStore('filters', {
       return dbFilters;
     },
   },
-  actions: {},
+  actions: {
+    resetFilters() {
+      this.selections = [];
+      this.references = [];
+      this.referenceSelections = [];
+    },
+  },
 });

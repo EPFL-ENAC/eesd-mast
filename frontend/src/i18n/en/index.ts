@@ -105,4 +105,5 @@ export default {
   show_less: 'Show less',
   contact_us_intro:
     'To submit a new reference and test data, please contact us:',
+  reset_filters: 'Reset filters',
 };

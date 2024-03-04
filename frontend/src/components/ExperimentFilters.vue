@@ -1,5 +1,14 @@
 <template>
   <div>
+    <q-btn
+      dense
+      flat
+      no-caps
+      color="primary"
+      :label="$t('reset_filters')"
+      class="q-ml-md q-mb-md"
+      @click="filters.resetFilters()"
+    ></q-btn>
     <q-select
       filled
       v-model="filters.referenceSelections"
