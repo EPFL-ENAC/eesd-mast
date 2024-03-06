@@ -55,14 +55,12 @@ const items: FieldItem<Reference>[] = [
         : '-',
   },
   {
-    field: 'request_data_available',
-  },
-  {
     field: 'link_to_request_data',
     html: (val: Reference) =>
       val.link_to_request_data
         ? `<a href="${val.link_to_request_data}" target="_blank">${val.link_to_request_data}</a>`
         : '-',
+    visible: (val: Reference) => val.link_to_request_data !== null,
   },
 ];
 
@@ -72,11 +70,15 @@ onMounted(updateReference);
 
 function updateReference() {
   if (props.experiment) {
-    referencesStore
-      .fetchReference(props.experiment.reference_id)
-      .then((res) => {
-        reference.value = res;
-      });
+    if (props.experiment.reference) {
+      reference.value = props.experiment.reference;
+    } else {
+      referencesStore
+        .fetchReference(props.experiment.reference_id)
+        .then((res) => {
+          reference.value = res;
+        });
+    }
   }
 }
 </script>

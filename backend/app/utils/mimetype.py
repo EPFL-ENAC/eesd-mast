@@ -9,5 +9,10 @@ jpg_mimetypes = [
     "application/jpeg"
 ]
 gif_mimetypes = ["image/gif"]
-others: list[str] = ["image/bmp", "image/webp"]
-image_mimetypes: list[str] = png_mimetypes + jpg_mimetypes + gif_mimetypes + others
+binary_mimetypes = ["application/octet-stream"]
+text_mimetypes = ["text/plain", "text/csv"]
+model_mimetypes = ["application/x-vtk"]
+other_images: list[str] = ["image/bmp", "image/webp"]
+image_mimetypes: list[str] = png_mimetypes + \
+    jpg_mimetypes + gif_mimetypes + other_images
+zip_mimetypes: list[str] = ["application/zip", "application/x-zip-compressed"]

@@ -1,50 +1,35 @@
 <template>
   <div v-if="selected">
     <div class="q-mb-md">
-      <span class="text-h6 on-left">{{ selected.reference.reference }}</span>
-      <q-chip
-        v-if="selected.reference.link_to_experimental_paper"
-        icon="article"
+      <q-btn
+        v-if="experiment"
+        :label="$t('view_details')"
+        no-caps
+        icon="open_in_new"
         color="primary"
-        text-color="white"
-        class="on-left"
-      >
-        <a
-          :href="selected.reference.link_to_experimental_paper"
-          target="_blank"
-          style="text-decoration: none; color: white"
-        >
-          {{ $t('paper') }}
-        </a>
-      </q-chip>
-      <q-chip
-        v-if="selected.reference.link_to_request_data"
-        icon="grid_on"
-        color="secondary"
-        text-color="white"
-        class="on-left"
-      >
-        <a
-          :href="selected.reference.link_to_request_data"
-          target="_blank"
-          style="text-decoration: none; color: white"
-        >
-          {{ $t('data') }}
-        </a>
-      </q-chip>
+        :to="`/building/${selected.id}`"
+      />
+    </div>
+    <div>
+      <span class="text-subtitle1 on-left">{{
+        selected.reference.reference
+      }}</span>
       <span v-if="reference_experiments.length > 1">
-        <q-btn
+        <q-chip
           v-for="exp in reference_experiments"
           :key="exp.id"
-          no-caps
-          rounded
           :label="exp.experiment_id || exp.id"
           :title="exp.description"
-          :disable="exp.id === selected.id"
-          class="on-left"
+          :clickable="exp.id !== selected.id"
           :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
-          :to="`/building/${exp.id}`"
+          @click="onExperiment(exp)"
         />
+      </span>
+    </div>
+    <div class="text-h5 q-mb-md">
+      {{ selected.description }}
+      <span v-if="selected.experiment_id">
+        - {{ selected.experiment_id }}
       </span>
     </div>
     <div v-if="selected.experimental_campaign_motivation">
@@ -55,8 +40,8 @@
         {{ selected.experimental_campaign_motivation }}
       </div>
     </div>
-    <div class="row q-gutter-md q-mt-md q-mb-md">
-      <div class="col-12 col-md-auto">
+    <q-card flat class="q-mt-md q-mb-md">
+      <q-card-section>
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"
@@ -94,86 +79,56 @@
             @click="imageDisplay = 'full'"
           />
         </div>
-      </div>
-      <div class="col-12 col-md">
-        <pga-chart :experiment="selected" :height="300" />
-      </div>
-      <div class="col-12 col-md">
-        <dg-chart :experiment="selected" :height="300" />
-      </div>
-    </div>
+      </q-card-section>
+      <q-card-section>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="details" :label="$t('details')" />
+          <q-tab name="reference" :label="$t('reference')" />
+        </q-tabs>
 
-    <div class="q-ma-md"></div>
-    <div class="q-ma-md"></div>
-    <q-tabs
-      v-model="tab"
-      dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
-      align="justify"
-      narrow-indicator
-    >
-      <q-tab name="details" :label="$t('details')" />
-      <q-tab name="run_results" :label="$t('run_results')" />
-      <q-tab name="3d_model" :label="$t('3d_model')" />
-      <q-tab name="files" :label="$t('files')" />
-      <q-tab name="reference" :label="$t('reference')" />
-    </q-tabs>
+        <q-separator />
+
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="details">
+            <fields-list :items="items" :dbobject="selected" />
+          </q-tab-panel>
+
+          <q-tab-panel name="reference">
+            <reference-view :experiment="selected" />
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card-section>
+    </q-card>
 
     <q-separator />
-
-    <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="details">
-        <fields-list :items="items" :dbobject="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="3d_model">
-        <div v-if="threeDModelFiles.length === 0" class="text-grey-6">
-          {{ $t('no_3d_model') }}
-        </div>
-        <div v-else v-for="file in threeDModelFiles" :key="file.path">
-          <vtk-viewer :file="file" />
-        </div>
-      </q-tab-panel>
-
-      <q-tab-panel name="run_results">
-        <run-results-view :experiment="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="files">
-        <experiment-files-view :experiment="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="reference">
-        <reference-view :experiment="selected" />
-      </q-tab-panel>
-    </q-tab-panels>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'ExperimentView',
+  name: 'ExperimentSummary',
 });
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
-import VtkViewer from './VtkViewer.vue';
-import ReferenceView from './ReferenceView.vue';
-import RunResultsView from './RunResultsView.vue';
-import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
-import PgaChart from './charts/PgaChart.vue';
-import DgChart from './charts/DgChart.vue';
-import { Experiment, FileNode } from 'src/components/models';
+import ReferenceView from './ReferenceView.vue';
+import { Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
 
-interface ExperimentViewProps {
+export interface ExperimentViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<ExperimentViewProps>(), {
@@ -181,8 +136,8 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
 });
 
 const imageDisplay = ref('fitted');
-const tab = ref('details');
 const selected = ref();
+const tab = ref('details');
 const reference_experiments = ref<Experiment[]>([]);
 
 const items: FieldItem<Experiment>[] = [
@@ -292,6 +247,10 @@ const items: FieldItem<Experiment>[] = [
   },
 ];
 
+const onExperiment = (exp: Experiment) => {
+  selected.value = exp;
+};
+
 watch(() => props.experiment, updateExperiment);
 
 onMounted(updateExperiment);
@@ -306,20 +265,4 @@ function updateExperiment() {
     selected.value = props.experiment;
   }
 }
-
-const threeDModelFiles = computed(() => {
-  const nodes: FileNode[] = [];
-  if (selected.value.files && selected.value.files.children) {
-    selected.value.files.children.forEach((element: FileNode) => {
-      if (element.name === '3D model' && element.children) {
-        nodes.push(
-          ...element.children.filter(
-            (f) => f.name.endsWith('.vtp') || f.alt_name?.endsWith('.vtp')
-          )
-        );
-      }
-    });
-  }
-  return nodes;
-});
 </script>

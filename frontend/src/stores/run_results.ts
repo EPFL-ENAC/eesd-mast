@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { RunResult } from 'src/components/models';
 
 interface State {
-  run_results: { [Key: number]: RunResult };
+  run_results: { [Key: number]: RunResult[] };
 }
 
 export const useRunResultsStore = defineStore('run_results', {
@@ -12,7 +12,7 @@ export const useRunResultsStore = defineStore('run_results', {
   }),
   getters: {
     fetchRunResults: (state) => {
-      return async (id: number) => {
+      return async (id: number): Promise<RunResult[]> => {
         if (!state.run_results[id]) {
           const query = {
             experiment_id: id,

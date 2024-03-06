@@ -1,38 +1,46 @@
 <template>
   <div>
+    <q-btn
+      dense
+      flat
+      no-caps
+      color="primary"
+      :label="$t('reset_filters')"
+      class="q-ml-md q-mb-md"
+      @click="filters.resetFilters()"
+    ></q-btn>
+    <q-select
+      filled
+      v-model="filters.referenceSelections"
+      use-chips
+      use-input
+      multiple
+      clearable
+      dense
+      input-debounce="300"
+      :label="$t('references')"
+      :hint="$t('select_references_hint')"
+      :options="references"
+      @filter="filterFn"
+      style="width: 250px"
+      class="q-ml-md q-mb-md"
+    >
+      <template v-slot:no-option>
+        <q-item>
+          <q-item-section class="text-grey">{{
+            $t('no_results')
+          }}</q-item-section>
+        </q-item>
+      </template>
+    </q-select>
     <q-tree
-      class="col-12 col-sm-6"
+      class="col-12 col-sm-6 q-ml-md"
       :nodes="filterNodes"
       node-key="key"
       no-connectors
       tick-strategy="leaf"
       v-model:ticked="filters.selections"
-      @update:ticked="onFilterTicked"
     >
-      <template v-slot:body-storeys>
-        <q-input
-          v-show="filters.selections.indexOf('storeys_nb') !== -1"
-          :disable="filters.selections.indexOf('storeys_nb') === -1"
-          v-model.number="filters.storeysNb"
-          type="number"
-          dense
-          style="max-width: 200px"
-          class="q-ml-lg"
-          :rules="[(val) => val > -1 || 'Positive number expected']"
-        />
-      </template>
-      <template v-slot:body-wall_leaves>
-        <q-input
-          v-show="filters.selections.indexOf('wall_leaves_nb') !== -1"
-          :disable="filters.selections.indexOf('wall_leaves_nb') === -1"
-          v-model.number="filters.wallLeavesNb"
-          type="number"
-          dense
-          style="max-width: 200px"
-          class="q-ml-lg"
-          :rules="[(val) => val > -1 || 'Positive number expected']"
-        />
-      </template>
     </q-tree>
   </div>
 </template>
@@ -47,9 +55,34 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
 import { useFiltersStore } from 'src/stores/filters';
+import { api } from 'src/boot/axios';
+import { Reference } from './models';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
+const references = ref([]);
+function filterFn(val, update, abort) {
+  const query = {
+    filter: val ? JSON.stringify({ full_reference: val }) : undefined,
+    sort: JSON.stringify(['reference', 'ASC']),
+  };
+  api({
+    method: 'get',
+    url: '/references',
+    params: query,
+  })
+    .then((response) => {
+      references.value = response.data.map((item: Reference) => ({
+        label: item.reference,
+        value: item,
+      }));
+      update();
+    })
+    .catch((error) => {
+      console.error(error);
+      abort();
+    });
+}
 
 const filterNodes = computed(() => [
   {
@@ -71,12 +104,18 @@ const filterNodes = computed(() => [
   {
     label: t('storeys_nb'),
     key: 'storeys_nb',
-    body: 'storeys',
+    children: storeysNb.map((label) => ({
+      label: label,
+      key: `storeys_nb:${label}`,
+    })),
   },
   {
     label: t('wall_leaves_nb'),
     key: 'wall_leaves_nb',
-    body: 'wall_leaves',
+    children: wallLeavesNb.map((label) => ({
+      label: label,
+      key: `wall_leaves_nb:${label}`,
+    })),
   },
   {
     label: t('diaphragm_material'),
@@ -87,11 +126,11 @@ const filterNodes = computed(() => [
     })),
   },
   {
-    label: t('applied_excitation_directions'),
-    key: 'applied_excitation_directions',
-    children: appliedExcitationDirections.map((label) => ({
+    label: t('simultaneous_excitations_nb'),
+    key: 'simultaneous_excitations_nb',
+    children: simultaneousExcitationsNb.map((label) => ({
       label: label,
-      key: `applied_excitation_directions:${label}`,
+      key: `simultaneous_excitations_nb:${label}`,
     })),
   },
   {
@@ -124,6 +163,10 @@ const masonryUnitType = [
   'Undressed stone',
 ];
 
+const storeysNb = ['1', '2', '3', '4', '5'];
+
+const wallLeavesNb = ['1', '2', '3'];
+
 const diaphragmMaterial = [
   'RC',
   'Timber',
@@ -138,14 +181,5 @@ const retrofittingApplication = [
   'After damage',
 ];
 
-const appliedExcitationDirections = ['N-S', 'E-W', 'V'];
-
-function onFilterTicked() {
-  if (filters.selections.indexOf('storeys_nb') === -1) {
-    filters.storeysNb = 1;
-  }
-  if (filters.selections.indexOf('wall_leaves_nb') === -1) {
-    filters.wallLeavesNb = 1;
-  }
-}
+const simultaneousExcitationsNb = ['1', '2', '3'];
 </script>

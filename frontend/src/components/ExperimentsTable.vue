@@ -7,7 +7,7 @@
       :rows="rows"
       :columns="columns"
       row-key="id"
-      :rows-per-page-options="[12, 25, 50, 0]"
+      :rows-per-page-options="[12, 24, 48, 0]"
       v-model:pagination="pagination"
       :loading="loading"
       :filter="filter"
@@ -44,13 +44,13 @@
               flat
               icon="grid_view"
               :class="view === 'grid' ? 'bg-grey-4' : ''"
-              @click="view = 'grid'"
+              @click="toggleView('grid')"
             />
             <q-btn
               flat
-              icon="table_view"
+              icon="view_list"
               :class="view === 'table' ? 'bg-grey-4' : ''"
-              @click="view = 'table'"
+              @click="toggleView('table')"
             />
           </q-btn-group>
         </div>
@@ -65,7 +65,7 @@
         </q-td>
       </template>
       <template v-slot:item="props">
-        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-2">
           <q-card flat bordered class="q-ma-md">
             <q-card-section
               class="q-pa-none"
@@ -78,19 +78,66 @@
                 spinner-color="grey-6"
                 height="250px"
               >
-                <div class="absolute-bottom text-subtitle1 text-center">
-                  <div>
+                <div class="absolute-bottom text-center">
+                  <div class="text-subtitle2">
+                    {{ props.row.reference.reference }}
+                  </div>
+                  <div class="text-caption">
                     {{ props.row.description }}
                     <span v-if="props.row.experiment_id">
                       - {{ props.row.experiment_id }}
                     </span>
                   </div>
-                  <div>{{ props.row.reference }}</div>
                 </div>
               </q-img>
             </q-card-section>
           </q-card>
         </div>
+      </template>
+
+      <template v-slot:body-cell-full_reference="props">
+        <q-td :props="props">
+          <div
+            style="overflow-wrap: break-word; width: 500px"
+            class="ellipsis"
+            :title="props.value"
+          >
+            {{ props.value }}
+          </div>
+          <div>
+            <q-chip
+              v-if="props.row.reference.link_to_experimental_paper"
+              icon="article"
+              color="primary"
+              text-color="white"
+              size="sm"
+              class="q-ml-none"
+            >
+              <a
+                :href="props.row.reference.link_to_experimental_paper"
+                target="_blank"
+                style="text-decoration: none; color: white"
+              >
+                {{ $t('paper') }}
+              </a>
+            </q-chip>
+            <q-chip
+              v-if="props.row.reference.link_to_request_data"
+              icon="grid_on"
+              color="secondary"
+              text-color="white"
+              size="sm"
+            >
+              <a
+                :href="props.row.reference.link_to_request_data"
+                target="_blank"
+                style="text-decoration: none; color: white"
+              >
+                {{ $t('data') }}
+              </a>
+            </q-chip>
+          </div>
+        </q-td>
       </template>
     </q-table>
 
@@ -106,7 +153,7 @@
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <experiment-view :experiment="experiment"></experiment-view>
+          <experiment-summary :experiment="experiment"></experiment-summary>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -121,10 +168,11 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { getSettings, saveSettings } from 'src/utils/settings';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
 import { Experiment, Reference } from 'src/components/models';
-import ExperimentView from 'src/components/ExperimentView.vue';
+import ExperimentSummary from 'src/components/ExperimentSummary.vue';
 import {
   makePaginationRequestHandler,
   QueryParams,
@@ -133,8 +181,7 @@ import { useFiltersStore } from 'src/stores/filters';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
-
-const view = ref('grid');
+const view = ref(getSettings().experiments_view);
 const tableRef = ref();
 const rows = ref([]);
 const filter = ref('');
@@ -143,11 +190,11 @@ const pagination = ref({
   sortBy: 'id',
   descending: false,
   page: 1,
-  rowsPerPage: 12,
-  rowsNumber: 12,
+  rowsPerPage: 24,
+  rowsNumber: 24,
 });
 const showExperiment = ref(false);
-const experiment = ref({});
+const experiment = ref<Experiment>();
 
 const columns = [
   {
@@ -164,7 +211,7 @@ const columns = [
     label: t('scheme'),
     align: 'left',
     field: 'scheme',
-    sortable: true,
+    sortable: false,
   },
   {
     name: 'experiment_id',
@@ -183,12 +230,30 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'publication_year',
+    required: true,
+    label: t('year'),
+    align: 'left',
+    field: 'publication_year',
+    sortable: true,
+  },
+  {
     name: 'reference',
     required: true,
     label: t('reference'),
     align: 'left',
     field: 'reference',
-    sortable: true,
+    format: (val: Reference) => val.reference,
+    sortable: false,
+  },
+  {
+    name: 'full_reference',
+    required: true,
+    label: t('full_reference'),
+    align: 'left',
+    field: 'reference',
+    format: (val: Reference) => val.full_reference,
+    sortable: false,
   },
 ];
 
@@ -250,4 +315,11 @@ function onRemoveReferenceFilter(reference: Reference) {
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
 });
+
+function toggleView(newView: string) {
+  view.value = newView;
+  const settings = getSettings();
+  settings.experiments_view = view.value;
+  saveSettings(settings);
+}
 </script>

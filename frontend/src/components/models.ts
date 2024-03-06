@@ -7,6 +7,7 @@ export interface Reference extends DBModel {
   reference: string;
   link_to_experimental_paper: string | null;
   corresponding_author_email: string;
+  request_data_available: string | null;
   link_to_request_data: string | null;
 }
 
@@ -26,8 +27,34 @@ export interface Experiment extends DBModel {
   experimental_results_reported: string[] | null;
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
+  files: FileNode;
 }
 
 export interface RunResult extends DBModel {
+  run_id: string;
   experiment_id: number;
+  actual_pga_x: number | null;
+  actual_pga_y: number | null;
+  dg_reported: number | null;
+  dg_derived: number | null;
+  reported_t1_x: number | null;
+  reported_t1_y: number | null;
+}
+
+export interface FileNode {
+  name: string;
+  path: string;
+  size: number | undefined;
+  alt_name: string | undefined;
+  alt_path: string | undefined;
+  alt_size: number | undefined;
+  is_file: boolean;
+  children: FileNode[] | undefined;
+}
+
+export interface RunResultFileNodes {
+  top_displacement_histories: FileNode | undefined;
+  global_force_displacement_curve: FileNode | undefined;
+  shake_table_accelerations: FileNode | undefined;
+  crack_maps: FileNode | undefined;
 }
