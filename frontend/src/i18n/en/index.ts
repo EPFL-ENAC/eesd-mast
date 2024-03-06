@@ -29,7 +29,7 @@ export default {
   original_size: 'Original',
   experiment_id: 'Experiment ID',
   storeys_nb: 'Number of Storeys',
-  building_height: 'Building Height',
+  building_height: 'Building Height (without roof structure)',
   total_building_height: 'Total Building Height',
   test_scale: 'Test Scale',
   simultaneous_excitations_nb: 'Number of Simultaneous Excitations',
