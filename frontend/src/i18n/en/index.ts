@@ -106,4 +106,5 @@ export default {
   contact_us_intro:
     'To submit a new reference and test data, please contact us:',
   reset_filters: 'Reset filters',
+  year: 'Year',
 };

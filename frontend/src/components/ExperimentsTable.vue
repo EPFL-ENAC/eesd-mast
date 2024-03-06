@@ -230,6 +230,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'publication_year',
+    required: true,
+    label: t('year'),
+    align: 'left',
+    field: 'publication_year',
+    sortable: true,
+  },
+  {
     name: 'reference',
     required: true,
     label: t('reference'),
