@@ -62,6 +62,8 @@ The description of a building experiment will provide the following information:
 
 ##### Test Results
 
+Provide the test results for each run as follow:
+
 - **Run ID**
 - **Nominal PGA X**
 - **Nominal PGA Y**
