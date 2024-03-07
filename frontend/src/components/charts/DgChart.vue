@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { ac } from 'app/dist/spa/assets/index.3b4f5f06';
 export default defineComponent({
   name: 'DgChart',
 });
@@ -46,10 +47,12 @@ use([
 
 interface DgChartProps {
   experiment: Experiment;
+  direction: string;
   height?: number;
 }
 const props = withDefaults(defineProps<DgChartProps>(), {
   experiment: undefined,
+  direction: 'x',
   height: 300,
 });
 
@@ -89,28 +92,24 @@ function initChartOptions() {
 
 function buildOptions() {
   loading.value = true;
-  const visibleColumns = [
-    'nominal_pga_x',
-    'nominal_pga_y',
-    'actual_pga_x',
-    'actual_pga_y',
-    'dg_reported',
-    'dg_derived',
-  ].filter(
+  const nominal = `nominal_pga_${props.direction}`;
+  const actual = `actual_pga_${props.direction}`;
+  const visibleColumns = [nominal, actual, 'dg_reported', 'dg_derived'].filter(
     (col) =>
       runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
   );
-  let pgaColumn = visibleColumns.includes('actual_pga_x')
-    ? 'actual_pga_x'
-    : 'actual_pga_y';
-  if (!visibleColumns.includes(pgaColumn)) {
-    pgaColumn = visibleColumns.includes('nominal_pga_x')
-      ? 'nominal_pga_x'
-      : 'nominal_pga_y';
-  }
+  let pgaColumn = visibleColumns.includes(actual) ? actual : nominal;
   const dgColumn = visibleColumns.includes('dg_reported')
     ? 'dg_reported'
     : 'dg_derived';
+
+  if (
+    !visibleColumns.includes(pgaColumn) ||
+    !visibleColumns.includes(dgColumn)
+  ) {
+    loading.value = false;
+    return;
+  }
 
   const datasetDG = runResults.value
     .filter((result) => result[dgColumn] !== null && result[pgaColumn] !== null)
