@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { ac } from 'app/dist/spa/assets/index.3b4f5f06';
 export default defineComponent({
   name: 'PgaChart',
 });
@@ -46,10 +47,12 @@ use([
 
 interface PgaChartProps {
   experiment: Experiment;
+  direction: string;
   height?: number;
 }
 const props = withDefaults(defineProps<PgaChartProps>(), {
   experiment: undefined,
+  direction: 'x',
   height: 300,
 });
 
@@ -89,29 +92,19 @@ function initChartOptions() {
 
 function buildOptions() {
   loading.value = true;
-  const visibleColumns = [
-    'nominal_pga_x',
-    'nominal_pga_y',
-    'actual_pga_x',
-    'actual_pga_y',
-    'reported_t1_x',
-    'reported_t1_y',
-  ].filter(
+  const nominal = `nominal_pga_${props.direction}`;
+  const actual = `actual_pga_${props.direction}`;
+  const reported = `reported_t1_${props.direction}`;
+  const visibleColumns = [nominal, actual, reported].filter(
     (col) =>
       runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
   );
-  let pgaColumn = visibleColumns.includes('actual_pga_x')
-    ? 'actual_pga_x'
-    : 'actual_pga_y';
-  if (!visibleColumns.includes(pgaColumn)) {
-    pgaColumn = visibleColumns.includes('nominal_pga_x')
-      ? 'nominal_pga_x'
-      : 'nominal_pga_y';
-  }
-  const periodColumn = visibleColumns.includes('reported_t1_x')
-    ? 'reported_t1_x'
-    : 'reported_t1_y';
-  if (!visibleColumns.includes(periodColumn)) {
+  let pgaColumn = visibleColumns.includes(actual) ? actual : nominal;
+  const periodColumn = reported;
+  if (
+    !visibleColumns.includes(pgaColumn) ||
+    !visibleColumns.includes(periodColumn)
+  ) {
     loading.value = false;
     return;
   }

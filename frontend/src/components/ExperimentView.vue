@@ -96,7 +96,8 @@
         </div>
       </div>
       <div class="col-12 col-md">
-        <pga-chart :experiment="selected" :height="300" />
+        <pga-chart :experiment="selected" direction="x" :height="300" />
+        <pga-chart :experiment="selected" direction="y" :height="300" />
       </div>
       <div class="col-12 col-md">
         <dg-chart :experiment="selected" :height="300" />
