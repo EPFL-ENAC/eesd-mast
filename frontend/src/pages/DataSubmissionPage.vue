@@ -20,12 +20,16 @@
           @click="openPeoplePage('mathias.haindl')"
         />
       </div>
-      <div></div>
+      <div>
+        <q-markdown :src="DataSubmissionMd" no-line-numbers />
+      </div>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
+import DataSubmissionMd from 'src/assets/data-submission.md';
+
 function openPeoplePage(username: string) {
   window.open(`https://people.epfl.ch/${username}?lang=en`);
 }

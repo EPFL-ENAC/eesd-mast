@@ -9,14 +9,13 @@
 
     <q-separator />
     <div class="q-pa-md">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae,
-        qui voluptatum nisi eaque harum iusto accusantium facere at dolore
-        repellendus repellat nostrum corporis consectetur quos! Ipsum fugit
-        atque iure magnam!
-      </p>
+      <div>
+        <q-markdown :src="OverViewMd" no-line-numbers />
+      </div>
     </div>
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import OverViewMd from 'src/assets/overview.md';
+</script>
