@@ -2,14 +2,18 @@ from sqlmodel import SQLModel, select
 from sqlalchemy import func
 import json
 
+
 class QueryBuilder:
-    
+
     def __init__(self, model: SQLModel, filter: dict | str, sort: list | str, range: list | str):
         self.model = model
-        self.filter = json.loads(filter) if filter and type(filter) == str else {}
-        self.sort = json.loads(sort) if sort and type(sort) == str else []
-        self.range = json.loads(range) if range and type(range) == str else []
-        
+        self.filter = json.loads(filter) if filter and type(
+            filter) == str else (filter if filter else {})
+        self.sort = json.loads(sort) if sort and type(
+            sort) == str else (sort if sort else [])
+        self.range = json.loads(range) if range and type(
+            range) == str else (range if range else [])
+
     def build_count_query(self):
         return self._apply_filter(select(func.count(self.model.id)))
 
@@ -23,7 +27,7 @@ class QueryBuilder:
             for field, value in self.filter.items():
                 attr = getattr(self.model, field)
                 attribute_type = type(attr)
-                print(attribute_type) 
+                print(attribute_type)
                 if isinstance(value, list):
                     query = query.where(attr.in_(value))
                 elif field == "id" or field == "reference_id" or field == "experiment_id" or isinstance(value, int):

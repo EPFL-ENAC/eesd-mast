@@ -221,6 +221,17 @@ async def upload_experiment_files(
     return experiment
 
 
+@router.delete("/{experiment_id}/run_results")
+async def delete_experiment_run_results(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+) -> None:
+    """Delete run results of an experiment by id"""
+    service = ExperimentsService(session)
+    await service.delete_run_results(experiment_id)
+
+
 @router.delete("/{experiment_id}/files")
 async def delete_experiment_files(
     experiment_id: int,

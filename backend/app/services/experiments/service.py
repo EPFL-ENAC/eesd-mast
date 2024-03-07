@@ -121,6 +121,11 @@ class ExperimentsService:
 
         return experiment
 
+    async def delete_run_results(self, experiment_id: int) -> None:
+        """Delete run results of an experiment by id"""
+        run_results_service = RunResultsService(self.session)
+        await run_results_service.delete_by_experiment(experiment_id)
+
     async def delete_files(self, experiment_id: int) -> None:
         """Delete files of an experiment by id"""
         res = await self.session.exec(
