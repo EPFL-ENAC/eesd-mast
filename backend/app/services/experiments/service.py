@@ -126,6 +126,21 @@ class ExperimentsService:
         run_results_service = RunResultsService(self.session)
         await run_results_service.delete_by_experiment(experiment_id)
 
+    async def delete_scheme_file(self, experiment_id: int) -> None:
+        """Delete scheme file of an experiment by id"""
+        res = await self.session.exec(
+            select(Experiment).where(Experiment.id == experiment_id)
+        )
+        experiment = res.one_or_none()
+
+        if experiment and experiment.scheme:
+            name = experiment.scheme['name']
+            s3_file = f"experiments/{experiment_id}/{name}"
+            deleted = await s3_client.delete_file(s3_file)
+            if deleted:
+                experiment.scheme = None
+                await self.session.commit()
+
     async def delete_files(self, experiment_id: int) -> None:
         """Delete files of an experiment by id"""
         res = await self.session.exec(
@@ -134,13 +149,12 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.files:
-            if experiment.files:
-                key = experiment.files['name']
-                s3_folder = f"experiments/{experiment_id}/{key}"
-                deleted = await s3_client.delete_files(s3_folder)
-                if deleted:
-                    experiment.files = None
-                    await self.session.commit()
+            key = experiment.files['name']
+            s3_folder = f"experiments/{experiment_id}/{key}"
+            deleted = await s3_client.delete_files(s3_folder)
+            if deleted:
+                experiment.files = None
+                await self.session.commit()
 
     async def delete_by_reference(self, reference_id: int, recursive: bool = False) -> None:
         """Delete all experiments by reference id"""
