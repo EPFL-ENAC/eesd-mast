@@ -1,8 +1,8 @@
-### Instructions
+## Instructions
 
 To report a new building experiment, there are some data format conventions to follow.
 
-#### Reference Publication
+### Reference Publication
 
 The building experiment was reported in a reference publication.
 
@@ -19,7 +19,7 @@ If the reference publication is not in the database, you will provide the follow
 - **Request Data Available**: one of "Openly available", "Not available" or "Available on request"
 - **Link To Request Data**: a web link to a data access request site (optional)
 
-#### Building Experiment
+### Building Experiment
 
 The description of a building experiment will provide the following information:
 
@@ -60,7 +60,7 @@ The description of a building experiment will provide the following information:
 - **Publication Year**
 - **Reference ID**
 
-##### Test Results
+#### Test Results
 
 Provide the test results for each run as follow:
 
@@ -82,7 +82,7 @@ Provide the test results for each run as follow:
 - **Reported T1 Y**
 - **Experiment ID**
 
-##### Files
+#### Files
 
 The experiment's file repository layout conventions are:
 
@@ -121,6 +121,6 @@ where:
 - `.png` files are images,
 - `.txt` files are data files in tab separated values format.
 
-### Command Line Tool
+## Command Line Tool
 
 A command line tool is available for querying the database, extracting building experiment files, preparing data to upload and more. See usage instructions of [MAST CLI](https://github.com/EPFL-ENAC/eesd-mast-cli)
