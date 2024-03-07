@@ -41,7 +41,7 @@
       </div>
     </div>
     <q-card flat class="q-mt-md q-mb-md">
-      <q-card-section>
+      <q-card-section v-if="selected.scheme">
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"

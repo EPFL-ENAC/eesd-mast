@@ -57,42 +57,44 @@
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div class="col-12 col-md-auto">
-        <div>
-          <q-img
-            v-if="imageDisplay === 'fitted'"
-            :src="`${baseUrl}/files/${selected.scheme.path}`"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-            width="250px"
-          />
-          <img
-            v-else
-            :src="`${baseUrl}/files/${selected.scheme.path}`"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-          />
-        </div>
-        <div>
-          <span class="text-caption">{{ $t('image_size') }}</span>
-          <q-btn
-            :disable="imageDisplay === 'fitted'"
-            :label="$t('fitted_size')"
-            dense
-            flat
-            no-caps
-            size="sm"
-            @click="imageDisplay = 'fitted'"
-            class="on-left on-right"
-          />
-          <q-btn
-            :disable="imageDisplay !== 'fitted'"
-            :label="$t('original_size')"
-            dense
-            flat
-            no-caps
-            size="sm"
-            @click="imageDisplay = 'full'"
-          />
+        <div v-if="selected.scheme">
+          <div>
+            <q-img
+              v-if="imageDisplay === 'fitted'"
+              :src="`${baseUrl}/files/${selected.scheme.path}`"
+              :alt="`${selected.description} [${selected.reference}]`"
+              spinner-color="grey-6"
+              width="250px"
+            />
+            <img
+              v-else
+              :src="`${baseUrl}/files/${selected.scheme.path}`"
+              :alt="`${selected.description} [${selected.reference}]`"
+              spinner-color="grey-6"
+            />
+          </div>
+          <div>
+            <span class="text-caption">{{ $t('image_size') }}</span>
+            <q-btn
+              :disable="imageDisplay === 'fitted'"
+              :label="$t('fitted_size')"
+              dense
+              flat
+              no-caps
+              size="sm"
+              @click="imageDisplay = 'fitted'"
+              class="on-left on-right"
+            />
+            <q-btn
+              :disable="imageDisplay !== 'fitted'"
+              :label="$t('original_size')"
+              dense
+              flat
+              no-caps
+              size="sm"
+              @click="imageDisplay = 'full'"
+            />
+          </div>
         </div>
       </div>
       <div class="col-12 col-md">

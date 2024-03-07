@@ -14,7 +14,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ac } from 'app/dist/spa/assets/index.3b4f5f06';
 export default defineComponent({
   name: 'PgaChart',
 });
