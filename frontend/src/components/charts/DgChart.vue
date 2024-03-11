@@ -120,6 +120,7 @@ function buildOptions() {
   const datasetDG2 = datasetDG.filter((result) => result[0] === 2);
   const datasetDG3 = datasetDG.filter((result) => result[0] === 3);
   const datasetDG4 = datasetDG.filter((result) => result[0] === 4);
+  const datasetDG5 = datasetDG.filter((result) => result[0] === 5);
 
   const newOption: EChartsOption = {
     // title: {
@@ -197,6 +198,16 @@ function buildOptions() {
         symbolSize: 15,
         itemStyle: {
           color: 'orange',
+          opacity: 0.5,
+        },
+      },
+      {
+        name: t(dgColumn),
+        data: datasetDG5,
+        type: 'scatter',
+        symbolSize: 15,
+        itemStyle: {
+          color: 'purple',
           opacity: 0.5,
         },
       },
