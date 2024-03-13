@@ -1,7 +1,7 @@
 export default {
   overview: 'Overview',
   tested_buildings: 'Tested Buildings',
-  data_submission: 'Data Submission',
+  contact_us: 'Contact Us',
   summary:
     'A comprehensive database and collaborative resource for advancing seismic assessment of unreinforced masonry buildings',
   references: 'References',

@@ -1,7 +1,5 @@
 <template>
   <q-page>
-    <h5 class="q-pa-md q-mt-sm q-mb-sm">{{ $t('data_submission') }}</h5>
-    <q-separator />
     <div class="q-pa-md">
       <p>{{ $t('contact_us_intro') }}</p>
 
@@ -19,9 +17,6 @@
           label="Mathias Haindl"
           @click="openPeoplePage('mathias.haindl')"
         />
-      </div>
-      <div>
-        <q-markdown :src="DataSubmissionMd" no-line-numbers />
       </div>
     </div>
   </q-page>
