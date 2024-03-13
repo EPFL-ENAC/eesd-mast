@@ -142,7 +142,7 @@ function buildOptions() {
     },
     xAxis: {
       type: 'value',
-      name: `${t(dgColumn + '_axis')} (g)`,
+      name: t(dgColumn + '_axis'),
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
