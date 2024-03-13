@@ -23,8 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import DataSubmissionMd from 'src/assets/data-submission.md';
-
 function openPeoplePage(username: string) {
   window.open(`https://people.epfl.ch/${username}?lang=en`);
 }

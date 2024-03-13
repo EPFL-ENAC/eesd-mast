@@ -4,6 +4,7 @@ from app.services.runresults.service import RunResultsService
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
+from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -12,6 +13,11 @@ class ExperimentsService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def count(self) -> int:
+        """Count all experiments"""
+        count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
+        return count
 
     async def get(self, experiment_id: int) -> ExperimentRead:
         """Get an experiment by id"""

@@ -92,6 +92,7 @@
     "watchSyncEffect": true,
     "useFiltersStore": true,
     "useReferencesStore": true,
-    "useRunResultsStore": true
+    "useRunResultsStore": true,
+    "useAnalysisStore": true
   }
 }

@@ -1,5 +1,8 @@
 export default {
   overview: 'Overview',
+  buildings_metrics_label: 'Tests on unreinforced masonry buildings',
+  references_metrics_label: 'References with experimental data',
+  run_results_metrics_label: 'Downloadable experimental results',
   tested_buildings: 'Tested Buildings',
   contact_us: 'Contact Us',
   summary:

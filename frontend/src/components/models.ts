@@ -58,3 +58,9 @@ export interface RunResultFileNodes {
   shake_table_accelerations: FileNode | undefined;
   crack_maps: FileNode | undefined;
 }
+
+export interface Metrics {
+  experiments_count: number;
+  references_count: number;
+  run_results_count: number;
+}
