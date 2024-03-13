@@ -142,7 +142,7 @@ function buildOptions() {
     },
     xAxis: {
       type: 'value',
-      name: `${t(dgColumn)} (g)`,
+      name: `${t(dgColumn + '_axis')} (g)`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -152,7 +152,7 @@ function buildOptions() {
     },
     yAxis: {
       type: 'value',
-      name: `${t(pgaColumn)} (s)`,
+      name: `${t(pgaColumn + '_axis')} (s)`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -167,7 +167,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'red',
+          color: 'blue',
           opacity: 0.5,
         },
       },
@@ -177,7 +177,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'blue',
+          color: 'green',
           opacity: 0.5,
         },
       },
@@ -187,7 +187,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'green',
+          color: 'yellow',
           opacity: 0.5,
         },
       },
@@ -207,7 +207,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'purple',
+          color: 'red',
           opacity: 0.5,
         },
       },

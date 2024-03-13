@@ -138,7 +138,7 @@ function buildOptions() {
     },
     xAxis: {
       type: 'value',
-      name: `${t(pgaColumn)} (g)`,
+      name: `${t(pgaColumn + '_axis')} (g units)`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -148,7 +148,7 @@ function buildOptions() {
     },
     yAxis: {
       type: 'value',
-      name: `${t(periodColumn)} (s)`,
+      name: `${t(periodColumn + '_axis')} (sec.)`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',

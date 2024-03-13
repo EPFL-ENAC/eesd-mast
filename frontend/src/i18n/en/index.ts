@@ -107,4 +107,13 @@ export default {
     'To submit a new reference and test data, please contact us:',
   reset_filters: 'Reset filters',
   year: 'Year',
+  reported_t1_x_axis: 'Evolution of fundamental period X',
+  reported_t1_y_axis: 'Evolution of fundamental period Y',
+  actual_pga_x_axis: 'PGA X measured at the shake table',
+  actual_pga_y_axis: 'PGA Y measured at the shake table',
+  actual_pga_z_axis: 'PGA Z measured at the shake table',
+  nominal_pga_x_axis: 'Nominal PGA X',
+  nominal_pga_y_axis: 'Nominal PGA Y',
+  nominal_pga_z_axis: 'Nominal PGA Z',
+  dg_reported_axis: 'Estimated damage grade (DG)',
 };
