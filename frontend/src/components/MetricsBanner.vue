@@ -3,7 +3,7 @@
     <q-card flat square class="bg-grey-9 text-white">
       <q-card-section>
         <div class="row">
-          <div class="col col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-4 col-sm-12 text-center">
             <div class="text-h3">
               {{ analysis.metrics.experiments_count }}
             </div>
@@ -11,7 +11,7 @@
               {{ $t('buildings_metrics_label') }}
             </div>
           </div>
-          <div class="col col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-4 col-sm-12 text-center">
             <div class="text-h3">
               {{ analysis.metrics.references_count }}
             </div>
@@ -19,7 +19,7 @@
               {{ $t('references_metrics_label') }}
             </div>
           </div>
-          <div class="col col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-4 col-sm-12 text-center">
             <div class="text-h4 q-mt-sm">
               {{ $t('downloadable') }}
             </div>
@@ -40,7 +40,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { Metrics } from 'src/components/models';
 import { useAnalysisStore } from 'src/stores/analysis';
 
 const analysis = useAnalysisStore();

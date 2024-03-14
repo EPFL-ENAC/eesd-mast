@@ -124,11 +124,12 @@ import { baseUrl } from 'src/boot/axios';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 import ReferenceView from './ReferenceView.vue';
 import { Experiment } from 'src/components/models';
+import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
 
-export interface ExperimentViewProps {
+interface ExperimentViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<ExperimentViewProps>(), {
@@ -154,6 +155,7 @@ const items: FieldItem<Experiment>[] = [
   },
   {
     field: 'test_scale',
+    format: (val: Experiment) => testScaleLabel(val.test_scale),
   },
   {
     field: 'simultaneous_excitations_nb',

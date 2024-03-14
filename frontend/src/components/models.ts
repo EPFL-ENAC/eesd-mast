@@ -28,6 +28,7 @@ export interface Experiment extends DBModel {
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
   files: FileNode;
+  test_scale: number | null;
 }
 
 export interface RunResult extends DBModel {
@@ -63,4 +64,17 @@ export interface Metrics {
   experiments_count: number;
   references_count: number;
   run_results_count: number;
+}
+
+export interface FieldValue {
+  field: string;
+  value: string | number | null;
+}
+
+export interface FieldFrequencies {
+  [Key: string]: number;
+}
+
+export interface ExperimentFrequencies {
+  [Key: string]: FieldFrequencies;
 }

@@ -1,10 +1,10 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text, func
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -18,6 +18,20 @@ class ExperimentsService:
         """Count all experiments"""
         count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
         return count
+
+    async def aggregate(self, filter: dict | str) -> ExperimentFrequencies:
+        """Get aggregations for the experiments matching filter"""
+        field_counts = {}
+        for field in ["masonry_unit_material", "diaphragm_material", "storeys_nb", "test_scale"]:
+            builder = QueryBuilder(Experiment, filter, [], [])
+            query = builder.build_frequencies_query(field)
+            results = await self.session.exec(query)
+            rows = results.fetchall()
+            counts = {row[0]: row[1] for row in rows}
+            field_counts[field] = counts
+
+        print(field_counts)
+        return ExperimentFrequencies(**field_counts)
 
     async def get(self, experiment_id: int) -> ExperimentRead:
         """Get an experiment by id"""

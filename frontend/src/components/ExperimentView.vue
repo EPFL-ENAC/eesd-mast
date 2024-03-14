@@ -173,6 +173,7 @@ import FieldsList, { FieldItem } from './FieldsList.vue';
 import PgaChart from './charts/PgaChart.vue';
 import DgChart from './charts/DgChart.vue';
 import { Experiment, FileNode } from 'src/components/models';
+import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
@@ -203,6 +204,7 @@ const items: FieldItem<Experiment>[] = [
   },
   {
     field: 'test_scale',
+    format: (val: Experiment) => testScaleLabel(val.test_scale),
   },
   {
     field: 'simultaneous_excitations_nb',

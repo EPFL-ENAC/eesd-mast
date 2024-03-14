@@ -5,6 +5,7 @@ from app.services.analysis.models import Metrics
 from app.services.experiments.service import ExperimentsService
 from app.services.references.service import ReferencesService
 from app.services.runresults.service import RunResultsService
+from app.services.experiments.models import ExperimentFrequencies
 
 router = APIRouter()
 
@@ -21,3 +22,15 @@ async def get_metrics(
     runres_service = RunResultsService(session)
     runres_count = await runres_service.count()
     return Metrics(experiments_count=exp_count, references_count=ref_count, run_results_count=runres_count)
+
+
+@router.get("/frequencies", response_model=ExperimentFrequencies)
+async def get_experiment_frequencies(
+    response: Response,
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+) -> ExperimentFrequencies:
+    """Get an overview of the experiments"""
+    service = ExperimentsService(session)
+    res = await service.aggregate(filter)
+    return res

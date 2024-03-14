@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, select
-from sqlalchemy import func
+from sqlalchemy import func, text
 import json
 
 
@@ -16,6 +16,12 @@ class QueryBuilder:
 
     def build_count_query(self):
         return self._apply_filter(select(func.count(self.model.id)))
+
+    def build_frequencies_query(self, field: str):
+        column = getattr(self.model, field)
+        query = select(column, func.count(column).label("count")).order_by(text("count DESC")).group_by(
+            text(field))
+        return self._apply_filter(query)
 
     def build_query(self, total_count):
         query = self._apply_filter(select(self.model))
