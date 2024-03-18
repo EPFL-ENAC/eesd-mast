@@ -35,7 +35,7 @@ import {
   LegendComponent,
 } from 'echarts/components';
 import { testScaleLabel, testScaleValue } from 'src/utils/numbers';
-import { colorPalette } from 'src/utils/colors';
+import { getFieldValueColor } from 'src/utils/colors';
 import { FieldValue } from 'src/components/models';
 import { useAnalysisStore } from 'src/stores/analysis';
 
@@ -117,7 +117,9 @@ function initChartOptions() {
     value,
   }));
 
-  const colors = dataset.map((item) => colorPalette(props.field)[item.name]);
+  const colors = dataset.map((item) =>
+    getFieldValueColor(props.field, item.name)
+  );
 
   const newOption: EChartsOption = {
     title: {

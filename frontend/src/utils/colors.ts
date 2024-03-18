@@ -1,4 +1,4 @@
-const palettes: { [Key: string]: { [Key: string]: string } } = {
+const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
   masonry_unit_material: {
     Clay: '#1f77b4',
     Limestone: '#ff7f0e',
@@ -35,6 +35,6 @@ const palettes: { [Key: string]: { [Key: string]: string } } = {
   },
 };
 
-export function colorPalette(name: string): { [Key: string]: string } {
-  return palettes[name] || {};
+export function getFieldValueColor(field: string, value: string): string {
+  return colorPalettes[field][value] || '#000000';
 }
