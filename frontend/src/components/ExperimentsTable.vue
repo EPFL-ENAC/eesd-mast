@@ -58,6 +58,7 @@
       <template v-slot:body-cell-scheme="props">
         <q-td :props="props">
           <q-img
+            v-if="props.value"
             :src="`${baseUrl}/files/${props.value.path}`"
             spinner-color="grey-6"
             width="100px"
@@ -73,7 +74,11 @@
               @click="onExperiment(props.row)"
             >
               <q-img
-                :src="`${baseUrl}/files/${props.row.scheme.path}`"
+                :src="
+                  props.row.scheme
+                    ? `${baseUrl}/files/${props.row.scheme.path}`
+                    : '/no-image.png'
+                "
                 :alt="`${props.row.description} [${props.row.reference}]`"
                 spinner-color="grey-6"
                 height="250px"
@@ -89,6 +94,19 @@
                     </span>
                   </div>
                 </div>
+                <template v-slot:error>
+                  <div class="absolute-bottom text-center">
+                    <div class="text-subtitle2">
+                      {{ props.row.reference.reference }}
+                    </div>
+                    <div class="text-caption">
+                      {{ props.row.description }}
+                      <span v-if="props.row.experiment_id">
+                        - {{ props.row.experiment_id }}
+                      </span>
+                    </div>
+                  </div>
+                </template>
               </q-img>
             </q-card-section>
           </q-card>

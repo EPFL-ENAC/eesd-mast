@@ -26,7 +26,9 @@ router = APIRouter()
 @router.get("/{file_path:path}",
             status_code=200,
             description="-- Download any assets from S3 --")
-async def get_file(file_path: str, download: bool = Query(False, alias="d", description="Download file instead of inline display")):
+async def get_file(file_path: str,
+                   download: bool = Query(
+                       False, alias="d", description="Download file instead of inline display")):
     (body, content_type) = await s3_client.get_file(file_path)
     if body:
         if download:

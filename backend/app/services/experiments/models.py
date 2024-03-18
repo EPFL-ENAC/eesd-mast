@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, ARRAY, UniqueConstraint, Column, Integer, String, JSON
 from typing import List, Dict, Optional
+from pydantic import BaseModel
 
 
 class ExperimentBase(SQLModel):
@@ -76,3 +77,10 @@ class ExperimentCreate(ExperimentBase):
 
 class ExperimentUpdate(ExperimentBase):
     pass
+
+
+class ExperimentFrequencies(BaseModel):
+    masonry_unit_material: dict
+    diaphragm_material: dict
+    storeys_nb: dict
+    test_scale: dict

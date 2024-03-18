@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-breadcrumbs class="q-pa-md q-mt-sm q-mb-sm text-h5">
+    <q-breadcrumbs class="q-pa-md q-mt-sm q-mb-sm text-h6">
       <q-breadcrumbs-el :label="$t('tested_buildings')" to="../buildings" />
       <q-breadcrumbs-el v-if="experiment" :label="title" />
     </q-breadcrumbs>

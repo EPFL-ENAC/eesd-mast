@@ -1,22 +1,17 @@
 <template>
   <q-page>
     <div class="q-pa-md">
-      <h5 class="q-mt-sm q-mb-sm">{{ $t('overview') }}</h5>
       <div class="text-subtitle1 text-grey-8">
-        {{ $t('summary') }}
+        <q-markdown :src="OverViewMd" no-line-numbers />
       </div>
     </div>
-
-    <q-separator />
-    <div class="q-pa-md">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae,
-        qui voluptatum nisi eaque harum iusto accusantium facere at dolore
-        repellendus repellat nostrum corporis consectetur quos! Ipsum fugit
-        atque iure magnam!
-      </p>
-    </div>
+    <metrics-banner />
+    <experiment-aggregations />
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import OverViewMd from 'src/assets/overview.md';
+import MetricsBanner from 'src/components/MetricsBanner.vue';
+import ExperimentAggregations from 'src/components/ExperimentAggregations.vue';
+</script>

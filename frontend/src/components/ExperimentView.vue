@@ -57,49 +57,53 @@
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div class="col-12 col-md-auto">
-        <div>
-          <q-img
-            v-if="imageDisplay === 'fitted'"
-            :src="`${baseUrl}/files/${selected.scheme.path}`"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-            width="250px"
-          />
-          <img
-            v-else
-            :src="`${baseUrl}/files/${selected.scheme.path}`"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-          />
-        </div>
-        <div>
-          <span class="text-caption">{{ $t('image_size') }}</span>
-          <q-btn
-            :disable="imageDisplay === 'fitted'"
-            :label="$t('fitted_size')"
-            dense
-            flat
-            no-caps
-            size="sm"
-            @click="imageDisplay = 'fitted'"
-            class="on-left on-right"
-          />
-          <q-btn
-            :disable="imageDisplay !== 'fitted'"
-            :label="$t('original_size')"
-            dense
-            flat
-            no-caps
-            size="sm"
-            @click="imageDisplay = 'full'"
-          />
+        <div v-if="selected.scheme">
+          <div>
+            <q-img
+              v-if="imageDisplay === 'fitted'"
+              :src="`${baseUrl}/files/${selected.scheme.path}`"
+              :alt="`${selected.description} [${selected.reference}]`"
+              spinner-color="grey-6"
+              width="250px"
+            />
+            <img
+              v-else
+              :src="`${baseUrl}/files/${selected.scheme.path}`"
+              :alt="`${selected.description} [${selected.reference}]`"
+              spinner-color="grey-6"
+            />
+          </div>
+          <div>
+            <span class="text-caption">{{ $t('image_size') }}</span>
+            <q-btn
+              :disable="imageDisplay === 'fitted'"
+              :label="$t('fitted_size')"
+              dense
+              flat
+              no-caps
+              size="sm"
+              @click="imageDisplay = 'fitted'"
+              class="on-left on-right"
+            />
+            <q-btn
+              :disable="imageDisplay !== 'fitted'"
+              :label="$t('original_size')"
+              dense
+              flat
+              no-caps
+              size="sm"
+              @click="imageDisplay = 'full'"
+            />
+          </div>
         </div>
       </div>
       <div class="col-12 col-md">
-        <pga-chart :experiment="selected" :height="300" />
+        <pga-chart :experiment="selected" direction="x" :height="300" />
+        <pga-chart :experiment="selected" direction="y" :height="300" />
       </div>
       <div class="col-12 col-md">
-        <dg-chart :experiment="selected" :height="300" />
+        <dg-chart :experiment="selected" direction="x" :height="300" />
+        <dg-chart :experiment="selected" direction="y" :height="300" />
       </div>
     </div>
 
@@ -169,6 +173,7 @@ import FieldsList, { FieldItem } from './FieldsList.vue';
 import PgaChart from './charts/PgaChart.vue';
 import DgChart from './charts/DgChart.vue';
 import { Experiment, FileNode } from 'src/components/models';
+import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
@@ -199,6 +204,7 @@ const items: FieldItem<Experiment>[] = [
   },
   {
     field: 'test_scale',
+    format: (val: Experiment) => testScaleLabel(val.test_scale),
   },
   {
     field: 'simultaneous_excitations_nb',

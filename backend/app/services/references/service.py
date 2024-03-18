@@ -2,13 +2,20 @@ from app.services.references.models import Reference, ReferenceUpdate, Reference
 from app.services.experiments.service import ExperimentsService
 from app.utils.query import QueryBuilder
 from sqlmodel import select
+from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
 
-class ReferenceService:
+
+class ReferencesService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def count(self) -> int:
+        """Count all run results"""
+        count = (await self.session.exec(text("select count(id) from reference"))).scalar()
+        return count
 
     async def get(self, reference_id: int | str) -> Reference:
         """Get a reference by id or short name"""
@@ -23,7 +30,7 @@ class ReferenceService:
             raise HTTPException(status_code=404, detail="Reference not found")
 
         return reference
-    
+
     async def find(self, filter: dict | str, sort: list | str, range: list | str) -> list[int, int, int, Reference]:
         """Get all references matching filter and range"""
         builder = QueryBuilder(Reference, filter, sort, range)
@@ -41,14 +48,14 @@ class ReferenceService:
         references = results.all()
 
         return [start, end, total_count, references]
-    
+
     async def create(self, reference: Reference) -> ReferenceRead:
         """Create a reference"""
         self.session.add(reference)
         await self.session.commit()
         await self.session.refresh(reference)
         return reference
-    
+
     async def patch(self, reference_id: int, reference: ReferenceUpdate) -> ReferenceRead:
         """Update a reference"""
         res = await self.session.exec(
@@ -66,7 +73,7 @@ class ReferenceService:
         await self.session.refresh(reference_db)
 
         return reference_db
-    
+
     async def delete(self, reference_id: int, recursive: bool = False) -> None:
         """Delete a reference by id"""
         res = await self.session.exec(

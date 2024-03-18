@@ -46,3 +46,7 @@ stop:
 
 logs:
 	docker compose logs -f $(service)
+
+
+psql:
+	psql -h localhost -p 5432 -U postgres

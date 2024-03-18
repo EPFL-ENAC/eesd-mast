@@ -5,7 +5,7 @@ class FileNode:
     """A node in a tree representing a file system, used to represent a list of file objects in S3
     """
 
-    def __init__(self, name, path=None, is_file=False, size=None):
+    def __init__(self, name, path=None, size=None, is_file=False, alt_name=None, alt_path=None, alt_size=None):
         self.name = name
         self.path = path
         self.size = size
@@ -37,7 +37,7 @@ class FileNode:
                 if not is_file:
                     new_path = file_ref["path"].split(new_path)[0] + new_path
                 new_size = file_ref["size"] if is_file else None
-                new_node = FileNode(part, new_path, is_file, new_size)
+                new_node = FileNode(part, new_path, new_size, is_file)
                 if is_file and "alt_name" in file_ref:
                     new_node.alt_name = file_ref["alt_name"]
                     new_node.alt_path = file_ref["alt_path"]

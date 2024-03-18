@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/submit',
-        component: () => import('pages/DataSubmissionPage.vue'),
+        component: () => import('src/pages/ContactUsPage.vue'),
       },
     ],
   },

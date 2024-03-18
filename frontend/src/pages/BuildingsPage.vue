@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <h5 class="q-pa-md q-mt-sm q-mb-sm">{{ $t('tested_buildings') }}</h5>
+    <h6 class="q-pa-md q-mt-sm q-mb-sm">{{ $t('tested_buildings') }}</h6>
     <q-separator />
     <experiments-table></experiments-table>
   </q-page>

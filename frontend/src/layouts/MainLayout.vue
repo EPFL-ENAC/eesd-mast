@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title class="text-weight-medium">
-          MAsonry Shake-Table
+          Masonry Shake-Table Database
         </q-toolbar-title>
       </q-toolbar>
       <q-toolbar inset style="min-height: 20px">
@@ -37,7 +37,7 @@
         <q-btn
           flat
           dense
-          :label="$t('data_submission')"
+          :label="$t('contact_us')"
           no-caps
           to="/submit"
           :class="isSubmit ? 'bg-grey-3' : ''"

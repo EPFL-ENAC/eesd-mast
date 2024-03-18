@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, Depends, HTTPException, Request
+from fastapi import FastAPI, status, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import config
 from app.db import get_session, AsyncSession
@@ -6,6 +6,7 @@ from app.services.files.views import router as files_router
 from app.services.references.views import router as references_router
 from app.services.experiments.views import router as experiments_router
 from app.services.runresults.views import router as run_results_router
+from app.services.analysis.views import router as analysis_router
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 
@@ -27,6 +28,7 @@ class HealthCheck(BaseModel):
     """Response model to validate and return when performing a health check."""
 
     status: str = "OK"
+
 
 @app.get(
     "/healthz",
@@ -71,4 +73,9 @@ app.include_router(
     run_results_router,
     prefix="/run_results",
     tags=["Run Results"],
+)
+app.include_router(
+    analysis_router,
+    prefix="/analysis",
+    tags=["Analysis"],
 )

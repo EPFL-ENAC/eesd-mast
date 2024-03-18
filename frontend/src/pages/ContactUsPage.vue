@@ -1,7 +1,5 @@
 <template>
   <q-page>
-    <h5 class="q-pa-md q-mt-sm q-mb-sm">{{ $t('data_submission') }}</h5>
-    <q-separator />
     <div class="q-pa-md">
       <p>{{ $t('contact_us_intro') }}</p>
 
@@ -20,7 +18,6 @@
           @click="openPeoplePage('mathias.haindl')"
         />
       </div>
-      <div></div>
     </div>
   </q-page>
 </template>
