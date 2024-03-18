@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { colorPalette } from 'src/utils/colors';
 export default defineComponent({
   name: 'FieldFrequenciesChart',
 });
@@ -34,6 +35,7 @@ import {
   LegendComponent,
 } from 'echarts/components';
 import { testScaleLabel, testScaleValue } from 'src/utils/numbers';
+import { colorPalette } from 'src/utils/colors';
 import { FieldValue } from 'src/components/models';
 import { useAnalysisStore } from 'src/stores/analysis';
 
@@ -115,6 +117,8 @@ function initChartOptions() {
     value,
   }));
 
+  const colors = dataset.map((item) => colorPalette(props.field)[item.name]);
+
   const newOption: EChartsOption = {
     title: {
       text: `${t(props.field)}`,
@@ -134,6 +138,7 @@ function initChartOptions() {
       {
         type: 'pie',
         radius: ['40%', '70%'],
+        color: colors,
         avoidLabelOverlap: false,
         label: {
           show: false,
