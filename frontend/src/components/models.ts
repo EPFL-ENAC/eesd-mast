@@ -79,7 +79,7 @@ export interface ExperimentFrequencies {
   [Key: string]: FieldFrequencies;
 }
 
-epxport interface ExperimentParallelCount {
+export interface ExperimentParallelCount {
   masonry_unit_material: string | null;
   diaphragm_material: string | null;
   storeys_nb: number | null;

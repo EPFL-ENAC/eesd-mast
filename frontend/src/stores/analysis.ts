@@ -94,8 +94,7 @@ export const useAnalysisStore = defineStore('analysis', {
         } else {
           this.filters.push(criteria);
         }
-        this.loadExperimentsFrequencies();
-        this.loadExperimentsParallelCounts();
+        this.loadExperimentsAnalysis();
       }
     },
     resetFilters() {
