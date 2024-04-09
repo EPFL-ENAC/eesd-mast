@@ -5,18 +5,18 @@
         <div class="row">
           <div class="col-12 col-md-4 col-sm-12 text-center">
             <div class="text-h3">
-              {{ analysis.metrics.experiments_count }}
+              {{ analysis.counts.experiments_count }}
             </div>
             <div class="text-subtitle1">
-              {{ $t('buildings_metrics_label') }}
+              {{ $t('buildings_counts_label') }}
             </div>
           </div>
           <div class="col-12 col-md-4 col-sm-12 text-center">
             <div class="text-h3">
-              {{ analysis.metrics.references_count }}
+              {{ analysis.counts.references_count }}
             </div>
             <div class="text-subtitle1">
-              {{ $t('references_metrics_label') }}
+              {{ $t('references_counts_label') }}
             </div>
           </div>
           <div class="col-12 col-md-4 col-sm-12 text-center">
@@ -24,7 +24,7 @@
               {{ $t('downloadable') }}
             </div>
             <div class="text-subtitle1">
-              {{ $t('run_results_metrics_label') }}
+              {{ $t('run_results_counts_label') }}
             </div>
           </div>
         </div>
@@ -45,6 +45,6 @@ import { useAnalysisStore } from 'src/stores/analysis';
 const analysis = useAnalysisStore();
 
 onMounted(() => {
-  analysis.loadMetrics();
+  analysis.loadCounts();
 });
 </script>

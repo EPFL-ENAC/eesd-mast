@@ -15,7 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { colorPalette } from 'src/utils/colors';
 export default defineComponent({
   name: 'FieldFrequenciesChart',
 });

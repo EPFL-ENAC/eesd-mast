@@ -23,6 +23,13 @@ class QueryBuilder:
             text(field))
         return self._apply_filter(query)
 
+    def build_parallel_count_query(self, fields: list[str]):
+        columns = [getattr(self.model, field)
+                   for field in fields]
+        selected_columns = columns + [func.count().label("count")]
+        query = select(*selected_columns).group_by(*columns).order_by(*columns)
+        return self._apply_filter(query)
+
     def build_query(self, total_count):
         query = self._apply_filter(select(self.model))
         query = self._apply_sort(query)

@@ -1,4 +1,4 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.files.s3client import s3_client
@@ -30,8 +30,19 @@ class ExperimentsService:
             counts = {row[0]: row[1] for row in rows}
             field_counts[field] = counts
 
-        print(field_counts)
         return ExperimentFrequencies(**field_counts)
+
+    async def parallel_count(self, filter: dict | str) -> list[ExperimentParallelCount]:
+        """Get aggregations for the experiments matching filter"""
+        fields = ["masonry_unit_material",
+                  "diaphragm_material", "storeys_nb", "test_scale"]
+        builder = QueryBuilder(Experiment, filter, [], [])
+        query = builder.build_parallel_count_query(fields)
+        results = await self.session.exec(query)
+        rows = results.fetchall()
+        print(rows)
+
+        return [ExperimentParallelCount(**dict(zip(fields + ["count"], row))) for row in rows]
 
     async def get(self, experiment_id: int) -> ExperimentRead:
         """Get an experiment by id"""

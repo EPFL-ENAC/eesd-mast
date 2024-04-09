@@ -2,35 +2,70 @@ import { api } from 'src/boot/axios';
 import { defineStore } from 'pinia';
 import {
   ExperimentFrequencies,
-  Metrics,
+  ExperimentParallelCount,
+  Counts,
   FieldValue,
 } from 'src/components/models';
 import { QueryParams } from 'src/utils/pagination';
 
 interface State {
-  metrics: Metrics;
+  counts: Counts;
   frequencies: ExperimentFrequencies | null;
+  parallelCounts: ExperimentParallelCount[] | [];
   filters: FieldValue[];
 }
 
 export const useAnalysisStore = defineStore('analysis', {
   state: (): State => ({
-    metrics: {
+    counts: {
       experiments_count: 0,
       references_count: 0,
       run_results_count: 0,
     },
     frequencies: null,
+    parallelCounts: [],
     filters: [],
   }),
   getters: {},
   actions: {
-    loadMetrics() {
-      api.get<Metrics>('/analysis/metrics').then((resp) => {
-        this.metrics = resp.data;
+    loadCounts() {
+      api.get<Counts>('/analysis/counts').then((resp) => {
+        this.counts = resp.data;
       });
     },
-    loadFrequencies() {
+    loadExperimentsFrequencies() {
+      const query: QueryParams = {
+        filter: JSON.stringify(this.makeDbFilters()),
+        sort: undefined,
+        range: undefined,
+      };
+      api({
+        method: 'get',
+        url: '/analysis/experiments/frequencies',
+        params: query,
+      }).then((resp) => {
+        this.frequencies = resp.data;
+      });
+    },
+    loadExperimentsParallelCounts() {
+      const query: QueryParams = {
+        filter: JSON.stringify(this.makeDbFilters()),
+        sort: undefined,
+        range: undefined,
+      };
+      api({
+        method: 'get',
+        url: '/analysis/experiments/parallel-counts',
+        params: query,
+      }).then((resp) => {
+        this.parallelCounts = resp.data;
+      });
+    },
+    loadExperimentsAnalysis() {
+      this.loadExperimentsFrequencies();
+      this.loadExperimentsParallelCounts();
+    },
+    makeDbFilters() {
       const dbFilters: { [Key: string]: (string | number | null)[] } = {};
       this.filters.forEach((filter) => {
         const val = ['storeys_nb'].includes(filter.field)
@@ -42,18 +77,7 @@ export const useAnalysisStore = defineStore('analysis', {
           dbFilters[filter.field] = [val];
         }
       });
-      const query: QueryParams = {
-        filter: JSON.stringify(dbFilters),
-        sort: undefined,
-        range: undefined,
-      };
-      api({
-        method: 'get',
-        url: '/analysis/frequencies',
-        params: query,
-      }).then((resp) => {
-        this.frequencies = resp.data;
-      });
+      return dbFilters;
     },
     updateFilters(criteria: FieldValue | undefined) {
       if (!criteria) {
@@ -70,12 +94,13 @@ export const useAnalysisStore = defineStore('analysis', {
         } else {
           this.filters.push(criteria);
         }
-        this.loadFrequencies();
+        this.loadExperimentsFrequencies();
+        this.loadExperimentsParallelCounts();
       }
     },
     resetFilters() {
       this.filters = [];
-      this.loadFrequencies();
+      this.loadExperimentsAnalysis();
     },
   },
 });

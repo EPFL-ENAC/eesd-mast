@@ -84,3 +84,11 @@ class ExperimentFrequencies(BaseModel):
     diaphragm_material: dict
     storeys_nb: dict
     test_scale: dict
+
+
+class ExperimentParallelCount(BaseModel):
+    masonry_unit_material: str | None
+    diaphragm_material: str | None
+    storeys_nb: int | None
+    test_scale: float | None
+    count: int

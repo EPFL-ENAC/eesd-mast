@@ -60,7 +60,7 @@ export interface RunResultFileNodes {
   crack_maps: FileNode | undefined;
 }
 
-export interface Metrics {
+export interface Counts {
   experiments_count: number;
   references_count: number;
   run_results_count: number;
@@ -77,4 +77,12 @@ export interface FieldFrequencies {
 
 export interface ExperimentFrequencies {
   [Key: string]: FieldFrequencies;
+}
+
+epxport interface ExperimentParallelCount {
+  masonry_unit_material: string | null;
+  diaphragm_material: string | null;
+  storeys_nb: number | null;
+  test_scale: number | null;
+  count: number;
 }

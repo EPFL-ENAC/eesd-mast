@@ -8,7 +8,7 @@
       >
         <field-frequencies-chart
           :field="field"
-          :total="analysis.metrics.experiments_count"
+          :total="analysis.counts.experiments_count"
           @change:filter="onFilter"
         />
       </div>
@@ -58,7 +58,7 @@ const fields = computed(() => {
 });
 
 onMounted(() => {
-  analysis.loadFrequencies();
+  analysis.loadExperimentsAnalysis();
 });
 
 function criteriaLabel(criteria: FieldValue) {
