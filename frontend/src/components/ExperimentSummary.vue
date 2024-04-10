@@ -40,7 +40,7 @@
         {{ selected.experimental_campaign_motivation }}
       </div>
     </div>
-    <q-card flat class="q-mt-md q-mb-md">
+    <q-card flat class="q-mt-md">
       <q-card-section v-if="selected.scheme">
         <div>
           <q-img
@@ -107,8 +107,17 @@
         </q-tab-panels>
       </q-card-section>
     </q-card>
-
-    <q-separator />
+    <div>
+      <q-btn
+        flat
+        v-if="experiment"
+        :label="$t('view_details')"
+        no-caps
+        icon="open_in_new"
+        color="primary"
+        :to="`/building/${selected.id}`"
+      />
+    </div>
   </div>
 </template>
 
