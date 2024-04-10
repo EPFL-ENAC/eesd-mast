@@ -13,12 +13,19 @@ export default defineComponent({
 import { ExperimentParallelCount } from '../models';
 import VuePlotly from './VuePlotly.vue';
 import { testScaleLabel } from 'src/utils/numbers';
-import { isStone } from 'src/utils/criteria';
+import { isStone, isMixedMaterial } from 'src/utils/criteria';
 
 const { t } = useI18n({ useScope: 'global' });
 const analysis = useAnalysisStore();
 
-const layout = {};
+const layout = {
+  margin: {
+    l: 50, // Left margin
+    r: 50, // Right margin
+    b: 20, // Bottom margin
+    t: 20, // Top margin
+  },
+};
 
 const chartData = computed(() => {
   const parCatsData = {
@@ -34,13 +41,14 @@ const chartData = computed(() => {
     // merge all stones into one category
     const digestedCounts: ExperimentParallelCount[] = [];
     analysis.experimentsParallelCounts.forEach((line) => {
+      const newline = { ...line };
       if (isStone(line.masonry_unit_material)) {
-        const newline = { ...line };
         newline.masonry_unit_material = 'Stone';
-        digestedCounts.push(newline);
-      } else {
-        digestedCounts.push(line);
       }
+      if (isMixedMaterial(line.diaphragm_material)) {
+        newline.diaphragm_material = 'Mixed';
+      }
+      digestedCounts.push(newline);
     });
 
     parCatsData.counts = digestedCounts.map((line) => line.count);

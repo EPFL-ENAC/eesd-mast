@@ -7,7 +7,7 @@ import {
   FieldValue,
 } from 'src/components/models';
 import { QueryParams } from 'src/utils/pagination';
-import { STONES } from 'src/utils/criteria';
+import { STONES, MIXED_MATERIAL } from 'src/utils/criteria';
 
 interface State {
   counts: Counts;
@@ -77,6 +77,9 @@ export const useAnalysisStore = defineStore('analysis', {
           filter.value === 'Stone'
         ) {
           val = STONES;
+        }
+        if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
+          val = MIXED_MATERIAL;
         }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {

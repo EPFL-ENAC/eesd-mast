@@ -40,6 +40,12 @@ export const TEST_SCALE: string[] = [
   '0.1',
 ];
 
+export const MIXED_MATERIAL: string[] = [
+  'RC & Timber',
+  'Steel & bricks',
+  'Hollow tile slab',
+];
+
 export const DIAPHRAGM_MATERIAL: string[] = [
   'RC',
   'Timber',
@@ -59,4 +65,8 @@ export const SIMULTANEOUS_EXCITATIONS_NB: string[] = ['1', '2', '3'];
 
 export function isStone(value: string | null): boolean {
   return STONES.includes(value);
+}
+
+export function isMixedMaterial(value: string | null): boolean {
+  return MIXED_MATERIAL.includes(value);
 }

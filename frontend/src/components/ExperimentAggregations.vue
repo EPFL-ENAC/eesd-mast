@@ -58,7 +58,7 @@ import { FieldFrequencies } from './models';
 import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
 import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
-import { isStone } from 'src/utils/criteria';
+import { isStone, isMixedMaterial } from 'src/utils/criteria';
 
 const router = useRouter();
 const analysis = useAnalysisStore();
@@ -73,17 +73,36 @@ const fields = computed(() => {
     .reduce((acc, key) => {
       return acc + (analysis.frequencies?.masonry_unit_material[key] || 0);
     }, 0);
-  const newMum: FieldFrequencies = {
+  const newMumFreq: FieldFrequencies = {
     Stone: stoneFreq,
   };
   Object.keys(analysis.frequencies.masonry_unit_material)
     .filter((key) => !isStone(key))
     .forEach((key) => {
       if (analysis.frequencies !== null) {
-        newMum[key] = analysis.frequencies.masonry_unit_material[key];
+        newMumFreq[key] = analysis.frequencies.masonry_unit_material[key];
       }
     });
-  analysis.frequencies.masonry_unit_material = newMum;
+  analysis.frequencies.masonry_unit_material = newMumFreq;
+
+  // cumulate frequencies of mixed materials
+  const mixedFreq = Object.keys(analysis.frequencies.diaphragm_material)
+    .filter(isMixedMaterial)
+    .reduce((acc, key) => {
+      return acc + (analysis.frequencies?.diaphragm_material[key] || 0);
+    }, 0);
+  const newMatFreq: FieldFrequencies = {
+    Mixed: mixedFreq,
+  };
+  Object.keys(analysis.frequencies.diaphragm_material)
+    .filter((key) => !isMixedMaterial(key))
+    .forEach((key) => {
+      if (analysis.frequencies !== null) {
+        newMatFreq[key] = analysis.frequencies.diaphragm_material[key];
+      }
+    });
+  analysis.frequencies.diaphragm_material = newMatFreq;
+
   return Object.keys(analysis.frequencies);
 });
 

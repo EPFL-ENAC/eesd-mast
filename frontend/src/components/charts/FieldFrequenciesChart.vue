@@ -47,7 +47,7 @@ interface FieldFrequenciesChartProps {
 }
 const props = withDefaults(defineProps<FieldFrequenciesChartProps>(), {
   field: undefined,
-  height: 400,
+  height: 300,
 });
 const emit = defineEmits<{
   (e: 'change:filter', value?: FieldValue): void;
@@ -109,10 +109,12 @@ function initChartOptions() {
   }
   loading.value = true;
 
-  const dataset = Object.entries(frequencies.value).map(([key, value]) => ({
-    name: keyLabel(key),
-    value,
-  }));
+  const dataset = Object.entries(frequencies.value)
+    .map(([key, value]) => ({
+      name: keyLabel(key),
+      value,
+    }))
+    .filter((item) => item.value > 0);
 
   const colors = dataset.map((item) =>
     getFieldValueColor(props.field, item.name)

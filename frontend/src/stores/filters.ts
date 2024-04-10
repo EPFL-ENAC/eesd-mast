@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { FieldValue, Reference } from 'src/components/models';
-import { STONES } from 'src/utils/criteria';
+import { STONES, MIXED_MATERIAL } from 'src/utils/criteria';
 
 interface RefenceSelection {
   label: string;
@@ -72,8 +72,15 @@ export const useFiltersStore = defineStore('filters', {
           filter.field === 'masonry_unit_material' &&
           filter.value === 'Stone'
         ) {
-          STONES.forEach((stone) =>
-            this.selections.push(`masonry_unit_material:${stone}`)
+          STONES.forEach((val) =>
+            this.selections.push(`${filter.field}:${val}`)
+          );
+        } else if (
+          filter.field === 'diaphragm_material' &&
+          filter.value === 'Mixed'
+        ) {
+          MIXED_MATERIAL.forEach((val) =>
+            this.selections.push(`${filter.field}:${val}`)
           );
         } else {
           this.selections.push(`${filter.field}:${filter.value}`);
