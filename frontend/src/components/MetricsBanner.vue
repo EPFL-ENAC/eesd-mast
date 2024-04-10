@@ -12,9 +12,7 @@
             </div>
           </div>
           <div class="col-12 col-md-4 col-sm-12 text-center">
-            <div class="text-h3">
-              {{ analysis.counts.references_count }}
-            </div>
+            <div class="text-h3">100+</div>
             <div class="text-subtitle1">
               {{ $t('references_counts_label') }}
             </div>
