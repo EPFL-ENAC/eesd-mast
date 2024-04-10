@@ -7,6 +7,7 @@ import {
   FieldValue,
 } from 'src/components/models';
 import { QueryParams } from 'src/utils/pagination';
+import { STONES } from 'src/utils/criteria';
 
 interface State {
   counts: Counts;
@@ -75,14 +76,7 @@ export const useAnalysisStore = defineStore('analysis', {
           filter.field === 'masonry_unit_material' &&
           filter.value === 'Stone'
         ) {
-          val = [
-            'Limestone',
-            'Calcareous sandstone',
-            'Neopolitan tuff stone',
-            'Tuff stone',
-            'Calcareous tuff stone',
-            'Granite',
-          ];
+          val = STONES;
         }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {

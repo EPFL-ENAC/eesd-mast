@@ -20,6 +20,15 @@
         class="on-right"
         @remove="analysis.updateFilters(criteria)"
       />
+      <q-btn
+        dense
+        flat
+        no-caps
+        icon="visibility"
+        color="secondary"
+        :label="$t('show_tested_buildings')"
+        @click="onShowExperiments"
+      ></q-btn>
     </div>
     <div class="row">
       <div
@@ -49,8 +58,11 @@ import { FieldFrequencies } from './models';
 import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
 import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
+import { isStone } from 'src/utils/criteria';
 
+const router = useRouter();
 const analysis = useAnalysisStore();
+const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
 
 const fields = computed(() => {
@@ -79,11 +91,6 @@ onMounted(() => {
   analysis.loadExperimentsAnalysis();
 });
 
-function isStone(value: string) {
-  // value string matches stone or granit
-  return value.match(/(stone|granit)/i) !== null;
-}
-
 function criteriaLabel(criteria: FieldValue) {
   if (criteria.field === 'test_scale') {
     return `${t(criteria.field)}: ${testScaleLabel(criteria.value)}`;
@@ -94,5 +101,11 @@ function criteriaLabel(criteria: FieldValue) {
 
 function onFilter(criteria: FieldValue | undefined) {
   analysis.updateFilters(criteria);
+}
+
+function onShowExperiments() {
+  filters.resetFilters();
+  filters.applySelections(analysis.filters);
+  router.push('/buildings');
 }
 </script>

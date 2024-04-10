@@ -13,6 +13,7 @@ export default defineComponent({
 import { ExperimentParallelCount } from '../models';
 import VuePlotly from './VuePlotly.vue';
 import { testScaleLabel } from 'src/utils/numbers';
+import { isStone } from 'src/utils/criteria';
 
 const { t } = useI18n({ useScope: 'global' });
 const analysis = useAnalysisStore();
@@ -63,9 +64,4 @@ const chartData = computed(() => {
   }
   return [parCatsData];
 });
-
-function isStone(value: string | null) {
-  // value string matches stone or granit
-  return value === null || value.match(/(stone|granit)/i) !== null;
-}
 </script>

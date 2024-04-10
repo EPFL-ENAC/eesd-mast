@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, select
-from sqlalchemy import func, text
+from sqlalchemy import func, text, or_
 import json
 
 
@@ -40,9 +40,13 @@ class QueryBuilder:
             for field, value in self.filter.items():
                 column = getattr(self.model, field)
                 if isinstance(value, list):
-                    if len(value) == 1:
+                    if len(value) == 1 and value[0] is None:
                         query = self._apply_filter_value(
                             query, field, column, value[0])
+                    elif None in value:
+                        noNoneValues = [v for v in value if v is not None]
+                        query = query.where(
+                            or_(column.is_(None), column.in_(noNoneValues)))
                     else:
                         query = query.where(column.in_(value))
                 else:

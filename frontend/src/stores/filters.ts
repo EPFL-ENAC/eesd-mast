@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { Reference } from 'src/components/models';
+import { FieldValue, Reference } from 'src/components/models';
+import { STONES } from 'src/utils/criteria';
 
 interface RefenceSelection {
   label: string;
@@ -25,13 +26,17 @@ export const useFiltersStore = defineStore('filters', {
         const tokens = selection.split(':');
         if (tokens.length === 2) {
           const [field, value] = tokens;
-          const val = [
+          let val = [
             'storeys_nb',
+            'test_scale',
             'wall_leaves_nb',
             'simultaneous_excitations_nb',
           ].includes(field)
             ? Number(value)
             : value;
+          if (val === 'null') {
+            val = null;
+          }
           if (dbFilters[field]) {
             dbFilters[field].push(val);
           } else {
@@ -60,6 +65,20 @@ export const useFiltersStore = defineStore('filters', {
       this.selections = [];
       this.references = [];
       this.referenceSelections = [];
+    },
+    applySelections(filters: FieldValue[]) {
+      filters.forEach((filter) => {
+        if (
+          filter.field === 'masonry_unit_material' &&
+          filter.value === 'Stone'
+        ) {
+          STONES.forEach((stone) =>
+            this.selections.push(`masonry_unit_material:${stone}`)
+          );
+        } else {
+          this.selections.push(`${filter.field}:${filter.value}`);
+        }
+      });
     },
   },
 });

@@ -121,4 +121,5 @@ export default {
   nominal_pga_z_axis: 'Nominal PGA Z',
   dg_reported_axis: 'Estimated damage grade (DG)',
   dg_derived_axis: 'Derived damage grade (DG)',
+  show_tested_buildings: 'Show tested buildings',
 };
