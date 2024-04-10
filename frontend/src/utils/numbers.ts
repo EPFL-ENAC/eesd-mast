@@ -6,12 +6,12 @@ export function toMaxDecimals(x: number | null, n: number): number | null {
 }
 
 const scale_labels: { [Key: string]: string } = {
-  '1.0': '1:1',
-  '0.5': '1:2',
-  '0.333': '1:3',
-  '0.25': '1:4',
-  '0.667': '2:3',
-  '0.1': '1:10',
+  '1.0': '1',
+  '0.5': '1/2',
+  '0.333': '1/3',
+  '0.25': '1/4',
+  '0.667': '2/3',
+  '0.1': '1/10',
 };
 
 export function testScaleLabel(scale: string | number | null): string {

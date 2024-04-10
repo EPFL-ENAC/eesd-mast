@@ -19,7 +19,7 @@ class QueryBuilder:
 
     def build_frequencies_query(self, field: str):
         column = getattr(self.model, field)
-        query = select(column, func.count(column).label("count")).order_by(text("count DESC")).group_by(
+        query = select(column, func.count().label("count")).order_by(text("count DESC")).group_by(
             text(field))
         return self._apply_filter(query)
 
@@ -38,15 +38,25 @@ class QueryBuilder:
     def _apply_filter(self, query):
         if len(self.filter):
             for field, value in self.filter.items():
-                attr = getattr(self.model, field)
-                attribute_type = type(attr)
-                print(attribute_type)
+                column = getattr(self.model, field)
                 if isinstance(value, list):
-                    query = query.where(attr.in_(value))
-                elif field == "id" or field == "reference_id" or field == "experiment_id" or isinstance(value, int):
-                    query = query.where(attr == value)
+                    if len(value) == 1:
+                        query = self._apply_filter_value(
+                            query, field, column, value[0])
+                    else:
+                        query = query.where(column.in_(value))
                 else:
-                    query = query.where(attr.ilike(f"%{value}%"))
+                    query = self._apply_filter_value(
+                        query, field, column, value)
+        return query
+
+    def _apply_filter_value(self, query, field, column, value):
+        if field == "id" or field == "reference_id" or field == "experiment_id" or isinstance(value, int):
+            query = query.where(column == value)
+        elif value is None:
+            query = query.where(column.is_(None))
+        else:
+            query = query.where(column.ilike(f"%{value}%"))
         return query
 
     def _apply_sort(self, query):

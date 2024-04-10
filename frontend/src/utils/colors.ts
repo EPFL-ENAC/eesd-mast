@@ -1,19 +1,20 @@
 const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
   masonry_unit_material: {
-    Clay: '#1f77b4',
-    Limestone: '#ff7f0e',
+    Clay: '#d62728',
+    Stone: '#1f77b4',
+    Limestone: '#1f77b4',
     'Calcareous sandstone': '#2ca02c',
-    Concrete: '#d62728',
+    Concrete: '#7f7f7f',
     'Calcium silicate': '#9467bd',
     Granite: '#8c564b',
     Adobe: '#e377c2',
-    'Neopolitan tuff stone': '#7f7f7f',
+    'Neopolitan tuff stone': '#ff7f0e',
     'Tuff stone': '#bcbd22',
     'Calcareous tuff stone': '#17becf',
   },
   diaphragm_material: {
-    Timber: '#66c2a5',
-    RC: '#fc8d62',
+    Timber: '#fc8d62',
+    RC: '#66c2a5',
     'Hollow tile slab': '#8da0cb',
     'Steel & bricks': '#e78ac3',
     'RC & Timber': '#a6d854',
@@ -27,11 +28,11 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
     '5': '#08589e',
   },
   test_scale: {
-    '1:1': '#7a0177',
-    '2:3': '#c51b8a',
-    '1:2': '#f768a1',
-    '1:3': '#fbb4b9',
-    '1:4': '#feebe2',
+    '1': '#7a0177',
+    '2/3': '#c51b8a',
+    '1/2': '#f768a1',
+    '1/3': '#fbb4b9',
+    '1/4': '#feebe2',
   },
 };
 

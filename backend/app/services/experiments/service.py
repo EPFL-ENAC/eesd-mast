@@ -19,7 +19,7 @@ class ExperimentsService:
         count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
         return count
 
-    async def aggregate(self, filter: dict | str) -> ExperimentFrequencies:
+    async def frequencies(self, filter: dict | str) -> ExperimentFrequencies:
         """Get aggregations for the experiments matching filter"""
         field_counts = {}
         for field in ["masonry_unit_material", "diaphragm_material", "storeys_nb", "test_scale"]:
@@ -27,7 +27,8 @@ class ExperimentsService:
             query = builder.build_frequencies_query(field)
             results = await self.session.exec(query)
             rows = results.fetchall()
-            counts = {row[0]: row[1] for row in rows}
+            # exclude 0 counts
+            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
             field_counts[field] = counts
 
         return ExperimentFrequencies(**field_counts)
@@ -40,7 +41,6 @@ class ExperimentsService:
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)
         rows = results.fetchall()
-        print(rows)
 
         return [ExperimentParallelCount(**dict(zip(fields + ["count"], row))) for row in rows]
 

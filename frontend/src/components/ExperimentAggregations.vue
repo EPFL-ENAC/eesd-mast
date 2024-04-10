@@ -1,19 +1,5 @@
 <template>
   <div>
-    <div class="row">
-      <div
-        class="col-12 col-md-3 col-sm-12"
-        v-for="field in fields"
-        :key="field"
-      >
-        <field-frequencies-chart
-          :field="field"
-          :total="analysis.counts.experiments_count"
-          @change:filter="onFilter"
-        />
-      </div>
-    </div>
-
     <div class="q-pa-md" v-if="analysis.filters.length">
       <q-btn
         dense
@@ -35,6 +21,18 @@
         @remove="analysis.updateFilters(criteria)"
       />
     </div>
+    <div class="row">
+      <div
+        class="col-12 col-md-3 col-sm-12"
+        v-for="field in fields"
+        :key="field"
+      >
+        <field-frequencies-chart :field="field" @change:filter="onFilter" />
+      </div>
+    </div>
+    <div>
+      <experiments-parallel-chart />
+    </div>
   </div>
 </template>
 
@@ -47,29 +45,54 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
+import { FieldFrequencies } from './models';
 import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
+import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 
 const analysis = useAnalysisStore();
 const { t } = useI18n({ useScope: 'global' });
 
 const fields = computed(() => {
-  return analysis.frequencies === null ? [] : Object.keys(analysis.frequencies);
+  // cumulate frequencies of stones
+  if (analysis.frequencies === null) return [];
+  const stoneFreq = Object.keys(analysis.frequencies.masonry_unit_material)
+    .filter(isStone)
+    .reduce((acc, key) => {
+      return acc + (analysis.frequencies?.masonry_unit_material[key] || 0);
+    }, 0);
+  const newMum: FieldFrequencies = {
+    Stone: stoneFreq,
+  };
+  Object.keys(analysis.frequencies.masonry_unit_material)
+    .filter((key) => !isStone(key))
+    .forEach((key) => {
+      if (analysis.frequencies !== null) {
+        newMum[key] = analysis.frequencies.masonry_unit_material[key];
+      }
+    });
+  analysis.frequencies.masonry_unit_material = newMum;
+  return Object.keys(analysis.frequencies);
 });
 
 onMounted(() => {
   analysis.loadExperimentsAnalysis();
 });
 
+function isStone(value: string) {
+  // value string matches stone or granit
+  return value.match(/(stone|granit)/i) !== null;
+}
+
 function criteriaLabel(criteria: FieldValue) {
-  const val =
-    criteria.field === 'test_scale'
-      ? testScaleLabel(criteria.value)
-      : criteria.value;
+  if (criteria.field === 'test_scale') {
+    return `${t(criteria.field)}: ${testScaleLabel(criteria.value)}`;
+  }
+  const val = criteria.value === null ? 'N/A' : criteria.value;
   return `${t(criteria.field)}: ${val}`;
 }
 
-function onFilter(value: FieldValue | undefined) {
-  analysis.updateFilters(value);
+function onFilter(criteria: FieldValue | undefined) {
+  analysis.updateFilters(criteria);
 }
 </script>

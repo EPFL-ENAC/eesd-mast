@@ -32,7 +32,7 @@ async def get_experiments_frequencies(
 ) -> ExperimentFrequencies:
     """Get the frequency of some fields in the experiments"""
     service = ExperimentsService(session)
-    res = await service.aggregate(filter)
+    res = await service.frequencies(filter)
     return res
 
 

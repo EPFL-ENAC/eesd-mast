@@ -1,5 +1,5 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height + 150}px;`">
+  <div v-if="option.series" :style="`height: ${height - 20}px;`">
     <e-charts
       ref="chart"
       autoresize
@@ -43,13 +43,11 @@ use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent]);
 
 interface FieldFrequenciesChartProps {
   field: string;
-  total: number;
   height?: number;
 }
 const props = withDefaults(defineProps<FieldFrequenciesChartProps>(), {
   field: undefined,
-  total: 0,
-  height: 300,
+  height: 400,
 });
 const emit = defineEmits<{
   (e: 'change:filter', value?: FieldValue): void;
@@ -132,6 +130,7 @@ function initChartOptions() {
       formatter: '<b>{b}</b>: {c} ({d}%)',
     },
     legend: {
+      show: false,
       bottom: '0',
       left: 'center',
     },
@@ -141,19 +140,19 @@ function initChartOptions() {
         radius: ['40%', '70%'],
         color: colors,
         avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center',
-        },
+        // label: {
+        //   show: false,
+        //   position: 'center',
+        // },
+        // labelLine: {
+        //   show: false,
+        // },
         emphasis: {
           label: {
             show: true,
             fontSize: 20,
             fontWeight: 'bold',
           },
-        },
-        labelLine: {
-          show: false,
         },
         data: dataset,
       },

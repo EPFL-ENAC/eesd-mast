@@ -11,7 +11,7 @@ import { QueryParams } from 'src/utils/pagination';
 interface State {
   counts: Counts;
   frequencies: ExperimentFrequencies | null;
-  parallelCounts: ExperimentParallelCount[] | [];
+  experimentsParallelCounts: ExperimentParallelCount[] | [];
   filters: FieldValue[];
 }
 
@@ -23,7 +23,7 @@ export const useAnalysisStore = defineStore('analysis', {
       run_results_count: 0,
     },
     frequencies: null,
-    parallelCounts: [],
+    experimentsParallelCounts: [],
     filters: [],
   }),
   getters: {},
@@ -58,7 +58,7 @@ export const useAnalysisStore = defineStore('analysis', {
         url: '/analysis/experiments/parallel-counts',
         params: query,
       }).then((resp) => {
-        this.parallelCounts = resp.data;
+        this.experimentsParallelCounts = resp.data;
       });
     },
     loadExperimentsAnalysis() {
@@ -68,10 +68,29 @@ export const useAnalysisStore = defineStore('analysis', {
     makeDbFilters() {
       const dbFilters: { [Key: string]: (string | number | null)[] } = {};
       this.filters.forEach((filter) => {
-        const val = ['storeys_nb'].includes(filter.field)
+        let val = ['storeys_nb'].includes(filter.field)
           ? Number(filter.value)
           : filter.value;
-        if (dbFilters[filter.field]) {
+        if (
+          filter.field === 'masonry_unit_material' &&
+          filter.value === 'Stone'
+        ) {
+          val = [
+            'Limestone',
+            'Calcareous sandstone',
+            'Neopolitan tuff stone',
+            'Tuff stone',
+            'Calcareous tuff stone',
+            'Granite',
+          ];
+        }
+        if (Array.isArray(val)) {
+          if (dbFilters[filter.field]) {
+            dbFilters[filter.field].push(...val);
+          } else {
+            dbFilters[filter.field] = val;
+          }
+        } else if (dbFilters[filter.field]) {
           dbFilters[filter.field].push(val);
         } else {
           dbFilters[filter.field] = [val];
