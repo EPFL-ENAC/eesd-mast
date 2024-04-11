@@ -1,7 +1,8 @@
 from app.services.runresults.models import RunResult, RunResultUpdate, RunResultVulnerability
+from app.services.experiments.models import Experiment
 from app.utils.query import QueryBuilder
-from sqlmodel import select
-from sqlalchemy.sql import text, not_
+from sqlmodel import select, join, not_
+from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -18,10 +19,14 @@ class RunResultsService:
 
     async def vulnerability(self, filter: dict | str) -> list[RunResultVulnerability]:
         """Get vulnerabilities from all run results"""
-        query = select(RunResult) \
+        query = select(RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
+            .select_from(join(RunResult, Experiment)) \
             .where(RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
             .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None)) \
             .where(not_(RunResult.run_id.in_(['Initial', 'Final'])))
+
+        builder = QueryBuilder(Experiment, filter, [], [])
+        query = builder.build_filter_query(query)
 
         # Execute query
         results = await self.session.exec(query)

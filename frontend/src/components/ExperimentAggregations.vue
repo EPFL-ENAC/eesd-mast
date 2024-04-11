@@ -42,17 +42,21 @@
         v-for="field in fields"
         :key="field"
       >
-        <field-frequencies-chart :field="field" @change:filter="onFilter" />
+        <field-frequencies-chart
+          :field="field"
+          @change:filter="onFilter"
+          class="q-ml-md q-mr-md"
+        />
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <experiments-parallel-chart class="q-pl-md" />
+        <experiments-parallel-chart class="q-ml-md q-mr-md" />
       </div>
     </div>
     <div class="row">
-      <div class="col-6">
-        <run-results-vulnerability-chart class="q-pl-md q-pr-md" />
+      <div class="col-12 col-md-6">
+        <run-results-vulnerability-chart class="q-ml-md q-mr-md" />
       </div>
     </div>
   </div>

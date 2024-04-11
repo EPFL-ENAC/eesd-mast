@@ -35,6 +35,10 @@ class QueryBuilder:
         query = self._apply_sort(query)
         return self._apply_range(query, total_count)
 
+    def build_filter_query(self, query_from):
+        query = self._apply_filter(query_from)
+        return query
+
     def _apply_filter(self, query):
         if len(self.filter):
             for field, value in self.filter.items():
