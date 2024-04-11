@@ -6,6 +6,7 @@ from app.services.experiments.service import ExperimentsService
 from app.services.references.service import ReferencesService
 from app.services.runresults.service import RunResultsService
 from app.services.experiments.models import ExperimentFrequencies, ExperimentParallelCount
+from app.services.runresults.models import RunResultVulnerability
 
 router = APIRouter()
 
@@ -45,4 +46,16 @@ async def get_experiments_parallel_counts(
     """Get the count of some fields in the experiments"""
     service = ExperimentsService(session)
     res = await service.parallel_count(filter)
+    return res
+
+
+@router.get("/run_results/vulnerability", response_model=list[RunResultVulnerability])
+async def get_run_results_vulnerability(
+    response: Response,
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+) -> list[RunResultVulnerability]:
+    """Get the vulnerability of the run results, PGA vs. DG"""
+    service = RunResultsService(session)
+    res = await service.vulnerability(filter)
     return res

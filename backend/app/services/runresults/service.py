@@ -1,7 +1,7 @@
-from app.services.runresults.models import RunResult, RunResultUpdate
+from app.services.runresults.models import RunResult, RunResultUpdate, RunResultVulnerability
 from app.utils.query import QueryBuilder
 from sqlmodel import select
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text, not_
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -15,6 +15,25 @@ class RunResultsService:
         """Count all run results"""
         count = (await self.session.exec(text("select count(id) from runresult"))).scalar()
         return count
+
+    async def vulnerability(self, filter: dict | str) -> list[RunResultVulnerability]:
+        """Get vulnerabilities from all run results"""
+        query = select(RunResult) \
+            .where(RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
+            .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None)) \
+            .where(not_(RunResult.run_id.in_(['Initial', 'Final'])))
+
+        # Execute query
+        results = await self.session.exec(query)
+        vulnerabilities = []
+        for result in results.all():
+            vulnerability = RunResultVulnerability(
+                pga=result.nominal_pga_x if result.nominal_pga_x else result.nominal_pga_y,
+                dg=result.dg_derived if result.dg_derived else result.dg_reported,
+            )
+            vulnerabilities.append(vulnerability)
+
+        return vulnerabilities
 
     async def get(self, run_result_id: int) -> RunResult:
         """Get a run result by id"""

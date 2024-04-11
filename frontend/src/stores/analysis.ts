@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import {
   ExperimentFrequencies,
   ExperimentParallelCount,
+  RunResultVulnerability,
   Counts,
   FieldValue,
 } from 'src/components/models';
@@ -13,6 +14,7 @@ interface State {
   counts: Counts;
   frequencies: ExperimentFrequencies | null;
   experimentsParallelCounts: ExperimentParallelCount[] | [];
+  runResultsVulnerability: RunResultVulnerability[] | [];
   filters: FieldValue[];
 }
 
@@ -25,6 +27,7 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     frequencies: null,
     experimentsParallelCounts: [],
+    runResultsVulnerability: [],
     filters: [],
   }),
   getters: {},
@@ -62,9 +65,24 @@ export const useAnalysisStore = defineStore('analysis', {
         this.experimentsParallelCounts = resp.data;
       });
     },
+    loadRunResultsVulnerability() {
+      const query: QueryParams = {
+        filter: JSON.stringify(this.makeDbFilters()),
+        sort: undefined,
+        range: undefined,
+      };
+      api({
+        method: 'get',
+        url: '/analysis/run_results/vulnerability',
+        params: query,
+      }).then((resp) => {
+        this.runResultsVulnerability = resp.data;
+      });
+    },
     loadExperimentsAnalysis() {
       this.loadExperimentsFrequencies();
       this.loadExperimentsParallelCounts();
+      this.loadRunResultsVulnerability();
     },
     makeDbFilters() {
       const dbFilters: { [Key: string]: (string | number | null)[] } = {};

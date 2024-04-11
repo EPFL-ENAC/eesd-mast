@@ -86,3 +86,8 @@ export interface ExperimentParallelCount {
   test_scale: number | null;
   count: number;
 }
+
+export interface RunResultVulnerability {
+  pga: number;
+  dg: number;
+}

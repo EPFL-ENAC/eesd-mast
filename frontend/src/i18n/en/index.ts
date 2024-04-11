@@ -119,8 +119,11 @@ export default {
   nominal_pga_x_axis: 'Nominal PGA X',
   nominal_pga_y_axis: 'Nominal PGA Y',
   nominal_pga_z_axis: 'Nominal PGA Z',
+  pga_axis: 'PGA (g)',
   dg_reported_axis: 'Estimated damage grade (DG)',
   dg_derived_axis: 'Derived damage grade (DG)',
+  dg_axis: 'Damage grade (DG)',
   show_tested_buildings: 'Show tested buildings',
   aggregations_hint: 'Select a category to filter tested buildings',
+  damage_vulnerability: 'Damage Vulnerability',
 };

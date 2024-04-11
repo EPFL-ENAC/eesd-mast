@@ -1,5 +1,5 @@
 <template>
-  <vue-plotly :data="chartData" :layout="layout" />
+  <vue-plotly :data="chartData" :layout="layout" :config="config" />
 </template>
 
 <script lang="ts">
@@ -22,9 +22,14 @@ const layout = {
   margin: {
     l: 50, // Left margin
     r: 50, // Right margin
-    b: 20, // Bottom margin
-    t: 20, // Top margin
+    b: 50, // Bottom margin
+    t: 50, // Top margin
   },
+};
+
+const config = {
+  displayModeBar: false,
+  responsive: true,
 };
 
 const chartData = computed(() => {

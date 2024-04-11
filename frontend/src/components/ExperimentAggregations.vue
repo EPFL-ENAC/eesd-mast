@@ -47,7 +47,12 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <experiments-parallel-chart />
+        <experiments-parallel-chart class="q-pl-md" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <run-results-vulnerability-chart class="q-pl-md q-pr-md" />
       </div>
     </div>
   </div>
@@ -65,6 +70,7 @@ export default defineComponent({
 import { FieldFrequencies } from './models';
 import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
 import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
+import RunResultsVulnerabilityChart from './charts/RunResultsVulnerabilityChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
 
