@@ -35,8 +35,9 @@ class ExperimentsService:
 
     async def parallel_count(self, filter: dict | str) -> list[ExperimentParallelCount]:
         """Get aggregations for the experiments matching filter"""
-        fields = ["masonry_unit_material",
-                  "diaphragm_material", "storeys_nb", "test_scale"]
+        fields = ["masonry_unit_material", "masonry_unit_type",
+                  "diaphragm_material", "wall_leaves_nb", "storeys_nb",
+                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application"]
         builder = QueryBuilder(Experiment, filter, [], [])
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)

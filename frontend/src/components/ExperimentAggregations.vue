@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-6">
+      <div class="col-12">
         <experiments-parallel-chart />
       </div>
     </div>

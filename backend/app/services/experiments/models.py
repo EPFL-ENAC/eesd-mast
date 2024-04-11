@@ -88,7 +88,11 @@ class ExperimentFrequencies(BaseModel):
 
 class ExperimentParallelCount(BaseModel):
     masonry_unit_material: str | None
+    masonry_unit_type: str | None
     diaphragm_material: str | None
+    wall_leaves_nb: int | None
     storeys_nb: int | None
     test_scale: float | None
+    simultaneous_excitations_nb: int | None
+    retrofitting_application: str | None
     count: int

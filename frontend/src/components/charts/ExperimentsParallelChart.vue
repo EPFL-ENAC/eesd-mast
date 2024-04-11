@@ -54,9 +54,13 @@ const chartData = computed(() => {
     parCatsData.counts = digestedCounts.map((line) => line.count);
     [
       'masonry_unit_material',
+      'masonry_unit_type',
       'diaphragm_material',
+      'wall_leaves_nb',
       'storeys_nb',
       'test_scale',
+      'simultaneous_excitations_nb',
+      'retrofitting_application',
     ].forEach((field: string) => {
       parCatsData.dimensions.push({
         label: t(field),
