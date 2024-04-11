@@ -1,34 +1,40 @@
 <template>
   <div>
-    <div class="q-pa-md" v-if="analysis.filters.length">
-      <q-btn
-        dense
-        flat
-        no-caps
-        color="primary"
-        :label="$t('reset_filters')"
-        @click="analysis.resetFilters()"
-      ></q-btn>
-      <q-chip
-        removable
-        size="sm"
-        color="primary"
-        text-color="white"
-        v-for="criteria in analysis.filters"
-        :key="criteria.field"
-        :label="criteriaLabel(criteria)"
-        class="on-right"
-        @remove="analysis.updateFilters(criteria)"
-      />
-      <q-btn
-        dense
-        flat
-        no-caps
-        icon="visibility"
-        color="secondary"
-        :label="$t('show_tested_buildings')"
-        @click="onShowExperiments"
-      ></q-btn>
+    <div class="q-pa-md">
+      <div v-if="analysis.filters.length">
+        <q-btn
+          dense
+          flat
+          no-caps
+          color="primary"
+          :label="$t('reset_filters')"
+          @click="analysis.resetFilters()"
+        ></q-btn>
+        <q-chip
+          removable
+          size="sm"
+          color="primary"
+          text-color="white"
+          v-for="criteria in analysis.filters"
+          :key="criteria.field"
+          :label="criteriaLabel(criteria)"
+          class="on-right"
+          @remove="analysis.updateFilters(criteria)"
+        />
+        <q-btn
+          dense
+          flat
+          no-caps
+          icon="visibility"
+          color="secondary"
+          :label="$t('show_tested_buildings')"
+          @click="onShowExperiments"
+        ></q-btn>
+      </div>
+      <div v-else class="q-pa-xs text-caption text-grey-8">
+        <q-icon name="info" size="sm"></q-icon>
+        <span class="on-right">{{ $t('aggregations_hint') }}</span>
+      </div>
     </div>
     <div class="row">
       <div
@@ -39,8 +45,10 @@
         <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
     </div>
-    <div>
-      <experiments-parallel-chart />
+    <div class="row">
+      <div class="col-6">
+        <experiments-parallel-chart />
+      </div>
     </div>
   </div>
 </template>
