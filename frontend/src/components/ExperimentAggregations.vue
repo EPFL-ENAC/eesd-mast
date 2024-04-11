@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-mb-xl">
     <div class="q-pa-md">
       <div v-if="analysis.filters.length">
         <q-btn
