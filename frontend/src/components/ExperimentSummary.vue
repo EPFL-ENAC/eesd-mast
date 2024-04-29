@@ -40,8 +40,8 @@
         {{ selected.experimental_campaign_motivation }}
       </div>
     </div>
-    <q-card flat class="q-mt-md q-mb-md">
-      <q-card-section>
+    <q-card flat class="q-mt-md">
+      <q-card-section v-if="selected.scheme">
         <div>
           <q-img
             v-if="imageDisplay === 'fitted'"
@@ -107,8 +107,17 @@
         </q-tab-panels>
       </q-card-section>
     </q-card>
-
-    <q-separator />
+    <div>
+      <q-btn
+        flat
+        v-if="experiment"
+        :label="$t('view_details')"
+        no-caps
+        icon="open_in_new"
+        color="primary"
+        :to="`/building/${selected.id}`"
+      />
+    </div>
   </div>
 </template>
 
@@ -124,11 +133,12 @@ import { baseUrl } from 'src/boot/axios';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 import ReferenceView from './ReferenceView.vue';
 import { Experiment } from 'src/components/models';
+import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
 
-export interface ExperimentViewProps {
+interface ExperimentViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<ExperimentViewProps>(), {
@@ -154,6 +164,7 @@ const items: FieldItem<Experiment>[] = [
   },
   {
     field: 'test_scale',
+    format: (val: Experiment) => testScaleLabel(val.test_scale),
   },
   {
     field: 'simultaneous_excitations_nb',

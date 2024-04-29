@@ -28,6 +28,7 @@ export interface Experiment extends DBModel {
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
   files: FileNode;
+  test_scale: number | null;
 }
 
 export interface RunResult extends DBModel {
@@ -57,4 +58,36 @@ export interface RunResultFileNodes {
   global_force_displacement_curve: FileNode | undefined;
   shake_table_accelerations: FileNode | undefined;
   crack_maps: FileNode | undefined;
+}
+
+export interface Counts {
+  experiments_count: number;
+  references_count: number;
+  run_results_count: number;
+}
+
+export interface FieldValue {
+  field: string;
+  value: string | number | null;
+}
+
+export interface FieldFrequencies {
+  [Key: string]: number;
+}
+
+export interface ExperimentFrequencies {
+  [Key: string]: FieldFrequencies;
+}
+
+export interface ExperimentParallelCount {
+  masonry_unit_material: string | null;
+  diaphragm_material: string | null;
+  storeys_nb: number | null;
+  test_scale: number | null;
+  count: number;
+}
+
+export interface RunResultVulnerability {
+  pga: number;
+  dg: number;
 }

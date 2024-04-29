@@ -7,9 +7,10 @@ from app.services.references.models import (
     ReferenceRead,
     ReferenceUpdate,
 )
-from app.services.references.service import ReferenceService
+from app.services.references.service import ReferencesService
 
 router = APIRouter()
+
 
 @router.get("/{reference_id}", response_model=ReferenceRead)
 async def get_reference(
@@ -18,7 +19,7 @@ async def get_reference(
     reference_id: int | str,
 ) -> ReferenceRead:
     """Get a reference by id or short name"""
-    service = ReferenceService(session)
+    service = ReferencesService(session)
     reference = await service.get(reference_id)
     return reference
 
@@ -32,7 +33,7 @@ async def get_references(
     session: AsyncSession = Depends(get_session),
 ) -> list[ReferenceRead]:
     """Get all references"""
-    service = ReferenceService(session)
+    service = ReferencesService(session)
     start, end, total_count, references = await service.find(filter, sort, range)
 
     response.headers[
@@ -48,7 +49,7 @@ async def create_reference(
     api_key: str = Security(get_api_key),
 ) -> ReferenceRead:
     """Creates an reference"""
-    service = ReferenceService(session)
+    service = ReferencesService(session)
     reference = await service.create(Reference.from_orm(reference))
     return reference
 
@@ -60,7 +61,7 @@ async def update_reference(
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key)
 ) -> ReferenceRead:
-    service = ReferenceService(session)
+    service = ReferencesService(session)
     reference = await service.patch(reference_id, reference_update)
     return reference
 
@@ -73,5 +74,5 @@ async def delete_reference(
     api_key: str = Security(get_api_key),
 ) -> None:
     """Delete an reference by id"""
-    service = ReferenceService(session)
+    service = ReferencesService(session)
     await service.delete(reference_id, recursive)

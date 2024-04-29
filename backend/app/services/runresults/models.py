@@ -1,4 +1,6 @@
 from sqlmodel import SQLModel, Field, UniqueConstraint
+from pydantic import BaseModel
+
 
 class RunResultBase(SQLModel):
     run_id: str = Field(unique=True, index=True)
@@ -22,6 +24,7 @@ class RunResultBase(SQLModel):
         default=None, foreign_key="experiment.id", index=True
     )
 
+
 class RunResult(RunResultBase, table=True):
     __table_args__ = (UniqueConstraint("id"),)
     id: int = Field(
@@ -31,11 +34,19 @@ class RunResult(RunResultBase, table=True):
         index=True,
     )
 
+
 class RunResultRead(RunResultBase):
     id: int
+
 
 class RunResultCreate(RunResultBase):
     pass
 
+
 class RunResultUpdate(RunResultBase):
     pass
+
+
+class RunResultVulnerability(BaseModel):
+    pga: float | None
+    dg: float | None

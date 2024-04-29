@@ -1,9 +1,10 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
+from sqlalchemy.sql import text, func
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -12,6 +13,37 @@ class ExperimentsService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def count(self) -> int:
+        """Count all experiments"""
+        count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
+        return count
+
+    async def frequencies(self, filter: dict | str) -> ExperimentFrequencies:
+        """Get aggregations for the experiments matching filter"""
+        field_counts = {}
+        for field in ["masonry_unit_material", "diaphragm_material", "storeys_nb", "test_scale"]:
+            builder = QueryBuilder(Experiment, filter, [], [])
+            query = builder.build_frequencies_query(field)
+            results = await self.session.exec(query)
+            rows = results.fetchall()
+            # exclude 0 counts
+            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
+            field_counts[field] = counts
+
+        return ExperimentFrequencies(**field_counts)
+
+    async def parallel_count(self, filter: dict | str) -> list[ExperimentParallelCount]:
+        """Get aggregations for the experiments matching filter"""
+        fields = ["masonry_unit_material", "masonry_unit_type",
+                  "diaphragm_material", "wall_leaves_nb", "storeys_nb",
+                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application"]
+        builder = QueryBuilder(Experiment, filter, [], [])
+        query = builder.build_parallel_count_query(fields)
+        results = await self.session.exec(query)
+        rows = results.fetchall()
+
+        return [ExperimentParallelCount(**dict(zip(fields + ["count"], row))) for row in rows]
 
     async def get(self, experiment_id: int) -> ExperimentRead:
         """Get an experiment by id"""
@@ -121,6 +153,26 @@ class ExperimentsService:
 
         return experiment
 
+    async def delete_run_results(self, experiment_id: int) -> None:
+        """Delete run results of an experiment by id"""
+        run_results_service = RunResultsService(self.session)
+        await run_results_service.delete_by_experiment(experiment_id)
+
+    async def delete_scheme_file(self, experiment_id: int) -> None:
+        """Delete scheme file of an experiment by id"""
+        res = await self.session.exec(
+            select(Experiment).where(Experiment.id == experiment_id)
+        )
+        experiment = res.one_or_none()
+
+        if experiment and experiment.scheme:
+            name = experiment.scheme['name']
+            s3_file = f"experiments/{experiment_id}/{name}"
+            deleted = await s3_client.delete_file(s3_file)
+            if deleted:
+                experiment.scheme = None
+                await self.session.commit()
+
     async def delete_files(self, experiment_id: int) -> None:
         """Delete files of an experiment by id"""
         res = await self.session.exec(
@@ -129,13 +181,12 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.files:
-            if experiment.files:
-                key = experiment.files['name']
-                s3_folder = f"experiments/{experiment_id}/{key}"
-                deleted = await s3_client.delete_files(s3_folder)
-                if deleted:
-                    experiment.files = None
-                    await self.session.commit()
+            key = experiment.files['name']
+            s3_folder = f"experiments/{experiment_id}/{key}"
+            deleted = await s3_client.delete_files(s3_folder)
+            if deleted:
+                experiment.files = None
+                await self.session.commit()
 
     async def delete_by_reference(self, reference_id: int, recursive: bool = False) -> None:
         """Delete all experiments by reference id"""

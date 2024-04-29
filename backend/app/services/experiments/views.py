@@ -15,7 +15,7 @@ from fastapi.exceptions import HTTPException
 from app.db import get_session, AsyncSession
 from app.auth import get_api_key
 from app.services.files.size import size_checker
-from app.utils.mimetype import zip_mimetypes
+from app.utils.mimetype import zip_mimetypes, image_mimetypes
 from app.utils.file_nodes import FileNode
 from app.services.files.s3client import s3_client
 from app.services.experiments.service import ExperimentsService
@@ -169,6 +169,43 @@ async def get_experiment_files(
         raise HTTPException(status_code=404, detail="Files not found")
 
 
+@router.post("/{experiment_id}/scheme",
+             status_code=200,
+             dependencies=[Depends(size_checker)])
+async def upload_experiment_scheme_file(
+        experiment_id: int,
+        files: UploadFile = File(
+            description="Experiment scheme file (image) upload"),
+        session: AsyncSession = Depends(get_session),
+        api_key: str = Security(get_api_key)):
+    service = ExperimentsService(session)
+    experiment = await service.get(experiment_id)
+
+    if files.content_type not in image_mimetypes:
+        raise HTTPException(
+            status_code=415, detail="Only images are allowed")
+
+    if experiment.scheme:
+        await service.delete_scheme_file(experiment_id)
+
+    # upload file to s3
+    file = await s3_client.upload_file(files, s3_folder=f"experiments/{experiment_id}")
+
+    # update experiment
+    # create file tree
+    node = FileNode(name=file["name"], path=file["path"], size=file["size"], is_file=True,
+                    alt_name=(file["alt_name"]
+                              if "alt_name" in file else None),
+                    alt_path=(file["alt_path"]
+                              if "alt_path" in file else None),
+                    alt_size=(file["alt_size"] if "alt_size" in file else None))
+    experiment_update = ExperimentUpdate(
+        scheme=node.to_dict(), reference_id=experiment.reference_id)
+    experiment = await service.patch(experiment_id, experiment_update)
+
+    return experiment
+
+
 @router.post("/{experiment_id}/files",
              status_code=200,
              dependencies=[Depends(size_checker)])
@@ -221,6 +258,17 @@ async def upload_experiment_files(
     return experiment
 
 
+@router.delete("/{experiment_id}/run_results")
+async def delete_experiment_run_results(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+) -> None:
+    """Delete run results of an experiment by id"""
+    service = ExperimentsService(session)
+    await service.delete_run_results(experiment_id)
+
+
 @router.delete("/{experiment_id}/files")
 async def delete_experiment_files(
     experiment_id: int,
@@ -230,6 +278,17 @@ async def delete_experiment_files(
     """Delete files of an experiment by id"""
     service = ExperimentsService(session)
     await service.delete_files(experiment_id)
+
+
+@router.delete("/{experiment_id}/scheme")
+async def delete_experiment_scheme_file(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+) -> None:
+    """Delete scheme file of an experiment by id"""
+    service = ExperimentsService(session)
+    await service.delete_scheme_file(experiment_id)
 
 
 @router.delete("/{experiment_id}")

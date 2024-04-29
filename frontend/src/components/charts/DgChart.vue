@@ -46,10 +46,12 @@ use([
 
 interface DgChartProps {
   experiment: Experiment;
+  direction: string;
   height?: number;
 }
 const props = withDefaults(defineProps<DgChartProps>(), {
   experiment: undefined,
+  direction: 'x',
   height: 300,
 });
 
@@ -89,28 +91,24 @@ function initChartOptions() {
 
 function buildOptions() {
   loading.value = true;
-  const visibleColumns = [
-    'nominal_pga_x',
-    'nominal_pga_y',
-    'actual_pga_x',
-    'actual_pga_y',
-    'dg_reported',
-    'dg_derived',
-  ].filter(
+  const nominal = `nominal_pga_${props.direction}`;
+  const actual = `actual_pga_${props.direction}`;
+  const visibleColumns = [nominal, actual, 'dg_reported', 'dg_derived'].filter(
     (col) =>
       runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
   );
-  let pgaColumn = visibleColumns.includes('actual_pga_x')
-    ? 'actual_pga_x'
-    : 'actual_pga_y';
-  if (!visibleColumns.includes(pgaColumn)) {
-    pgaColumn = visibleColumns.includes('nominal_pga_x')
-      ? 'nominal_pga_x'
-      : 'nominal_pga_y';
-  }
+  let pgaColumn = visibleColumns.includes(actual) ? actual : nominal;
   const dgColumn = visibleColumns.includes('dg_reported')
     ? 'dg_reported'
     : 'dg_derived';
+
+  if (
+    !visibleColumns.includes(pgaColumn) ||
+    !visibleColumns.includes(dgColumn)
+  ) {
+    loading.value = false;
+    return;
+  }
 
   const datasetDG = runResults.value
     .filter((result) => result[dgColumn] !== null && result[pgaColumn] !== null)
@@ -122,6 +120,7 @@ function buildOptions() {
   const datasetDG2 = datasetDG.filter((result) => result[0] === 2);
   const datasetDG3 = datasetDG.filter((result) => result[0] === 3);
   const datasetDG4 = datasetDG.filter((result) => result[0] === 4);
+  const datasetDG5 = datasetDG.filter((result) => result[0] === 5);
 
   const newOption: EChartsOption = {
     // title: {
@@ -143,7 +142,7 @@ function buildOptions() {
     },
     xAxis: {
       type: 'value',
-      name: `${t(dgColumn)} (g)`,
+      name: t(dgColumn + '_axis'),
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -153,7 +152,7 @@ function buildOptions() {
     },
     yAxis: {
       type: 'value',
-      name: `${t(pgaColumn)} (s)`,
+      name: `${t(pgaColumn + '_axis')} (s)`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -168,7 +167,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'red',
+          color: 'blue',
           opacity: 0.5,
         },
       },
@@ -178,7 +177,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'blue',
+          color: 'green',
           opacity: 0.5,
         },
       },
@@ -188,7 +187,7 @@ function buildOptions() {
         type: 'scatter',
         symbolSize: 15,
         itemStyle: {
-          color: 'green',
+          color: 'yellow',
           opacity: 0.5,
         },
       },
@@ -199,6 +198,16 @@ function buildOptions() {
         symbolSize: 15,
         itemStyle: {
           color: 'orange',
+          opacity: 0.5,
+        },
+      },
+      {
+        name: t(dgColumn),
+        data: datasetDG5,
+        type: 'scatter',
+        symbolSize: 15,
+        itemStyle: {
+          color: 'red',
           opacity: 0.5,
         },
       },
