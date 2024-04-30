@@ -6,11 +6,12 @@
 import { defineComponent } from 'vue';
 export default defineComponent({
   components: { VuePlotly },
-  name: 'RunResultsVulnerabilityChart',
+  name: 'RunResultsVulnerabilitiesChart',
 });
 </script>
 <script setup lang="ts">
 import { RunResultVulnerability } from '../models';
+import { getDgColor } from 'src/utils/colors';
 import VuePlotly from './VuePlotly.vue';
 
 const { t } = useI18n({ useScope: 'global' });
@@ -71,25 +72,17 @@ const chartData = computed(() => {
     '5': [],
   };
 
-  const dgColors: { [Key: string]: string } = {
-    '1': 'blue',
-    '2': 'green',
-    '3': 'yellow',
-    '4': 'orange',
-    '5': 'red',
-  };
-
-  analysis.runResultsVulnerability.forEach((line: RunResultVulnerability) => {
-    dgGroups[line.dg].push(line.pga);
+  analysis.runResultsVulnerabilities.forEach((line: RunResultVulnerability) => {
+    dgGroups[line.dg] = line.pgas;
   });
 
   const scatterTraces: ScatterTrace[] = Object.keys(dgGroups).map((key) => {
     return {
-      y: dgGroups[key].map(() => parseInt(key)),
+      y: dgGroups[key].map(() => key),
       x: dgGroups[key],
       mode: 'markers',
       marker: {
-        color: dgColors[key],
+        color: getDgColor(key),
       },
       name: `DG${key}`,
     };
@@ -102,7 +95,7 @@ const chartData = computed(() => {
       name: key,
       side: 'positive',
       marker: {
-        color: dgColors[key],
+        color: getDgColor(key),
       },
       jitter: 0.05,
     };

@@ -48,5 +48,13 @@ class RunResultUpdate(RunResultBase):
 
 
 class RunResultVulnerability(BaseModel):
-    pga: float | None
-    dg: float | None
+    pgas: list[float] | None
+    dg: int | None
+
+
+class RunResultFragility(BaseModel):
+    thresh: list[float] | None
+    prob: list[float] | None
+    x: list[float] | None
+    y: list[float] | None
+    dg: int | None

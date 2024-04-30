@@ -88,6 +88,14 @@ export interface ExperimentParallelCount {
 }
 
 export interface RunResultVulnerability {
-  pga: number;
+  pgas: number[];
+  dg: number;
+}
+
+export interface RunResultFragility {
+  thresh: number[];
+  prob: number[];
+  x: number[];
+  y: number[];
   dg: number;
 }

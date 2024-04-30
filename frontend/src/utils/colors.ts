@@ -40,3 +40,15 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
 export function getFieldValueColor(field: string, value: string): string {
   return colorPalettes[field][value] || '#000000';
 }
+
+const dgColors: { [Key: string]: string } = {
+  '1': 'blue',
+  '2': 'green',
+  '3': 'yellow',
+  '4': 'orange',
+  '5': 'red',
+};
+
+export function getDgColor(dg: string): string {
+  return dgColors[dg] || '#000000';
+}

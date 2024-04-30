@@ -123,6 +123,7 @@ export default {
   dg_reported_axis: 'Estimated damage grade (DG)',
   dg_derived_axis: 'Derived damage grade (DG)',
   dg_axis: 'Damage grade (DG)',
+  dg_pga_axis: 'P(DGi&#124;PGA)',
   show_tested_buildings: 'Show tested buildings',
   aggregations_hint: 'Select a category to filter tested buildings',
   damage_vulnerability: 'Damage Vulnerability',
