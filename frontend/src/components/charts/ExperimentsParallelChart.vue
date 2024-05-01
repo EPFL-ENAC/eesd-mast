@@ -68,7 +68,7 @@ const chartData = computed(() => {
       'retrofitting_application',
     ].forEach((field: string) => {
       parCatsData.dimensions.push({
-        label: t(field),
+        label: t(`${field}_short`),
         values: digestedCounts.map((line) => {
           if (field === 'test_scale') {
             return testScaleLabel(line[field]);
