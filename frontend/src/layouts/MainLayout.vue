@@ -14,6 +14,14 @@
         <q-toolbar-title class="text-weight-medium">
           Masonry Shake-Table Database
         </q-toolbar-title>
+        <div class="row q-col-gutter-md">
+          <a href="https://epfl.ch" target="_blank">
+            <img src="/EPFL.svg" style="width: 80px" />
+          </a>
+          <a href="https://www.epfl.ch/labs/eesd/" target="_blank">
+            <img src="/EESD.svg" style="width: 88px" class="float-right" />
+          </a>
+        </div>
       </q-toolbar>
       <q-toolbar inset style="min-height: 20px">
         <q-btn
@@ -28,7 +36,7 @@
         <q-btn
           flat
           dense
-          :label="$t('tested_buildings')"
+          :label="$t('buildings')"
           no-caps
           to="/buildings"
           :class="isBuildings ? 'bg-grey-3' : ''"
@@ -46,19 +54,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <div class="row q-pa-md">
-        <div class="col-6">
-          <a href="https://epfl.ch" target="_blank">
-            <img src="/EPFL.svg" style="width: 100px" />
-          </a>
-        </div>
-        <div class="col-6">
-          <a href="https://www.epfl.ch/labs/eesd/" target="_blank">
-            <img src="/EESD.svg" style="width: 105px" class="float-right" />
-          </a>
-        </div>
-      </div>
+    <q-drawer v-model="leftDrawerOpen" :show-if-above="isBuildings" bordered>
       <div v-if="!isBuildings">
         <q-list>
           <q-item-label header class="text-h5">{{
@@ -96,18 +92,44 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-dialog v-model="showIntro">
+      <q-card>
+        <q-card-section>
+          <div class="q-pa-md">
+            <div class="text-subtitle1 text-grey-8">
+              <q-markdown :src="OverViewMd" no-line-numbers />
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat :label="$t('close')" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { getSettings, saveSettings } from 'src/utils/settings';
+import OverViewMd from 'src/assets/overview.md';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
 import ExperimentFilters from 'src/components/ExperimentFilters.vue';
 
 const route = useRoute();
+
+const showIntro = ref(false);
+
+onMounted(() => {
+  const settings = getSettings();
+  if (!settings.intro_shown) {
+    showIntro.value = true;
+    settings.intro_shown = true;
+    saveSettings(settings);
+  }
+});
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(() => route.path.startsWith('/buildings'));
@@ -135,6 +157,13 @@ const essentialLinks: EssentialLinkProps[] = [
 ];
 const leftDrawerOpen = ref(false);
 const rightDrawerOpen = ref(false);
+
+watch(
+  () => isBuildings.value,
+  () => {
+    if (isBuildings.value) leftDrawerOpen.value = true;
+  }
+);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

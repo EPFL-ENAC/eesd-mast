@@ -27,7 +27,7 @@
           no-caps
           icon="visibility"
           color="secondary"
-          :label="$t('show_tested_buildings')"
+          :label="$t('show_buildings')"
           @click="onShowExperiments"
         ></q-btn>
       </div>

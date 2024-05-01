@@ -4,7 +4,7 @@ export default {
   references_counts_label: 'References with experimental data',
   downloadable: 'Downloadable',
   run_results_counts_label: 'Experimental results',
-  tested_buildings: 'Tested Buildings',
+  buildings: 'Buildings',
   contact_us: 'Contact Us',
   summary:
     'A comprehensive database and collaborative resource for advancing seismic assessment of unreinforced masonry buildings',
@@ -124,7 +124,8 @@ export default {
   dg_derived_axis: 'Derived damage grade (DG)',
   dg_axis: 'Damage grade (DG)',
   dg_pga_axis: 'P(DGi&#124;PGA)',
-  show_tested_buildings: 'Show tested buildings',
+  show_buildings: 'Show buildings',
   aggregations_hint: 'Select a category to filter tested buildings',
   damage_vulnerability: 'Damage Vulnerability',
+  close: 'Close',
 };
