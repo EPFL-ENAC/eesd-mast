@@ -67,19 +67,20 @@ class RunResultsService:
             p_exceed = []
             grade_pgas = list(
                 map(lambda vul: vul.pgas, [v for v in vulnerabilities if v.dg == i]))
-            for pga in PGA_thresh:
-                p_exceed.append(np.sum(grade_pgas <= pga) /
-                                np.sum(~np.isnan(grade_pgas)))
+            if len(grade_pgas):
+                for pga in PGA_thresh:
+                    p_exceed.append(np.sum(grade_pgas <= pga) /
+                                    np.sum(~np.isnan(grade_pgas)))
 
-            # Fit a lognormal CDF to the data
-            b, theta, beta = self.probit(PGA_thresh, p_exceed)
+                # Fit a lognormal CDF to the data
+                b, theta, beta = self.probit(PGA_thresh, p_exceed)
 
-            x = np.linspace(0.0001, 1.25, 1000)
-            data = lognorm.cdf(x, beta, scale=theta)
+                x = np.linspace(0.0001, 1.25, 1000)
+                data = lognorm.cdf(x, beta, scale=theta)
 
-            # Store the results
-            fragilities.append(RunResultFragility(
-                dg=i, thresh=PGA_thresh.tolist(), prob=p_exceed, x=x.tolist(), y=data.tolist()))
+                # Store the results
+                fragilities.append(RunResultFragility(
+                    dg=i, thresh=PGA_thresh.tolist(), prob=p_exceed, x=x.tolist(), y=data.tolist()))
 
         return fragilities
 
