@@ -33,6 +33,7 @@ const layout = {
     title: {
       text: t('pga_axis'),
     },
+    range: [0, 1.7],
   },
   margin: {
     l: 50, // Left margin
@@ -52,6 +53,7 @@ interface ScatterTrace {
   y: number[];
   mode: 'markers';
   marker: { color: string };
+  name: string;
 }
 
 interface ViolinTrace {
@@ -78,7 +80,7 @@ const chartData = computed(() => {
 
   const scatterTraces: ScatterTrace[] = Object.keys(dgGroups).map((key) => {
     return {
-      y: dgGroups[key].map(() => key),
+      y: dgGroups[key].map(() => parseInt(key)),
       x: dgGroups[key],
       mode: 'markers',
       marker: {
