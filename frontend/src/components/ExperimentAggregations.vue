@@ -49,19 +49,39 @@
         />
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <experiments-parallel-chart class="q-ml-md q-mr-md" />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
-      </div>
-      <div class="col-12 col-md-6">
-        <run-results-fragilities-chart class="q-ml-md q-mr-md" />
-      </div>
-    </div>
+
+    <q-tabs
+      v-model="tab"
+      dense
+      class="text-grey q-mt-md q-ml-md q-mr-md"
+      active-color="primary"
+      indicator-color="primary"
+      align="left"
+      narrow-indicator
+    >
+      <q-tab name="parallel" :label="$t('key_features')" />
+      <q-tab name="vulnerabilities" :label="$t('vulnerability')" />
+    </q-tabs>
+
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="parallel">
+        <div class="row">
+          <div class="col-12">
+            <experiments-parallel-chart class="q-ml-md q-mr-md" />
+          </div>
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="vulnerabilities">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
+          </div>
+          <div class="col-12 col-md-6">
+            <run-results-fragilities-chart class="q-ml-md q-mr-md" />
+          </div>
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
@@ -86,6 +106,8 @@ const router = useRouter();
 const analysis = useAnalysisStore();
 const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
+
+const tab = ref('parallel');
 
 const fields = computed(() => {
   // cumulate frequencies of stones

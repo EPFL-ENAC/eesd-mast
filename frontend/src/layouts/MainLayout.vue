@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
       <q-toolbar>
         <q-btn
@@ -60,6 +60,16 @@
           <q-item-label header class="text-h5">{{
             $t('resources')
           }}</q-item-label>
+
+          <q-item clickable @click="onShowIntro">
+            <q-item-section avatar>
+              <q-icon name="info" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ $t('introduction') }}</q-item-label>
+            </q-item-section>
+          </q-item>
           <EssentialLink
             v-for="link in essentialLinks"
             :key="link.title"
@@ -170,5 +180,9 @@ function toggleLeftDrawer() {
 }
 function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value;
+}
+
+function onShowIntro() {
+  showIntro.value = true;
 }
 </script>
