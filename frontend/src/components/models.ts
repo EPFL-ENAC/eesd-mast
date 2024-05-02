@@ -28,6 +28,7 @@ export interface Experiment extends DBModel {
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
   files: FileNode;
+  modelds: FileNode;
   test_scale: number | null;
 }
 

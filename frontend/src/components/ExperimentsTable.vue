@@ -16,14 +16,7 @@
       @row-click="onRowClick"
     >
       <template v-slot:top-left>
-        <q-chip
-          removable
-          v-for="sel in filters.references"
-          :key="sel.id"
-          @remove="onRemoveReferenceFilter(sel)"
-        >
-          {{ sel.reference }}
-        </q-chip>
+        <q-toggle v-model="filters.with3dModel" :label="$t('with_3d_model')" />
       </template>
       <template v-slot:top-right>
         <q-input
@@ -65,6 +58,16 @@
           />
         </q-td>
       </template>
+      <template v-slot:body-cell-models="props">
+        <q-td :props="props">
+          <q-img
+            v-if="hasModels(props.row)"
+            :src="getModelsSchemeUrl(props.row)"
+            spinner-color="grey-6"
+            width="100px"
+          />
+        </q-td>
+      </template>
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-2">
           <q-card flat bordered class="q-ma-md">
@@ -75,7 +78,9 @@
             >
               <q-img
                 :src="
-                  props.row.scheme
+                  filters.with3dModel
+                    ? getModelsSchemeUrl(props.row)
+                    : props.row.scheme
                     ? `${baseUrl}/files/${props.row.scheme.path}`
                     : '/no-image.png'
                 "
@@ -83,6 +88,16 @@
                 spinner-color="grey-6"
                 height="250px"
               >
+                <div
+                  v-if="!filters.with3dModel && hasModels(props.row)"
+                  class="absolute-top text-right"
+                >
+                  <q-icon
+                    name="house_siding"
+                    class="bg-secondary text-white"
+                    size="sm"
+                  />
+                </div>
                 <div class="absolute-bottom text-center">
                   <div class="text-subtitle2">
                     {{ props.row.reference.reference }}
@@ -142,7 +157,7 @@
             <q-chip
               v-if="props.row.reference.link_to_request_data"
               icon="grid_on"
-              color="secondary"
+              color="grey-7"
               text-color="white"
               size="sm"
             >
@@ -189,7 +204,7 @@ import { useI18n } from 'vue-i18n';
 import { getSettings, saveSettings } from 'src/utils/settings';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl } from 'src/boot/axios';
-import { Experiment, Reference } from 'src/components/models';
+import { FileNode, Experiment, Reference } from 'src/components/models';
 import ExperimentSummary from 'src/components/ExperimentSummary.vue';
 import {
   makePaginationRequestHandler,
@@ -216,11 +231,11 @@ const experiment = ref<Experiment>();
 
 const columns = [
   {
-    name: 'id',
+    name: 'building_id',
     required: true,
     label: '#',
     align: 'left',
-    field: 'id',
+    field: 'building_id',
     sortable: true,
   },
   {
@@ -230,6 +245,13 @@ const columns = [
     align: 'left',
     field: 'scheme',
     sortable: false,
+  },
+  {
+    name: 'models',
+    required: true,
+    label: t('model'),
+    align: 'left',
+    field: 'models',
   },
   {
     name: 'experiment_id',
@@ -326,10 +348,6 @@ function onExperiment(selected: Experiment) {
   showExperiment.value = true;
 }
 
-function onRemoveReferenceFilter(reference: Reference) {
-  filters.references = filters.references.filter((r) => r.id !== reference.id);
-}
-
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
 });
@@ -339,5 +357,23 @@ function toggleView(newView: string) {
   const settings = getSettings();
   settings.experiments_view = view.value;
   saveSettings(settings);
+}
+
+function hasModels(row: Experiment) {
+  return row.models;
+}
+
+function getModelsSchemeUrl(row: Experiment) {
+  if (row.models) {
+    const schemeInfo = (row.models as FileNode).children?.find(
+      (child: FileNode) => child.name.startsWith('scheme')
+    );
+    return schemeInfo
+      ? `${baseUrl}/files/${
+          schemeInfo.alt_path ? schemeInfo.alt_path : schemeInfo.path
+        }`
+      : '';
+  }
+  return '';
 }
 </script>

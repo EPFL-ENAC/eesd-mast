@@ -8,15 +8,15 @@ interface RefenceSelection {
 }
 
 interface State {
+  with3dModel: boolean;
   selections: string[];
-  references: Reference[];
   referenceSelections: RefenceSelection[];
 }
 
 export const useFiltersStore = defineStore('filters', {
   state: (): State => ({
+    with3dModel: false,
     selections: [],
-    references: [],
     referenceSelections: [],
   }),
   getters: {
@@ -49,13 +49,8 @@ export const useFiltersStore = defineStore('filters', {
           (ref) => ref.value.id
         );
       }
-      if (state.references && state.references.length > 0) {
-        const ids = state.references.map((ref) => ref.id);
-        if (dbFilters['reference_id']) {
-          dbFilters['reference_id'].push(...ids);
-        } else {
-          dbFilters['reference_id'] = ids;
-        }
+      if (state.with3dModel) {
+        dbFilters['models'] = { $exists: true };
       }
       return dbFilters;
     },
@@ -63,7 +58,6 @@ export const useFiltersStore = defineStore('filters', {
   actions: {
     resetFilters() {
       this.selections = [];
-      this.references = [];
       this.referenceSelections = [];
     },
     applySelections(filters: FieldValue[]) {

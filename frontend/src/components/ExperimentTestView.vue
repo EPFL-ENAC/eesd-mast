@@ -20,7 +20,7 @@
       <q-chip
         v-if="selected.reference.link_to_request_data"
         icon="grid_on"
-        color="secondary"
+        color="grey-7"
         text-color="white"
         class="on-left"
       >
@@ -43,7 +43,7 @@
           :disable="exp.id === selected.id"
           class="on-left"
           :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
-          :to="`/building/${exp.id}`"
+          :to="`/test/${exp.id}`"
         />
       </span>
     </div>
@@ -60,40 +60,16 @@
         <div v-if="selected.scheme">
           <div>
             <q-img
-              v-if="imageDisplay === 'fitted'"
-              :src="`${baseUrl}/files/${selected.scheme.path}`"
+              :src="schemeUrl"
               :alt="`${selected.description} [${selected.reference}]`"
               spinner-color="grey-6"
               width="250px"
             />
-            <img
-              v-else
-              :src="`${baseUrl}/files/${selected.scheme.path}`"
-              :alt="`${selected.description} [${selected.reference}]`"
-              spinner-color="grey-6"
-            />
           </div>
           <div>
-            <span class="text-caption">{{ $t('image_size') }}</span>
-            <q-btn
-              :disable="imageDisplay === 'fitted'"
-              :label="$t('fitted_size')"
-              dense
-              flat
-              no-caps
-              size="sm"
-              @click="imageDisplay = 'fitted'"
-              class="on-left on-right"
-            />
-            <q-btn
-              :disable="imageDisplay !== 'fitted'"
-              :label="$t('original_size')"
-              dense
-              flat
-              no-caps
-              size="sm"
-              @click="imageDisplay = 'full'"
-            />
+            <a :href="schemeUrl" target="_blank" class="text-caption">{{
+              $t('original_image')
+            }}</a>
           </div>
         </div>
       </div>
@@ -120,7 +96,6 @@
     >
       <q-tab name="details" :label="$t('details')" />
       <q-tab name="run_results" :label="$t('run_results')" />
-      <q-tab name="3d_model" :label="$t('3d_model')" />
       <q-tab name="files" :label="$t('files')" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
@@ -130,15 +105,6 @@
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="details">
         <fields-list :items="items" :dbobject="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="3d_model">
-        <div v-if="threeDModelFiles.length === 0" class="text-grey-6">
-          {{ $t('no_3d_model') }}
-        </div>
-        <div v-else v-for="file in threeDModelFiles" :key="file.path">
-          <vtk-viewer :file="file" />
-        </div>
       </q-tab-panel>
 
       <q-tab-panel name="run_results">
@@ -159,20 +125,19 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'ExperimentView',
+  name: 'ExperimentTestView',
 });
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
-import VtkViewer from './VtkViewer.vue';
 import ReferenceView from './ReferenceView.vue';
 import RunResultsView from './RunResultsView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 import PgaChart from './charts/PgaChart.vue';
 import DgChart from './charts/DgChart.vue';
-import { Experiment, FileNode } from 'src/components/models';
+import { Experiment } from 'src/components/models';
 import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -185,7 +150,6 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
   experiment: undefined,
 });
 
-const imageDisplay = ref('fitted');
 const tab = ref('details');
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
@@ -298,6 +262,13 @@ const items: FieldItem<Experiment>[] = [
   },
 ];
 
+const schemeUrl = computed(() => {
+  if (selected.value && selected.value.scheme) {
+    return `${baseUrl}/files/${selected.value.scheme.path}`;
+  }
+  return '';
+});
+
 watch(() => props.experiment, updateExperiment);
 
 onMounted(updateExperiment);
@@ -312,20 +283,4 @@ function updateExperiment() {
     selected.value = props.experiment;
   }
 }
-
-const threeDModelFiles = computed(() => {
-  const nodes: FileNode[] = [];
-  if (selected.value.files && selected.value.files.children) {
-    selected.value.files.children.forEach((element: FileNode) => {
-      if (element.name === '3D model' && element.children) {
-        nodes.push(
-          ...element.children.filter(
-            (f) => f.name.endsWith('.vtp') || f.alt_name?.endsWith('.vtp')
-          )
-        );
-      }
-    });
-  }
-  return nodes;
-});
 </script>

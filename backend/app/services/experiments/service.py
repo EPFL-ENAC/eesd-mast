@@ -173,6 +173,21 @@ class ExperimentsService:
                 experiment.scheme = None
                 await self.session.commit()
 
+    async def delete_models(self, experiment_id: int) -> None:
+        """Delete numerical models files of an experiment by id"""
+        res = await self.session.exec(
+            select(Experiment).where(Experiment.id == experiment_id)
+        )
+        experiment = res.one_or_none()
+
+        if experiment and experiment.models:
+            key = experiment.models['name']
+            s3_folder = f"experiments/{experiment_id}/{key}"
+            deleted = await s3_client.delete_files(s3_folder)
+            if deleted:
+                experiment.models = None
+                await self.session.commit()
+
     async def delete_files(self, experiment_id: int) -> None:
         """Delete files of an experiment by id"""
         res = await self.session.exec(

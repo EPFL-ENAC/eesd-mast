@@ -66,6 +66,8 @@ class S3_SERVICE(object):
         content_type = self._get_mime_type(file_path)
         if content_type in model_mimetypes:
             return await self._upload_local_vtk_file(parent_path, file_path, s3_folder)
+        elif content_type in image_mimetypes:
+            return await self._upload_local_image(parent_path, file_path, s3_folder)
         return await self._upload_local_file(parent_path, file_path, s3_folder)
 
     async def upload_file(self, upload_file: UploadFile, s3_folder: str = ""):
@@ -278,6 +280,50 @@ class S3_SERVICE(object):
                 status_code=500,
                 detail="Failed to upload file to S3")
 
+    async def _upload_local_image(self, parent_path, file_path: str, s3_folder: str = "") -> dict:
+        """Upload local image to S3, convert to webp if necessary
+
+        Args:
+            parent_path (str): Parent path of the file
+            file_path (str): Path to local file relative to parent path
+            s3_folder (str, optional): Relative parent folder in S3. Defaults to "".
+
+        Raises:
+            HTTPException: When S3 upload fails
+
+        Returns:
+            dict: S3 upload reference
+        """
+        if file_path.endswith(".webp"):
+            # no need to convert to webp
+            return await self._upload_local_file(parent_path, file_path, s3_folder)
+        else:
+            alt_info = None
+            try:
+                # convert to webp
+                file_path_alt = self._convert_image_file(
+                    parent_path, file_path)
+
+                # upload converted file
+                alt_info = await self._upload_local_file(
+                    parent_path, file_path_alt, s3_folder)
+            except Exception as e:
+                logger.error(e)
+
+            # Original file
+            orig_info = await self._upload_local_file(
+                parent_path, file_path, s3_folder)
+
+            # response http to be used by the frontend
+            return {
+                "path": orig_info["path"],
+                "name": orig_info["name"],
+                "size": orig_info["size"],
+                "alt_path": alt_info["path"],
+                "alt_name": alt_info["name"],
+                "alt_size": alt_info["size"]
+            } if alt_info else orig_info
+
     async def _upload_local_vtk_file(self, parent_path, file_path: str, s3_folder: str = "") -> dict:
         """Upload local file to S3, convert to vtp if necessary
 
@@ -293,17 +339,17 @@ class S3_SERVICE(object):
             dict: S3 upload reference
         """
         if file_path.endswith(".vtp"):
-            # no need to convert to webp
+            # no need to convert to vtk
             return await self._upload_local_file(parent_path, file_path, s3_folder)
         else:
-            vtp_info = None
+            alt_info = None
             try:
                 # convert to vtp
-                file_path_vtp = self._convert_vtk_file(parent_path, file_path)
+                file_path_alt = self._convert_vtk_file(parent_path, file_path)
 
-                # VTP converted file
-                vtp_info = await self._upload_local_file(
-                    parent_path, file_path_vtp, s3_folder)
+                # upload converted file
+                alt_info = await self._upload_local_file(
+                    parent_path, file_path_alt, s3_folder)
             except Exception as e:
                 logger.error(e)
 
@@ -316,10 +362,20 @@ class S3_SERVICE(object):
                 "path": orig_info["path"],
                 "name": orig_info["name"],
                 "size": orig_info["size"],
-                "alt_path": vtp_info["path"],
-                "alt_name": vtp_info["name"],
-                "alt_size": vtp_info["size"]
-            } if vtp_info else orig_info
+                "alt_path": alt_info["path"],
+                "alt_name": alt_info["name"],
+                "alt_size": alt_info["size"]
+            } if alt_info else orig_info
+
+    def _convert_image_file(self, parent_path: str, file_path: str) -> str:
+        split_file_path = os.path.splitext(file_path)
+        file_path_webp = f"{split_file_path[0]}.webp"
+        input_file = os.path.join(parent_path, file_path)
+        output_file = os.path.join(parent_path, file_path_webp)
+
+        Image.open(input_file).save(output_file, format="webp", quality=60)
+
+        return file_path_webp
 
     def _convert_vtk_file(self, parent_path: str, file_path: str) -> str:
         split_file_path = os.path.splitext(file_path)

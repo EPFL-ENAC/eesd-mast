@@ -11,8 +11,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/BuildingsPage.vue'),
       },
       {
-        path: '/building/:id',
-        component: () => import('src/pages/BuildingPage.vue'),
+        path: '/test/:id',
+        component: () => import('src/pages/TestPage.vue'),
+      },
+      {
+        path: '/model/:id',
+        component: () => import('src/pages/ModelPage.vue'),
       },
       {
         path: '/submit',

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="props.experiment?.files == null" class="text-grey-6">
+    <div v-if="!hasFiles" class="text-grey-6">
       {{ $t('no_files') }}
     </div>
     <div v-else>
@@ -139,6 +139,9 @@
                   <div v-else-if="prop.node.name.endsWith('.md')">
                     <file-node-markdown :node="prop.node" />
                   </div>
+                  <div v-else-if="prop.node.name.endsWith('.tcl')">
+                    <file-node-txt :node="prop.node" />
+                  </div>
                   <div v-else-if="prop.node.name.endsWith('.txt')">
                     <file-node-chart
                       :node="prop.node"
@@ -177,6 +180,7 @@ import { withDefaults, computed, ref, watch } from 'vue';
 import { Experiment, FileNode } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import FileNodeMarkdown from './FileNodeMarkdown.vue';
+import FileNodeTxt from './FileNodeTxt.vue';
 import VtkViewer from './VtkViewer.vue';
 
 const displayed = ref<string[]>([]);
@@ -186,13 +190,19 @@ const mdTab = ref<string>('');
 
 interface ExperimentFilesViewProps {
   experiment: Experiment;
+  type: 'files' | 'models';
 }
 const props = withDefaults(defineProps<ExperimentFilesViewProps>(), {
   experiment: undefined,
+  type: 'files',
 });
 
+const hasFiles = computed(() =>
+  props.experiment ? props.experiment[props.type] != null : false
+);
+
 const fileNodes = computed(() => {
-  const files = props.experiment && props.experiment.files;
+  const files = props.experiment && (props.experiment[props.type] as FileNode);
   sortFilesRecursively(files);
   return files.children ? files.children : [];
 });
@@ -202,11 +212,15 @@ const mdFiles = computed(() =>
 );
 
 const filesCount = computed<number>(() => {
-  return countFiles(props.experiment?.files);
+  return props.experiment
+    ? countFiles(props.experiment[props.type] as FileNode)
+    : 0;
 });
 
 const filesSize = computed<number>(() => {
-  return totalFilesSize(props.experiment?.files);
+  return props.experiment
+    ? totalFilesSize(props.experiment[props.type] as FileNode)
+    : 0;
 });
 
 watch(
@@ -221,9 +235,12 @@ onMounted(() => {
 function initViewer() {
   displayed.value = [];
   filter.value = '';
-  const mds = props.experiment?.files?.children?.filter((node) =>
-    node.name.endsWith('.md')
-  );
+  const mds =
+    props.experiment && props.experiment[props.type]
+      ? (props.experiment[props.type] as FileNode).children?.filter(
+          (node: FileNode) => node.name.endsWith('.md')
+        )
+      : [];
   if (mds && mds.length) {
     mdTab.value =
       mds.find((md) => md.name.toLocaleLowerCase() === 'readme.md')?.name ||
@@ -262,7 +279,7 @@ function downloadFile(path: string) {
 }
 
 function downloadFiles() {
-  window.open(`${baseUrl}/experiments/${props.experiment.id}/files`);
+  window.open(`${baseUrl}/experiments/${props.experiment.id}/${props.type}`);
 }
 
 function canBeDisplayed(node: FileNode) {
@@ -270,6 +287,7 @@ function canBeDisplayed(node: FileNode) {
     node.name.endsWith('.png') ||
     node.name.endsWith('.md') ||
     node.name.endsWith('.txt') ||
+    node.name.endsWith('.tcl') ||
     node.name.endsWith('.vtp') ||
     node.alt_name?.endsWith('.vtp')
   );

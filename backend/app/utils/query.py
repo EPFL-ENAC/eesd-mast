@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, select
-from sqlalchemy import func, text, or_
+from sqlalchemy import func, text, or_, cast, String
 import json
 
 
@@ -59,12 +59,22 @@ class QueryBuilder:
         return query
 
     def _apply_filter_value(self, query, field, column, value):
-        if field == "id" or field == "reference_id" or field == "experiment_id" or isinstance(value, int):
+        if field == "id" or field == "reference_id" or field == "experiment_id" or field == "building_id" or isinstance(value, int):
             query = query.where(column == value)
         elif value is None:
             query = query.where(column.is_(None))
+        elif isinstance(value, dict):
+            query = self._apply_filter_object(query, field, column, value)
         else:
             query = query.where(column.ilike(f"%{value}%"))
+        return query
+
+    def _apply_filter_object(self, query, field, column, value):
+        if '$exists' in value:
+            if value['$exists']:
+                query = query.where(cast(column, String) != 'null')
+            elif not value['$exists']:
+                query = query.where(column.is_(None))
         return query
 
     def _apply_sort(self, query):

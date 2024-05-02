@@ -2,11 +2,20 @@
   <q-page>
     <q-breadcrumbs class="q-pa-md q-mt-sm q-mb-sm text-h6">
       <q-breadcrumbs-el :label="$t('buildings')" to="../buildings" />
-      <q-breadcrumbs-el v-if="experiment" :label="title" />
+      <q-breadcrumbs-el v-if="experiment" :label="title" icon="house_siding" />
+      <q-btn
+        v-if="experiment"
+        :label="$t('view_test')"
+        no-caps
+        flat
+        icon="analytics"
+        color="primary"
+        :to="`/test/${experiment.id}`"
+      />
     </q-breadcrumbs>
     <q-separator />
     <div class="q-pa-md">
-      <experiment-view :experiment="experiment"></experiment-view>
+      <experiment-model-view :experiment="experiment"></experiment-model-view>
     </div>
   </q-page>
 </template>
@@ -15,9 +24,10 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { api, baseUrl } from 'src/boot/axios';
-import ExperimentView from 'components/ExperimentView.vue';
+import ExperimentModelView from 'components/ExperimentModelView.vue';
 
 const route = useRoute();
+const router = useRouter();
 
 const experiment = ref();
 
@@ -37,6 +47,12 @@ const title = computed(() => {
 function updateExperiment() {
   api
     .get(`${baseUrl}/experiments/${route.params.id}`)
-    .then((response) => (experiment.value = response.data));
+    .then((response) => (experiment.value = response.data))
+    .then(() => {
+      if (!experiment.value.models) {
+        router.push(`/test/${experiment.value.id}`);
+      }
+    })
+    .catch(() => router.push('/error'));
 }
 </script>
