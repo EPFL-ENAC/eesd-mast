@@ -57,19 +57,40 @@
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div class="col-12 col-md-auto">
-        <div v-if="selected.scheme">
-          <div>
+        <div class="row q-gutter-md">
+          <div v-if="selected.scheme">
+            <div>
+              <q-img
+                :src="schemeUrl"
+                :alt="`${selected.description} [${selected.reference}]`"
+                spinner-color="grey-6"
+                width="250px"
+              />
+            </div>
+            <div>
+              <a
+                :href="schemeUrl"
+                target="_blank"
+                class="text-caption text-primary"
+                >{{ $t('original_image') }} <q-icon name="open_in_new"
+              /></a>
+            </div>
+          </div>
+          <div v-for="img in planImages" :key="img.id" class="q-mt-md">
             <q-img
-              :src="schemeUrl"
-              :alt="`${selected.description} [${selected.reference}]`"
+              :src="getImageUrlAlt(img)"
+              :alt="img.name"
               spinner-color="grey-6"
               width="250px"
             />
-          </div>
-          <div>
-            <a :href="schemeUrl" target="_blank" class="text-caption">{{
-              $t('original_image')
-            }}</a>
+            <div>
+              <a
+                :href="getImageUrl(img)"
+                target="_blank"
+                class="text-caption text-primary"
+                >{{ $t('original_image') }} <q-icon name="open_in_new" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -137,7 +158,7 @@ import ExperimentFilesView from './ExperimentFilesView.vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 import PgaChart from './charts/PgaChart.vue';
 import DgChart from './charts/DgChart.vue';
-import { Experiment } from 'src/components/models';
+import { Experiment, FileNode } from 'src/components/models';
 import { testScaleLabel } from 'src/utils/numbers';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -269,6 +290,29 @@ const schemeUrl = computed(() => {
   return '';
 });
 
+const planImages = computed(() => {
+  if (selected.value.files) {
+    const plans = selected.value.files.children.find(
+      (f: FileNode) => f.name === 'Plans'
+    );
+    if (plans) {
+      return plans.children.filter(
+        (f: FileNode) => f.name.endsWith('.png') || f.name.endsWith('.webp')
+      );
+    }
+    return [];
+  }
+  return [];
+});
+
+function getImageUrlAlt(file: FileNode) {
+  return `${baseUrl}/files/${file.alt_path ? file.alt_path : file.path}`;
+}
+
+function getImageUrl(file: FileNode) {
+  return `${baseUrl}/files/${file.path}`;
+}
+
 watch(() => props.experiment, updateExperiment);
 
 onMounted(updateExperiment);
@@ -278,6 +322,11 @@ function updateExperiment() {
     referencesStore
       .fetchExperiments(props.experiment.reference_id)
       .then((res) => {
+        res.sort((a, b) => {
+          const labelA = a.experiment_id || a.id + '';
+          const labelB = b.experiment_id || b.id + '';
+          return labelA.localeCompare(labelB);
+        });
         reference_experiments.value = res;
       });
     selected.value = props.experiment;

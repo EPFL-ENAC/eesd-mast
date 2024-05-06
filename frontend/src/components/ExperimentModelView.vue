@@ -66,9 +66,12 @@
           />
         </div>
         <div>
-          <a :href="modelsSchemeUrl" target="_blank" class="text-caption">{{
-            $t('original_image')
-          }}</a>
+          <a
+            :href="modelsSchemeUrl"
+            target="_blank"
+            class="text-caption text-primary"
+            >{{ $t('original_image') }} <q-icon name="open_in_new"
+          /></a>
         </div>
       </div>
       <div v-for="img in otherImages" :key="img.path">
@@ -79,9 +82,12 @@
           width="250px"
         />
         <div>
-          <a :href="getImageUrl(img)" target="_blank" class="text-caption">{{
-            $t('original_image')
-          }}</a>
+          <a
+            :href="getImageUrl(img)"
+            target="_blank"
+            class="text-caption text-primary"
+            >{{ $t('original_image') }} <q-icon name="open_in_new"
+          /></a>
         </div>
       </div>
     </div>
