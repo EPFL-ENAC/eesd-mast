@@ -57,40 +57,38 @@
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div class="col-12 col-md-auto">
-        <div class="row q-gutter-md">
-          <div v-if="selected.scheme">
-            <div>
-              <q-img
-                :src="schemeUrl"
-                :alt="`${selected.description} [${selected.reference}]`"
-                spinner-color="grey-6"
-                width="250px"
-              />
-            </div>
-            <div>
-              <a
-                :href="schemeUrl"
-                target="_blank"
-                class="text-caption text-primary"
-                >{{ $t('original_image') }} <q-icon name="open_in_new"
-              /></a>
-            </div>
-          </div>
-          <div v-for="img in planImages" :key="img.id" class="q-mt-md">
+        <div v-if="selected.scheme">
+          <div>
             <q-img
-              :src="getImageUrlAlt(img)"
-              :alt="img.name"
+              :src="schemeUrl"
+              :alt="`${selected.description} [${selected.reference}]`"
               spinner-color="grey-6"
               width="250px"
             />
-            <div>
-              <a
-                :href="getImageUrl(img)"
-                target="_blank"
-                class="text-caption text-primary"
-                >{{ $t('original_image') }} <q-icon name="open_in_new" />
-              </a>
-            </div>
+          </div>
+          <div>
+            <a
+              :href="schemeUrl"
+              target="_blank"
+              class="text-caption text-primary"
+              >{{ $t('original_image') }} <q-icon name="open_in_new"
+            /></a>
+          </div>
+        </div>
+        <div v-for="img in planImages" :key="img.id" class="q-mt-md">
+          <q-img
+            :src="getImageUrlAlt(img)"
+            :alt="img.name"
+            spinner-color="grey-6"
+            width="250px"
+          />
+          <div>
+            <a
+              :href="getImageUrl(img)"
+              target="_blank"
+              class="text-caption text-primary"
+              >{{ $t('original_image') }} <q-icon name="open_in_new" />
+            </a>
           </div>
         </div>
       </div>
