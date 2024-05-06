@@ -56,21 +56,32 @@
       </div>
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
-      <div class="col-12 col-md-auto">
-        <div v-if="selected.scheme">
-          <div>
-            <q-img
-              :src="modelsSchemeUrlAlt"
-              :alt="`${selected.description} [${selected.reference}]`"
-              spinner-color="grey-6"
-              width="250px"
-            />
-          </div>
-          <div>
-            <a :href="modelsSchemeUrl" target="_blank" class="text-caption">{{
-              $t('original_image')
-            }}</a>
-          </div>
+      <div v-if="selected.scheme">
+        <div>
+          <q-img
+            :src="modelsSchemeUrlAlt"
+            :alt="`${selected.description} [${selected.reference}]`"
+            spinner-color="grey-6"
+            width="250px"
+          />
+        </div>
+        <div>
+          <a :href="modelsSchemeUrl" target="_blank" class="text-caption">{{
+            $t('original_image')
+          }}</a>
+        </div>
+      </div>
+      <div v-for="img in otherImages" :key="img.path">
+        <q-img
+          :src="getImageUrlAlt(img)"
+          :alt="`${selected.description} [${selected.reference}]`"
+          spinner-color="grey-6"
+          width="250px"
+        />
+        <div>
+          <a :href="getImageUrl(img)" target="_blank" class="text-caption">{{
+            $t('original_image')
+          }}</a>
         </div>
       </div>
     </div>
@@ -262,9 +273,7 @@ const modelsSchemeUrlAlt = computed(() => {
     const schemeInfo = selected.value.models.children.find((child: FileNode) =>
       child.name.startsWith('scheme')
     );
-    return `${baseUrl}/files/${
-      schemeInfo.alt_path ? schemeInfo.alt_path : schemeInfo.path
-    }`;
+    return getImageUrlAlt(schemeInfo);
   }
   return '';
 });
@@ -274,10 +283,29 @@ const modelsSchemeUrl = computed(() => {
     const schemeInfo = selected.value.models.children.find((child: FileNode) =>
       child.name.startsWith('scheme')
     );
-    return `${baseUrl}/files/${schemeInfo.path}`;
+    return getImageUrl(schemeInfo);
   }
   return '';
 });
+
+const otherImages = computed(() => {
+  if (selected.value) {
+    return selected.value.models.children.filter(
+      (f: FileNode) =>
+        (f.name.endsWith('.png') || f.name.endsWith('.webp')) &&
+        !f.name.startsWith('scheme')
+    );
+  }
+  return [];
+});
+
+function getImageUrlAlt(file: FileNode) {
+  return `${baseUrl}/files/${file.alt_path ? file.alt_path : file.path}`;
+}
+
+function getImageUrl(file: FileNode) {
+  return `${baseUrl}/files/${file.path}`;
+}
 
 watch(() => props.experiment, updateExperiment);
 
