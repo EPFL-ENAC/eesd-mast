@@ -16,7 +16,10 @@
       @row-click="onRowClick"
     >
       <template v-slot:top-left>
-        <q-toggle v-model="filters.with3dModel" :label="$t('with_3d_model')" />
+        <q-toggle
+          v-model="filters.with3dModel"
+          :label="$t('show_numerical_models')"
+        />
       </template>
       <template v-slot:top-right>
         <q-input

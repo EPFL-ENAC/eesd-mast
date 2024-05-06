@@ -95,6 +95,6 @@ const chartData = computed(() => {
     };
   });
 
-  return [...probTraces, ...fittedTraces];
+  return [/*...probTraces,*/ ...fittedTraces];
 });
 </script>

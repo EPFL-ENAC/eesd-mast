@@ -121,6 +121,7 @@ export default {
   show_buildings: 'Show buildings',
   show_less: 'Show less',
   show_more: 'Show more',
+  show_numerical_models: 'Show numerical models',
   simultaneous_excitations_nb: 'Number of Simultaneous Excitations',
   simultaneous_excitations_nb_short: 'Input dir.',
   storeys_nb: 'Number of Storeys',
@@ -141,6 +142,5 @@ export default {
   wall_leaves_nb: 'Number of Wall Leaves',
   wall_leaves_nb_short: 'Wall-leaves',
   wireframe: 'Wireframe',
-  with_3d_model: 'With 3D model',
   year: 'Year',
 };

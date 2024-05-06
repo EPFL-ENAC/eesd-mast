@@ -17,31 +17,39 @@ import VuePlotly from './VuePlotly.vue';
 const { t } = useI18n({ useScope: 'global' });
 const analysis = useAnalysisStore();
 
-const layout = {
-  //violingap: 0,
-  violingroupgap: 0,
-  violinmode: 'overlay',
-  yaxis: {
-    title: {
-      text: t('dg_axis'),
+const layout = computed(() => {
+  const groups = dgGroups.value;
+
+  const max = Object.keys(groups)
+    .map((key) => Math.max(...groups[key]))
+    .reduce((a, b) => Math.max(a, b), 0);
+
+  return {
+    //violingap: 0,
+    violingroupgap: 0,
+    violinmode: 'overlay',
+    yaxis: {
+      title: {
+        text: t('dg_axis'),
+      },
+      tickvals: [1, 2, 3, 4, 5],
+      ticktext: ['1', '2', '3', '4', '5'],
     },
-    tickvals: [1, 2, 3, 4, 5],
-    ticktext: ['1', '2', '3', '4', '5'],
-  },
-  showlegend: false,
-  xaxis: {
-    title: {
-      text: t('pga_axis'),
+    showlegend: false,
+    xaxis: {
+      title: {
+        text: t('pga_axis'),
+      },
+      range: [0, max + 0.1],
     },
-    range: [0, 1.7],
-  },
-  margin: {
-    l: 50, // Left margin
-    r: 50, // Right margin
-    b: 50, // Bottom margin
-    t: 50, // Top margin
-  },
-};
+    margin: {
+      l: 50, // Left margin
+      r: 50, // Right margin
+      b: 50, // Bottom margin
+      t: 50, // Top margin
+    },
+  };
+});
 
 const config = {
   displayModeBar: false,
@@ -66,22 +74,12 @@ interface ViolinTrace {
 }
 
 const chartData = computed(() => {
-  const dgGroups: { [Key: string]: number[] } = {
-    '1': [],
-    '2': [],
-    '3': [],
-    '4': [],
-    '5': [],
-  };
+  const groups = dgGroups.value;
 
-  analysis.runResultsVulnerabilities.forEach((line: RunResultVulnerability) => {
-    dgGroups[line.dg] = line.pgas;
-  });
-
-  const scatterTraces: ScatterTrace[] = Object.keys(dgGroups).map((key) => {
+  const scatterTraces: ScatterTrace[] = Object.keys(groups).map((key) => {
     return {
-      y: dgGroups[key].map(() => parseInt(key)),
-      x: dgGroups[key],
+      y: groups[key].map(() => parseInt(key)),
+      x: groups[key],
       mode: 'markers',
       marker: {
         color: getDgColor(key),
@@ -90,9 +88,11 @@ const chartData = computed(() => {
     };
   });
 
-  const violinTraces: ViolinTrace[] = Object.keys(dgGroups).map((key) => {
+  const violinTraces: ViolinTrace[] = Object.keys(groups).map((key) => {
+    const min = Math.min(...groups[key]);
+    const max = Math.max(...groups[key]);
     return {
-      x: dgGroups[key],
+      x: groups[key],
       type: 'violin',
       name: key,
       side: 'positive',
@@ -100,8 +100,25 @@ const chartData = computed(() => {
         color: getDgColor(key),
       },
       jitter: 0.05,
+      span: [min, max],
     };
   });
   return [...violinTraces, ...scatterTraces];
+});
+
+const dgGroups = computed(() => {
+  const groups: { [Key: string]: number[] } = {
+    '1': [],
+    '2': [],
+    '3': [],
+    '4': [],
+    '5': [],
+  };
+
+  analysis.runResultsVulnerabilities.forEach((line: RunResultVulnerability) => {
+    groups[line.dg] = line.pgas;
+  });
+
+  return groups;
 });
 </script>
