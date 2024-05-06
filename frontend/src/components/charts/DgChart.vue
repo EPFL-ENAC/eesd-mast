@@ -141,13 +141,20 @@ function buildOptions() {
       },
     },
     xAxis: {
-      type: 'value',
+      type: 'category',
       name: t(dgColumn + '_axis'),
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
         fontSize: 16,
         padding: [20, 0, 10, 0],
+      },
+      axisTick: {
+        alignWithLabel: true,
+      },
+      splitLine: {
+        show: true,
+        alignWithLabel: true,
       },
     },
     yAxis: {
