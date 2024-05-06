@@ -24,3 +24,11 @@ export function testScaleValue(label: string): number {
   );
   return parseFloat(scale || label);
 }
+
+export function makeLiteralLabel(values: number[]): string {
+  const last = values.pop();
+  if (values.length === 0) {
+    return last + '';
+  }
+  return values.join(', ') + ' and ' + last;
+}

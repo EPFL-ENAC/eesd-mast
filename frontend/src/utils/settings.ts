@@ -24,5 +24,5 @@ export function getSettings(): Settings {
 }
 
 export function saveSettings(settings: Settings) {
-  cookies.set('mast_settings', JSON.stringify(settings));
+  cookies.set('mast_settings', JSON.stringify(settings), '1y');
 }
