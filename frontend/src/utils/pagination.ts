@@ -25,8 +25,8 @@ type PaginationFetchResult = {
 
 export type QueryParams = {
   filter: string | undefined;
-  sort: string | undefined;
-  range: string | undefined;
+  sort?: string | undefined;
+  range?: string | undefined;
 };
 
 export function makePaginationRequestHandler(

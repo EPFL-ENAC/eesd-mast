@@ -22,6 +22,16 @@
         />
       </template>
       <template v-slot:top-right>
+        <q-btn
+          v-if="!filters.with3dModel"
+          :label="$t('download_test_files')"
+          no-caps
+          icon="download"
+          color="primary"
+          flat
+          class="on-left"
+          @click="downloadFiles"
+        />
         <q-input
           dense
           clearable
@@ -378,5 +388,19 @@ function getModelsSchemeUrl(row: Experiment) {
       : '';
   }
   return '';
+}
+
+function downloadFiles() {
+  const dbFilter = filters.dbFilters;
+  const query: QueryParams = {
+    filter: JSON.stringify(
+      filter.value ? { description: filter, ...dbFilter } : dbFilter
+    ),
+  };
+  const queryStr =
+    query.filter && query.filter !== '{}'
+      ? `?filter=${encodeURIComponent(query.filter)}`
+      : '';
+  window.open(`${baseUrl}/experiments-download/files${queryStr}`);
 }
 </script>

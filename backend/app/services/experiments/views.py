@@ -258,11 +258,6 @@ async def upload_experiment_models(
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
     source_dir = temp_dir
-    # real zip content is inside the single directory
-    # sfiles = [f.path for f in os.scandir(temp_dir) if not f.is_dir()]
-    # sdirs = [f.path for f in os.scandir(temp_dir) if f.is_dir()]
-    # if len(sdirs) == 1 and len(sfiles) == 0:
-    #     source_dir = sdirs[0]
 
     # upload files to s3
     # generate unique name for the numerical models files
@@ -310,11 +305,6 @@ async def upload_experiment_files(
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
     source_dir = temp_dir
-    # real zip content is inside the single directory
-    # sfiles = [f.path for f in os.scandir(temp_dir) if not f.is_dir()]
-    # sdirs = [f.path for f in os.scandir(temp_dir) if f.is_dir()]
-    # if len(sdirs) == 1 and len(sfiles) == 0:
-    #     source_dir = sdirs[0]
 
     # upload files to s3
     # generate unique name for the test files

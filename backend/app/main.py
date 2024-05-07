@@ -7,6 +7,7 @@ from app.services.references.views import router as references_router
 from app.services.experiments.views import router as experiments_router
 from app.services.runresults.views import router as run_results_router
 from app.services.analysis.views import router as analysis_router
+from app.services.experiments_download.views import router as experiments_download_router
 from pydantic import BaseModel
 from sqlalchemy.sql import text
 
@@ -78,4 +79,9 @@ app.include_router(
     analysis_router,
     prefix="/analysis",
     tags=["Analysis"],
+)
+app.include_router(
+    experiments_download_router,
+    prefix="/experiments-download",
+    tags=["Experiments"],
 )

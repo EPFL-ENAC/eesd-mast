@@ -44,7 +44,6 @@
               no-caps
               icon="download"
               color="primary"
-              dense
               flat
               class="on-left"
               @click="downloadFiles"

@@ -40,6 +40,7 @@ export default {
   digitalized_data: 'Digitalized Data',
   displacement_mm: 'Displacement (mm)',
   download: 'Download',
+  download_test_files: 'Download tests',
   downloadable: 'Downloadable',
   experiment_id: 'Experiment ID',
   experiment: 'Experiment',
