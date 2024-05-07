@@ -91,7 +91,7 @@ export default {
   nominal_pga_z_axis: 'Nominal PGA Z',
   nominal_pga_z: 'Nominal PGA Z',
   open_measured_data: 'Open Measured Data',
-  original_image: 'Original image',
+  zoom_image: 'Zoom image',
   original_size: 'Original',
   overview: 'Overview',
   paper: 'Paper',

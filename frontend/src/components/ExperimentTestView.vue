@@ -66,13 +66,16 @@
               width="250px"
             />
           </div>
-          <div>
-            <a
-              :href="schemeUrl"
-              target="_blank"
-              class="text-caption text-primary"
-              >{{ $t('original_image') }} <q-icon name="open_in_new"
-            /></a>
+          <div class="text-center">
+            <q-btn
+              dense
+              flat
+              no-caps
+              icon="zoom_in"
+              class="text-caption text-primary full-width"
+              :label="$t('zoom_image')"
+              @click="onShowImage(schemeUrl)"
+            />
           </div>
         </div>
         <div v-for="img in planImages" :key="img.id" class="q-mt-md">
@@ -83,13 +86,16 @@
             width="250px"
             style="border: 1px solid #e0e0e0"
           />
-          <div>
-            <a
-              :href="getImageUrl(img)"
-              target="_blank"
-              class="text-caption text-primary"
-              >{{ $t('original_image') }} <q-icon name="open_in_new" />
-            </a>
+          <div class="text-center">
+            <q-btn
+              dense
+              flat
+              no-caps
+              icon="zoom_in"
+              class="text-caption text-primary full-width"
+              :label="$t('zoom_image')"
+              @click="onShowImage(getImageUrl(img))"
+            />
           </div>
         </div>
       </div>
@@ -154,6 +160,8 @@
         <reference-view :experiment="selected" />
       </q-tab-panel>
     </q-tab-panels>
+
+    <image-dialog v-model="showImage" :src="imageSrc" />
   </div>
 </template>
 
@@ -172,6 +180,7 @@ import ExperimentFilesView from './ExperimentFilesView.vue';
 import ExperimentFields from './ExperimentFields.vue';
 import PgaChart from './charts/PgaChart.vue';
 import DgChart from './charts/DgChart.vue';
+import ImageDialog from './ImageDialog.vue';
 import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -189,6 +198,8 @@ const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 const hasPgaX = ref(true);
 const hasPgaY = ref(true);
+const showImage = ref(false);
+const imageSrc = ref('');
 
 const schemeUrl = computed(() => {
   if (selected.value && selected.value.scheme) {
@@ -233,5 +244,10 @@ function updateExperiment() {
       });
     selected.value = props.experiment;
   }
+}
+
+function onShowImage(src: string) {
+  imageSrc.value = src;
+  showImage.value = true;
 }
 </script>
