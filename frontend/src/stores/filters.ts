@@ -50,7 +50,7 @@ export const useFiltersStore = defineStore('filters', {
         );
       }
       if (state.with3dModel) {
-        dbFilters['models'] = { $exists: true };
+        dbFilters['model_files'] = { $exists: true };
       }
       return dbFilters;
     },

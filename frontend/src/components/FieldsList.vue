@@ -10,20 +10,18 @@
         <q-item-label>
           <span v-if="item.html" v-html="item.html(dbobject)"></span>
           <div v-else-if="item.links">
-            <div v-if="item.links(dbobject) && item.links(dbobject).length">
-              <q-btn
+            <dt v-if="item.links(dbobject) && item.links(dbobject).length">
+              <dl
                 v-for="link in item.links(dbobject)"
                 :key="link"
-                no-caps
-                flat
-                dense
-                :label="link"
-                class="on-left"
-                icon-right="open_in_new"
-                color="primary"
-                @click="openLink(link)"
-              />
-            </div>
+                class="q-mt-sm q-mb-sm"
+              >
+                <a :href="link" target="_blank">
+                  {{ truncateString(link, 100) }}
+                  <q-icon name="open_in_new" />
+                </a>
+              </dl>
+            </dt>
             <span v-else>-</span>
           </div>
           <span v-else-if="item.format">{{ item.format(dbobject) }}</span>
@@ -82,7 +80,10 @@ const visibleItems = computed(() => {
   });
 });
 
-function openLink(link: string) {
-  window.open(link);
+function truncateString(str: string, num: number) {
+  if (str.length <= num) {
+    return str;
+  }
+  return str.slice(0, num) + '...';
 }
 </script>
