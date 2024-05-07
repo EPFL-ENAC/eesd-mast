@@ -27,8 +27,9 @@ export interface Experiment extends DBModel {
   experimental_results_reported: string[] | null;
   link_to_open_measured_data: string | null;
   crack_types_observed: string[] | null;
-  files: FileNode;
-  modelds: FileNode;
+  test_files: FileNode | null;
+  model_files: FileNode | null;
+  plan_files: FileNode | null;
   test_scale: number | null;
 }
 

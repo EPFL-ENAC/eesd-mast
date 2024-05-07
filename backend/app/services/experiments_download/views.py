@@ -29,7 +29,23 @@ from app.services.experiments.models import (
 router = APIRouter()
 
 
-@router.get("/models",
+@router.get("/plan-files",
+            status_code=200,
+            description="-- Download experiments plan assets as a zip archive --")
+async def download_experiments_models(
+        filter: str = Query(None),
+        session: AsyncSession = Depends(get_session),
+        response: Response = Response(),
+):
+    return await download_experiments_data(
+        type="plan",
+        filter=filter,
+        session=session,
+        response=response,
+    )
+
+
+@router.get("/model-files",
             status_code=200,
             description="-- Download experiments numerical model assets as a zip archive --")
 async def download_experiments_models(
@@ -38,14 +54,14 @@ async def download_experiments_models(
         response: Response = Response(),
 ):
     return await download_experiments_data(
-        type="models",
+        type="model",
         filter=filter,
         session=session,
         response=response,
     )
 
 
-@router.get("/files",
+@router.get("/test-files",
             status_code=200,
             description="-- Download experiments test assets as a zip archive --")
 async def download_experiments_files(
@@ -54,7 +70,7 @@ async def download_experiments_files(
         response: Response = Response(),
 ):
     return await download_experiments_data(
-        type="files",
+        type="test",
         filter=filter,
         session=session,
         response=response,
@@ -75,10 +91,12 @@ async def download_experiments_data(
     folder_path = os.path.join(temp_dir, folder_name)
     os.makedirs(folder_path)
 
+    type_field = f"{type}_files"
+
     try:
         for experiment in experiments:
             exp: dict = experiment.dict()
-            if exp[type] and exp[type]["children"] and len(exp[type]["children"]) > 0:
+            if exp[type_field] and exp[type_field]["children"] and len(exp[type_field]["children"]) > 0:
                 # pad building_id up to 3 digits
                 exp_folder_name = f"{experiment.building_id}"
                 exp_folder_name = '{:0>3}'.format(exp_folder_name)
@@ -91,7 +109,7 @@ async def download_experiments_data(
                     folder_path, exp_folder_name)
                 os.makedirs(experiment_folder_path)
                 # write files recursively
-                await write_files_recursively(experiment_folder_path, exp[type]["children"])
+                await write_files_recursively(experiment_folder_path, exp[type_field]["children"])
 
         # Create a ZipFile Object
         zip_file_path = os.path.join(temp_dir, f"{folder_name}.zip")

@@ -6,8 +6,9 @@ from pydantic import BaseModel
 class ExperimentBase(SQLModel):
     building_id: int | None
     scheme: Dict | None = Field(sa_column=Column(JSON))
-    models: Dict | None = Field(sa_column=Column(JSON))
-    files: Dict | None = Field(sa_column=Column(JSON))
+    model_files: Dict | None = Field(sa_column=Column(JSON))
+    test_files: Dict | None = Field(sa_column=Column(JSON))
+    plan_files: Dict | None = Field(sa_column=Column(JSON))
     description: str | None
     experiment_id: str | None
     test_scale: float | None

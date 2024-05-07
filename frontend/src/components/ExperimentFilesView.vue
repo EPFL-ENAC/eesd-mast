@@ -189,19 +189,20 @@ const mdTab = ref<string>('');
 
 interface ExperimentFilesViewProps {
   experiment: Experiment;
-  type: 'files' | 'models';
+  type: 'test' | 'model';
 }
 const props = withDefaults(defineProps<ExperimentFilesViewProps>(), {
   experiment: undefined,
-  type: 'files',
+  type: 'test',
 });
 
 const hasFiles = computed(() =>
-  props.experiment ? props.experiment[props.type] != null : false
+  props.experiment ? props.experiment[getAttribute()] != null : false
 );
 
 const fileNodes = computed(() => {
-  const files = props.experiment && (props.experiment[props.type] as FileNode);
+  const files =
+    props.experiment && (props.experiment[getAttribute()] as FileNode);
   sortFilesRecursively(files);
   return files.children ? files.children : [];
 });
@@ -212,13 +213,13 @@ const mdFiles = computed(() =>
 
 const filesCount = computed<number>(() => {
   return props.experiment
-    ? countFiles(props.experiment[props.type] as FileNode)
+    ? countFiles(props.experiment[getAttribute()] as FileNode)
     : 0;
 });
 
 const filesSize = computed<number>(() => {
   return props.experiment
-    ? totalFilesSize(props.experiment[props.type] as FileNode)
+    ? totalFilesSize(props.experiment[getAttribute()] as FileNode)
     : 0;
 });
 
@@ -231,12 +232,16 @@ onMounted(() => {
   initViewer();
 });
 
+function getAttribute() {
+  return `${props.type}_files`;
+}
+
 function initViewer() {
   displayed.value = [];
   filter.value = '';
   const mds =
-    props.experiment && props.experiment[props.type]
-      ? (props.experiment[props.type] as FileNode).children?.filter(
+    props.experiment && props.experiment[getAttribute()]
+      ? (props.experiment[getAttribute()] as FileNode).children?.filter(
           (node: FileNode) => node.name.endsWith('.md')
         )
       : [];
@@ -278,7 +283,12 @@ function downloadFile(path: string) {
 }
 
 function downloadFiles() {
-  window.open(`${baseUrl}/experiments/${props.experiment.id}/${props.type}`);
+  window.open(
+    `${baseUrl}/experiments/${props.experiment.id}/${getAttribute().replace(
+      '_',
+      '-'
+    )}`
+  );
 }
 
 function canBeDisplayed(node: FileNode) {

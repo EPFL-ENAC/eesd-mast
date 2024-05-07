@@ -44,7 +44,9 @@ const title = computed(() => {
   return '';
 });
 
-const hasModels = computed(() => experiment.value && experiment.value?.models);
+const hasModels = computed(
+  () => experiment.value && experiment.value?.model_files
+);
 
 function updateExperiment() {
   api

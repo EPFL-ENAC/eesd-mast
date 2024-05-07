@@ -173,34 +173,49 @@ class ExperimentsService:
                 experiment.scheme = None
                 await self.session.commit()
 
-    async def delete_models(self, experiment_id: int) -> None:
-        """Delete numerical models files of an experiment by id"""
+    async def delete_plan_files(self, experiment_id: int) -> None:
+        """Delete plan files of an experiment by id"""
         res = await self.session.exec(
             select(Experiment).where(Experiment.id == experiment_id)
         )
         experiment = res.one_or_none()
 
-        if experiment and experiment.models:
-            key = experiment.models['name']
+        if experiment and experiment.plan_files:
+            key = experiment.plan_files['name']
             s3_folder = f"experiments/{experiment_id}/{key}"
             deleted = await s3_client.delete_files(s3_folder)
             if deleted:
-                experiment.models = None
+                experiment.plan_files = None
                 await self.session.commit()
 
-    async def delete_files(self, experiment_id: int) -> None:
+    async def delete_model_files(self, experiment_id: int) -> None:
+        """Delete numerical model files of an experiment by id"""
+        res = await self.session.exec(
+            select(Experiment).where(Experiment.id == experiment_id)
+        )
+        experiment = res.one_or_none()
+
+        if experiment and experiment.model_files:
+            key = experiment.model_files['name']
+            s3_folder = f"experiments/{experiment_id}/{key}"
+            deleted = await s3_client.delete_files(s3_folder)
+            if deleted:
+                experiment.model_files = None
+                await self.session.commit()
+
+    async def delete_test_files(self, experiment_id: int) -> None:
         """Delete files of an experiment by id"""
         res = await self.session.exec(
             select(Experiment).where(Experiment.id == experiment_id)
         )
         experiment = res.one_or_none()
 
-        if experiment and experiment.files:
-            key = experiment.files['name']
+        if experiment and experiment.test_files:
+            key = experiment.test_files['name']
             s3_folder = f"experiments/{experiment_id}/{key}"
             deleted = await s3_client.delete_files(s3_folder)
             if deleted:
-                experiment.files = None
+                experiment.test_files = None
                 await self.session.commit()
 
     async def delete_by_reference(self, reference_id: int, recursive: bool = False) -> None:

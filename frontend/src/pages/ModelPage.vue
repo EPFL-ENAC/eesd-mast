@@ -49,7 +49,7 @@ function updateExperiment() {
     .get(`${baseUrl}/experiments/${route.params.id}`)
     .then((response) => (experiment.value = response.data))
     .then(() => {
-      if (!experiment.value.models) {
+      if (!experiment.value.model_files) {
         router.push(`/test/${experiment.value.id}`);
       }
     })

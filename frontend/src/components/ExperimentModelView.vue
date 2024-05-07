@@ -126,7 +126,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="files">
-        <experiment-files-view :experiment="selected" type="models" />
+        <experiment-files-view :experiment="selected" type="model" />
       </q-tab-panel>
 
       <q-tab-panel name="reference">
@@ -167,8 +167,8 @@ const reference_experiments = ref<Experiment[]>([]);
 
 const modelsSchemeUrlAlt = computed(() => {
   if (selected.value) {
-    const schemeInfo = selected.value.models.children.find((child: FileNode) =>
-      child.name.startsWith('scheme')
+    const schemeInfo = selected.value.model_files.children.find(
+      (child: FileNode) => child.name.startsWith('scheme')
     );
     return getImageUrlAlt(schemeInfo);
   }
@@ -177,8 +177,8 @@ const modelsSchemeUrlAlt = computed(() => {
 
 const modelsSchemeUrl = computed(() => {
   if (selected.value) {
-    const schemeInfo = selected.value.models.children.find((child: FileNode) =>
-      child.name.startsWith('scheme')
+    const schemeInfo = selected.value.model_files.children.find(
+      (child: FileNode) => child.name.startsWith('scheme')
     );
     return getImageUrl(schemeInfo);
   }
@@ -187,7 +187,7 @@ const modelsSchemeUrl = computed(() => {
 
 const otherImages = computed(() => {
   if (selected.value) {
-    return selected.value.models.children.filter(
+    return selected.value.model_files.children.filter(
       (f: FileNode) =>
         (f.name.endsWith('.png') || f.name.endsWith('.webp')) &&
         !f.name.startsWith('scheme')
@@ -220,8 +220,8 @@ function updateExperiment() {
 }
 
 const threeDModelFiles = computed(() => {
-  if (selected.value.models && selected.value.models.children) {
-    return selected.value.models.children.filter(
+  if (selected.value.model_files && selected.value.model_files.children) {
+    return selected.value.model_files.children.filter(
       (f: FileNode) => f.name.endsWith('.vtp') || f.alt_name?.endsWith('.vtp')
     );
   }

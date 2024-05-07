@@ -146,7 +146,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="files">
-        <experiment-files-view :experiment="selected" />
+        <experiment-files-view :experiment="selected" type="test" />
       </q-tab-panel>
 
       <q-tab-panel name="reference">
@@ -197,16 +197,11 @@ const schemeUrl = computed(() => {
 });
 
 const planImages = computed(() => {
-  if (selected.value.files) {
-    const plans = selected.value.files.children.find(
-      (f: FileNode) => f.name === 'Plans'
+  let imagesFolder = selected.value.plan_files;
+  if (imagesFolder && imagesFolder.children) {
+    return imagesFolder.children.filter(
+      (f: FileNode) => f.name.endsWith('.png') || f.name.endsWith('.webp')
     );
-    if (plans) {
-      return plans.children.filter(
-        (f: FileNode) => f.name.endsWith('.png') || f.name.endsWith('.webp')
-      );
-    }
-    return [];
   }
   return [];
 });

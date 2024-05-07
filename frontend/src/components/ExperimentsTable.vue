@@ -373,12 +373,12 @@ function toggleView(newView: string) {
 }
 
 function hasModels(row: Experiment) {
-  return row.models;
+  return row.model_files;
 }
 
 function getModelsSchemeUrl(row: Experiment) {
-  if (row.models) {
-    const schemeInfo = (row.models as FileNode).children?.find(
+  if (row.model_files) {
+    const schemeInfo = (row.model_files as FileNode).children?.find(
       (child: FileNode) => child.name.startsWith('scheme')
     );
     return schemeInfo
@@ -401,6 +401,6 @@ function downloadFiles() {
     query.filter && query.filter !== '{}'
       ? `?filter=${encodeURIComponent(query.filter)}`
       : '';
-  window.open(`${baseUrl}/experiments-download/files${queryStr}`);
+  window.open(`${baseUrl}/experiments-download/test-files${queryStr}`);
 }
 </script>

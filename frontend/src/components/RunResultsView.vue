@@ -226,7 +226,7 @@ function loadRunFiles(run_id: number) {
 }
 
 function hasFiles() {
-  return props.experiment.files;
+  return props.experiment.test_files;
 }
 
 function hasRunFiles(run_id: number) {
@@ -246,8 +246,8 @@ function getRunFiles(run_id: number): RunResultFileNodes {
     shake_table_accelerations: undefined,
     crack_maps: undefined,
   };
-  if (props.experiment.files && props.experiment.files.children) {
-    props.experiment.files.children.forEach((element) => {
+  if (props.experiment.test_files && props.experiment.test_files.children) {
+    props.experiment.test_files.children.forEach((element) => {
       if (element.name === 'Top displacement histories') {
         nodes.top_displacement_histories = element.children?.find(
           (child) => child.name === `${run_id}.txt`

@@ -126,8 +126,8 @@ const reference_experiments = ref<Experiment[]>([]);
 
 const modelsSchemeUrl = computed(() => {
   if (selected.value) {
-    const schemeInfo = selected.value.models.children.find((child: FileNode) =>
-      child.name.startsWith('scheme')
+    const schemeInfo = selected.value.model_files.children.find(
+      (child: FileNode) => child.name.startsWith('scheme')
     );
     return schemeInfo
       ? `${baseUrl}/files/${
@@ -145,7 +145,7 @@ const schemeUrl = computed(() => {
   return '';
 });
 
-const hasModels = computed(() => selected.value?.models);
+const hasModels = computed(() => selected.value?.model_files);
 
 const onExperiment = (exp: Experiment) => {
   selected.value = exp;
