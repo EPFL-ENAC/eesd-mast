@@ -53,6 +53,8 @@ class ExperimentBase(SQLModel):
         sa_column=Column(ARRAY(String)))
     experimental_campaign_motivation: str | None
     publication_year: int | None
+    link_to_material_papers: List[str] | None = Field(
+        sa_column=Column(ARRAY(String)))
 
     reference_id: int = Field(
         foreign_key="reference.id", index=True

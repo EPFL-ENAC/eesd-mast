@@ -123,15 +123,17 @@ const items: FieldItem<Experiment>[] = [
         : '-',
   },
   {
+    field: 'link_to_material_papers',
+    links: (val: Experiment) => val.link_to_material_papers,
+  },
+  {
     field: 'open_measured_data',
     format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
   },
   {
     field: 'link_to_open_measured_data',
-    html: (val: Experiment) =>
-      val.link_to_open_measured_data
-        ? `<a href="${val.link_to_open_measured_data}" target="_blank">${val.link_to_open_measured_data}</a>`
-        : '-',
+    links: (val: Experiment) =>
+      val.link_to_open_measured_data ? [val.link_to_open_measured_data] : [],
   },
 ];
 

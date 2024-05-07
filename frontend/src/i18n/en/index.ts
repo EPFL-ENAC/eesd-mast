@@ -63,6 +63,7 @@ export default {
   last_estimated_fundamental_period: 'Last Estimated Fundamental Period',
   link_to_experimental_paper: 'Link to Experimental Paper',
   link_to_open_measured_data: 'Link to Open Measured Data',
+  link_to_material_papers: 'Links to Material Characterization Papers',
   link_to_request_data: 'Link to Data',
   masonry_compressive_strength: 'Masonry Compressive Strength',
   masonry_unit_material: 'Masonry Unit Material',

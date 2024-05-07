@@ -9,6 +9,23 @@
       <q-item-section>
         <q-item-label>
           <span v-if="item.html" v-html="item.html(dbobject)"></span>
+          <div v-else-if="item.links">
+            <div v-if="item.links(dbobject) && item.links(dbobject).length">
+              <q-btn
+                v-for="link in item.links(dbobject)"
+                :key="link"
+                no-caps
+                flat
+                dense
+                :label="link"
+                class="on-left"
+                icon-right="open_in_new"
+                color="primary"
+                @click="openLink(link)"
+              />
+            </div>
+            <span v-else>-</span>
+          </div>
           <span v-else-if="item.format">{{ item.format(dbobject) }}</span>
           <span v-else>
             {{
@@ -35,12 +52,13 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults } from 'vue';
-import { DBModel, Experiment, Reference } from '../models';
+import { DBModel, Experiment, Reference } from 'src/components/models';
 
 export interface FieldItem<T extends DBModel> {
   field: string;
   unit?: string;
   format?: (val: T) => string;
+  links?: (val: T) => string[] | null; // href
   html?: (val: T) => string;
   visible?: (val: T) => boolean;
 }
@@ -63,5 +81,8 @@ const visibleItems = computed(() => {
     return true;
   });
 });
+
+function openLink(link: string) {
+  window.open(link);
+}
 </script>
-./models

@@ -139,10 +139,15 @@ class ExperimentsService:
             # Delete associated files
             if experiment.scheme:
                 await s3_client.delete_file(experiment.scheme['path'])
-            if experiment.files:
-                key = experiment.files['name']
-                s3_folder = f"experiments/{experiment_id}/{key}"
-                await s3_client.delete_files(s3_folder)
+            if experiment.plan_files:
+                key = experiment.plan_files['name']
+                await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
+            if experiment.model_files:
+                key = experiment.model_files['name']
+                await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
+            if experiment.test_files:
+                key = experiment.test_files['name']
+                await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
             # Delete run results
             if recursive:
                 run_results_service = RunResultsService(self.session)

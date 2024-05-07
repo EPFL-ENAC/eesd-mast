@@ -31,6 +31,7 @@ export interface Experiment extends DBModel {
   model_files: FileNode | null;
   plan_files: FileNode | null;
   test_scale: number | null;
+  link_to_material_papers: string[] | null;
 }
 
 export interface RunResult extends DBModel {
