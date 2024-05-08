@@ -43,7 +43,7 @@
           :disable="exp.id === selected.id"
           class="on-left"
           :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
-          :to="`/test/${exp.id}`"
+          :to="`/model/${exp.id}`"
         />
       </span>
     </div>
