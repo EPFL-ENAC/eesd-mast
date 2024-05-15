@@ -14,7 +14,7 @@
               <dl
                 v-for="link in item.links(dbobject)"
                 :key="link"
-                class="q-mt-sm q-mb-sm"
+                class="q-mt-sm q-mb-sm field-item"
               >
                 <a :href="link" target="_blank">
                   {{ truncateString(link, 100) }}
