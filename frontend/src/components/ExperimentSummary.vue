@@ -1,23 +1,5 @@
 <template>
   <div v-if="selected">
-    <div class="row q-gutter-md q-mb-md">
-      <q-btn
-        v-if="experiment"
-        :label="$t('view_test')"
-        no-caps
-        icon="analytics"
-        color="primary"
-        :to="`/test/${selected.id}`"
-      />
-      <q-btn
-        v-if="hasModels"
-        :label="$t('view_model')"
-        no-caps
-        icon="house_siding"
-        color="secondary"
-        :to="`/model/${selected.id}`"
-      />
-    </div>
     <div>
       <span class="text-subtitle1 on-left">{{
         selected.reference.reference
@@ -80,20 +62,48 @@
     </div>
     <q-card flat class="q-mt-md">
       <q-card-section v-if="selected.scheme">
-        <div class="row q-gutter-xl">
-          <q-img
-            :src="schemeUrl"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-            width="250px"
-          />
-          <q-img
-            v-if="hasModels"
-            :src="modelsSchemeUrl"
-            :alt="`${selected.description} [${selected.reference}]`"
-            spinner-color="grey-6"
-            width="250px"
-          />
+        <div class="row justify-center q-gutter-xl">
+          <div class="column">
+            <div class="col-auto text-center">
+              <q-btn
+                :label="$t('view_test')"
+                no-caps
+                icon="analytics"
+                color="primary"
+                :to="`/test/${selected.id}`"
+                class="full-width q-mb-md"
+              />
+            </div>
+            <div class="col">
+              <q-img
+                :src="schemeUrl"
+                :alt="`${selected.description} [${selected.reference}]`"
+                spinner-color="grey-6"
+                width="250px"
+              />
+            </div>
+          </div>
+          <div v-if="hasModels" class="column">
+            <div class="col-auto text-center">
+              <q-btn
+                :label="$t('view_model')"
+                no-caps
+                icon="house_siding"
+                color="secondary"
+                :to="`/model/${selected.id}`"
+                class="full-width q-mb-md"
+              />
+            </div>
+            <div class="col">
+              <q-img
+                v-if="hasModels"
+                :src="modelsSchemeUrl"
+                :alt="`${selected.description} [${selected.reference}]`"
+                spinner-color="grey-6"
+                width="250px"
+              />
+            </div>
+          </div>
         </div>
       </q-card-section>
     </q-card>

@@ -197,7 +197,7 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card :style="$q.screen.lt.md ? '' : 'width: 1000px; max-width: 90vw'">
+      <q-card :style="$q.screen.lt.md ? '' : 'width: 800px; max-width: 80vw'">
         <q-bar class="bg-white q-pt-lg">
           <q-space />
           <q-btn dense flat size="xl" icon="close" v-close-popup />
