@@ -51,6 +51,12 @@ class QueryBuilder:
                         noNoneValues = [v for v in value if v is not None]
                         query = query.where(
                             or_(column.is_(None), column.in_(noNoneValues)))
+                    elif field == "test_scale":
+                        # test_scale is a float field, but when the first criteria is 1,
+                        # the query parameters are passed as integers, then force
+                        # the values to be floats
+                        query = query.where(column.in_(
+                            [float(val) for val in value]))
                     else:
                         query = query.where(column.in_(value))
                 else:
