@@ -22,7 +22,7 @@
           color="secondary"
           keep-color
           icon="house_siding"
-          size="xl"
+          size="70px"
         />
       </template>
       <template v-slot:top-right>
