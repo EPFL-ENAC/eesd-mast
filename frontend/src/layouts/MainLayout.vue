@@ -105,11 +105,9 @@
 
     <q-dialog v-model="showIntro">
       <q-card>
-        <q-card-section>
-          <div class="q-pa-md">
-            <div class="text-subtitle1 text-grey-8">
-              <q-markdown :src="OverViewMd" no-line-numbers />
-            </div>
+        <q-card-section class="q-ml-md q-mr-md">
+          <div class="text-subtitle1 text-grey-8">
+            <q-markdown :src="OverViewMd" no-line-numbers />
           </div>
         </q-card-section>
         <q-card-actions align="right">

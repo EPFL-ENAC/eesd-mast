@@ -22,6 +22,7 @@ const layout = {
     title: {
       text: t('pga_axis'),
     },
+    range: [0, 1.03],
   },
   yaxis: {
     title: {
@@ -82,7 +83,7 @@ const chartData = computed(() => {
   const fittedTraces: LineTrace[] = Object.keys(dgGroups).map((key) => {
     return {
       y: dgGroups[key].y,
-      x: dgGroups[key].x,
+      x: dgGroups[key].x.filter((val) => val <= 1),
       mode: 'lines',
       marker: {
         color: getDgColor(key),
