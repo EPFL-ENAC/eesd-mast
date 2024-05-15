@@ -19,6 +19,9 @@
         <q-toggle
           v-model="filters.with3dModel"
           :label="$t('show_numerical_models')"
+          color="secondary"
+          keep-color
+          icon="house_siding"
         />
       </template>
       <template v-slot:top-right>
