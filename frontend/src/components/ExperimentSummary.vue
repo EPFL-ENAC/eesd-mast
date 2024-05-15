@@ -106,6 +106,9 @@
           </div>
         </div>
       </q-card-section>
+      <q-card-section>
+        <reference-view :experiment="selected" />
+      </q-card-section>
     </q-card>
   </div>
 </template>
@@ -119,6 +122,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { baseUrl } from 'src/boot/axios';
+import ReferenceView from './ReferenceView.vue';
 import { FileNode, Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
