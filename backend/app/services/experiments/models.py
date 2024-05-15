@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, ARRAY, UniqueConstraint, Column, Integer, String, JSON
 from typing import List, Dict, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ExperimentBase(SQLModel):
@@ -58,6 +58,10 @@ class ExperimentBase(SQLModel):
 
     reference_id: int = Field(
         foreign_key="reference.id", index=True
+    )
+
+    model_config = ConfigDict(
+        protected_namespaces=()
     )
 
 

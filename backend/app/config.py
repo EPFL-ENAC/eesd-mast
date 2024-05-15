@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, root_validator
+from pydantic import model_validator
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
@@ -26,7 +27,7 @@ class Config(BaseSettings):
     S3_BUCKET: str
     S3_PATH_PREFIX: str
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def form_db_url(cls, values: dict) -> dict:
         """Form the DB URL from the settings"""
         if "DB_URL" not in values:
