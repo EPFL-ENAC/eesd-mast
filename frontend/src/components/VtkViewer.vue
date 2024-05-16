@@ -1,9 +1,13 @@
 <template>
   <div v-if="file">
     <div class="row">
-      <div class="col-lg-6 col-md-8 col-sm-12">
-        <div class="q-mb-md row">
+      <div
+        class="col-lg-6 col-md-8 col-sm-12"
+        :style="`width: ${width}; height: ${width};`"
+      >
+        <div v-if="withRepresentation || download" class="q-mb-md row">
           <q-select
+            v-if="withRepresentation"
             v-model="representation"
             :options="representationOptions"
             map-options
@@ -49,10 +53,14 @@ import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 export interface VtkViewerProps {
   file: FileNode | undefined;
   download: boolean;
+  withRepresentation: boolean;
+  width: string;
 }
 const props = withDefaults(defineProps<VtkViewerProps>(), {
   file: undefined,
   download: true,
+  withRepresentation: true,
+  width: '400px',
 });
 
 const { t } = useI18n({ useScope: 'global' });

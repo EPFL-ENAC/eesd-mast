@@ -191,6 +191,11 @@ class RunResultsService:
             await self.session.delete(run_result)
             await self.session.commit()
 
+    async def get_by_experiment(self, experiment_id: int) -> list[RunResult]:
+        """Delete all run results by experiment id"""
+        start, stop, total_count, run_results = await self.find(filter={"experiment_id": experiment_id}, sort=None, range=None)
+        return run_results
+
     async def delete_by_experiment(self, experiment_id: int) -> None:
         """Delete all run results by experiment id"""
         start, stop, total_count, run_results = await self.find(filter={"experiment_id": experiment_id}, sort=None, range=None)

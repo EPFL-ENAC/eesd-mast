@@ -25,6 +25,8 @@ from app.services.experiments.models import (
     ExperimentRead,
     ExperimentUpdate,
 )
+from app.services.runresults.models import RunResultRead
+from app.services.numericalmodels.models import NumericalModelRead
 
 router = APIRouter()
 
@@ -114,7 +116,7 @@ async def create_experiment(
 ) -> ExperimentRead:
     """Creates an experiment"""
     service = ExperimentsService(session)
-    experiment = await service.create(Experiment.from_orm(experiment))
+    experiment = await service.create(Experiment.model_validate(experiment))
     return experiment
 
 
@@ -410,6 +412,16 @@ async def upload_experiment_files(
     return experiment
 
 
+@router.get("/{experiment_id}/run_results", response_model=list[RunResultRead])
+async def get_experiment_run_results(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+) -> list[RunResultRead]:
+    """Delete run results of an experiment by id"""
+    service = ExperimentsService(session)
+    return await service.get_run_results(experiment_id)
+
+
 @router.delete("/{experiment_id}/run_results")
 async def delete_experiment_run_results(
     experiment_id: int,
@@ -419,6 +431,27 @@ async def delete_experiment_run_results(
     """Delete run results of an experiment by id"""
     service = ExperimentsService(session)
     await service.delete_run_results(experiment_id)
+
+
+@router.get("/{experiment_id}/numerical_model", response_model=NumericalModelRead)
+async def get_experiment_numerical_model(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+) -> NumericalModelRead:
+    """Get numerical model of an experiment by id"""
+    service = ExperimentsService(session)
+    return await service.get_numerical_model(experiment_id)
+
+
+@router.delete("/{experiment_id}/numerical_model")
+async def delete_experiment_numerical_model(
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+) -> None:
+    """Delete numerical model of an experiment by id"""
+    service = ExperimentsService(session)
+    await service.delete_numerical_model(experiment_id)
 
 
 @router.delete("/{experiment_id}/plan-files")

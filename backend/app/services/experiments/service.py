@@ -1,6 +1,9 @@
 from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
+from app.services.runresults.models import RunResult
+from app.services.numericalmodels.service import NumericalModelsService
+from app.services.numericalmodels.models import NumericalModel
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
@@ -53,7 +56,7 @@ class ExperimentsService:
         experiment = res.one_or_none()
         if not experiment:
             raise HTTPException(status_code=404, detail="Experiment not found")
-        experiment = ExperimentRead.from_orm(experiment)
+        experiment = ExperimentRead.model_validate(experiment)
 
         # Get reference
         res = await self.session.exec(
@@ -61,7 +64,7 @@ class ExperimentsService:
                 Reference.id == experiment.reference_id)
         )
         reference = res.one_or_none()
-        reference_reference = ReferenceRead.from_orm(reference)
+        reference_reference = ReferenceRead.model_validate(reference)
 
         experiment.reference = reference_reference
 
@@ -83,7 +86,7 @@ class ExperimentsService:
         results = await self.session.exec(query)
         experiments = results.all()
         # Cast to ExperimentRead
-        experiments = [ExperimentRead.from_orm(
+        experiments = [ExperimentRead.model_validate(
             experiment) for experiment in experiments]
 
         # Reference IDs
@@ -98,7 +101,7 @@ class ExperimentsService:
 
         # Add reference short name to each experiment
         for experiment in experiments:
-            experiment.reference = ReferenceRead.from_orm(
+            experiment.reference = ReferenceRead.model_validate(
                 reference_dict[experiment.reference_id])
 
         return [start, end, total_count, experiments]
@@ -148,20 +151,37 @@ class ExperimentsService:
             if experiment.test_files:
                 key = experiment.test_files['name']
                 await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
-            # Delete run results
+            # Delete run results and numerical models
             if recursive:
                 run_results_service = RunResultsService(self.session)
                 await run_results_service.delete_by_experiment(experiment_id)
+                numerical_models_service = NumericalModelsService(self.session)
+                await numerical_models_service.delete_by_experiment(experiment_id)
             # Delete experiment
             await self.session.delete(experiment)
             await self.session.commit()
 
         return experiment
 
+    async def get_run_results(self, experiment_id: int) -> list[RunResult]:
+        """Delete run results of an experiment by id"""
+        run_results_service = RunResultsService(self.session)
+        return await run_results_service.get_by_experiment(experiment_id)
+
     async def delete_run_results(self, experiment_id: int) -> None:
         """Delete run results of an experiment by id"""
         run_results_service = RunResultsService(self.session)
         await run_results_service.delete_by_experiment(experiment_id)
+
+    async def get_numerical_model(self, experiment_id: int) -> NumericalModel:
+        """Get numerical model of an experiment by id"""
+        numerical_models_service = NumericalModelsService(self.session)
+        return await numerical_models_service.get_by_experiment(experiment_id)
+
+    async def delete_numerical_model(self, experiment_id: int) -> None:
+        """Delete numerical model of an experiment by id"""
+        numerical_models_service = NumericalModelsService(self.session)
+        await numerical_models_service.delete_by_experiment(experiment_id)
 
     async def delete_scheme_file(self, experiment_id: int) -> None:
         """Delete scheme file of an experiment by id"""

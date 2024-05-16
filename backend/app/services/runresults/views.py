@@ -1,6 +1,5 @@
 
-from fastapi import Depends, Security, APIRouter, Query, Response, Body, HTTPException
-from sqlmodel import select
+from fastapi import Depends, Security, APIRouter, Query, Response, Body
 from app.db import get_session, AsyncSession
 from app.auth import get_api_key
 from app.services.runresults.service import RunResultsService
@@ -10,7 +9,6 @@ from app.services.runresults.models import (
     RunResultRead,
     RunResultUpdate,
 )
-from app.utils.query import QueryBuilder
 from logging import debug
 
 router = APIRouter()
@@ -52,9 +50,9 @@ async def create_run_result(
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key),
 ) -> RunResultRead:
-    """Creates a run result"""
+    """Create a run result"""
     service = RunResultsService(session)
-    run_result = await service.create(RunResult.from_orm(run_result))
+    run_result = await service.create(RunResult.model_validate(run_result))
     return run_result
 
 
@@ -65,6 +63,7 @@ async def update_run_result(
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key)
 ) -> RunResultRead:
+    """Update a run result"""
     service = RunResultsService(session)
     run_result = await service.patch(run_result_id, run_result_update)
     return run_result

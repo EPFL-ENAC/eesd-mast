@@ -5,10 +5,14 @@ from pydantic import BaseModel, ConfigDict
 
 class ExperimentBase(SQLModel):
     building_id: int | None
+
+    # files
     scheme: Dict | None = Field(sa_column=Column(JSON))
     model_files: Dict | None = Field(sa_column=Column(JSON))
     test_files: Dict | None = Field(sa_column=Column(JSON))
     plan_files: Dict | None = Field(sa_column=Column(JSON))
+
+    # details
     description: str | None
     experiment_id: str | None
     test_scale: float | None

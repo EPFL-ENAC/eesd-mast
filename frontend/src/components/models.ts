@@ -102,3 +102,51 @@ export interface RunResultFragility {
   y: number[];
   dg: number;
 }
+
+export interface NumericalModel extends DBModel {
+  experiment_id: number;
+  software_used: string | null;
+  software_used_comment: string | null;
+  modeling_approach: string | null;
+  modeling_approach_comment: string | null;
+  units: string | null;
+  units_comment: string | null;
+  frame_elements: string | null;
+  frame_elements_comment: string | null;
+  diaphragm_elements: string | null;
+  diaphragm_elements_comment: string | null;
+  damping_model: string | null;
+  damping_model_comment: string | null;
+  global_geometry_def: string | null;
+  global_geometry_def_comment: string | null;
+  element_geometry_def: string | null;
+  element_geometry_def_comment: string | null;
+  mass_def: string | null;
+  mass_def_comment: string | null;
+  gravity_loads_def: string | null;
+  gravity_loads_def_comment: string | null;
+  wall_connections: string | null;
+  wall_connections_comment: string | null;
+  floor_connections: string | null;
+  floor_connections_comment: string | null;
+  base_support: string | null;
+  base_support_comment: string | null;
+  elastic_modulus: number | null;
+  elastic_modulus_comment: string | null;
+  shear_modulus: number | null;
+  shear_modulus_comment: string | null;
+  compression_strength: number | null;
+  compression_strength_comment: string | null;
+  tension_strength: number | null;
+  tension_strength_comment: string | null;
+  cohesion: number | null;
+  cohesion_comment: string | null;
+  friction_coeff: number | null;
+  friction_coeff_comment: string | null;
+  residual_friction_coeff: number | null;
+  residual_friction_coeff_comment: string | null;
+  damping_ratio: number | null;
+  damping_ratio_comment: string | null;
+  softening_coeff: number | null;
+  softening_coeff_comment: string | null;
+}

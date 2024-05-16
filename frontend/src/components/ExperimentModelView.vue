@@ -96,10 +96,18 @@
           />
         </div>
       </div>
+      <div v-if="threeDModelFiles.length > 0">
+        <div v-for="file in threeDModelFiles" :key="file.path">
+          <vtk-viewer
+            :file="file"
+            :download="false"
+            :with-representation="false"
+            width="500px"
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="q-ma-md"></div>
-    <div class="q-ma-md"></div>
     <q-tabs
       v-model="tab"
       dense
@@ -110,7 +118,6 @@
       narrow-indicator
     >
       <q-tab name="details" :label="$t('details')" />
-      <q-tab name="3d_model" :label="$t('3d_model')" />
       <q-tab name="files" :label="$t('files')" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
@@ -119,16 +126,9 @@
 
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="details">
-        <experiment-fields :experiment="selected" />
-      </q-tab-panel>
-
-      <q-tab-panel name="3d_model">
-        <div v-if="threeDModelFiles.length === 0" class="text-grey-6">
-          {{ $t('no_3d_model') }}
-        </div>
-        <div v-else v-for="file in threeDModelFiles" :key="file.path">
-          <vtk-viewer :file="file" />
-        </div>
+        <numerical-model-fields
+          :numerical_model="numericalModelsStore.numerical_model"
+        />
       </q-tab-panel>
 
       <q-tab-panel name="files">
@@ -156,12 +156,14 @@ import { baseUrl } from 'src/boot/axios';
 import VtkViewer from './VtkViewer.vue';
 import ReferenceView from './ReferenceView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
-import ExperimentFields from './ExperimentFields.vue';
+import NumericalModelFields from './NumericalModelFields.vue';
 import ImageDialog from './ImageDialog.vue';
 import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
+import { useNumericalModelsStore } from 'src/stores/numerical_models';
 
 const referencesStore = useReferencesStore();
+const numericalModelsStore = useNumericalModelsStore();
 
 interface ExperimentViewProps {
   experiment: Experiment;
@@ -227,6 +229,7 @@ function updateExperiment() {
         reference_experiments.value = res;
       });
     selected.value = props.experiment;
+    numericalModelsStore.fetchNumericalModel(props.experiment.id);
   }
 }
 
