@@ -8,22 +8,13 @@
           round
           icon="menu"
           aria-label="Menu"
+          :disable="!isBuildings"
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title class="text-weight-medium">
+        <span class="text-h6 q-ml-md q-mr-xl">
           Masonry Shake-Table Database
-        </q-toolbar-title>
-        <div class="row q-col-gutter-md">
-          <a href="https://epfl.ch" target="_blank">
-            <img src="/EPFL.svg" style="width: 80px" />
-          </a>
-          <a href="https://www.epfl.ch/labs/eesd/" target="_blank">
-            <img src="/EESD.svg" style="width: 88px" class="float-right" />
-          </a>
-        </div>
-      </q-toolbar>
-      <q-toolbar inset style="min-height: 20px">
+        </span>
         <q-btn
           flat
           dense
@@ -42,41 +33,30 @@
           :class="isBuildings ? 'bg-grey-3' : ''"
           class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
         />
+        <q-space />
+        <q-btn flat :label="$t('contact_us')" no-caps @click="onShowContact" />
         <q-btn
           flat
-          dense
-          :label="$t('contact_us')"
-          no-caps
-          to="/submit"
-          :class="isSubmit ? 'bg-grey-3' : ''"
-          class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
-        />
+          round
+          icon="info"
+          :title="$t('introduction')"
+          @click="onShowIntro"
+          class="on-left"
+        ></q-btn>
+        <a href="https://epfl.ch" target="_blank" class="q-mr-lg q-mt-sm">
+          <img src="/EPFL.svg" style="width: 80px" />
+        </a>
+        <a
+          href="https://www.epfl.ch/labs/eesd/"
+          target="_blank"
+          class="q-mt-sm"
+        >
+          <img src="/EESD.svg" style="width: 88px" class="float-right" />
+        </a>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" :show-if-above="isBuildings" bordered>
-      <div v-if="!isBuildings">
-        <q-list>
-          <q-item-label header class="text-h5">{{
-            $t('resources')
-          }}</q-item-label>
-
-          <q-item clickable @click="onShowIntro">
-            <q-item-section avatar>
-              <q-icon name="info" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label>{{ $t('introduction') }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <EssentialLink
-            v-for="link in essentialLinks"
-            :key="link.title"
-            v-bind="link"
-          />
-        </q-list>
-      </div>
       <div v-if="isBuildings">
         <q-list>
           <q-item-label header class="text-h5">{{
@@ -115,6 +95,35 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="showContact">
+      <q-card>
+        <q-card-section class="q-ml-md q-mr-md">
+          <div class="q-pa-md">
+            <p>{{ $t('contact_us_intro') }}</p>
+
+            <div class="q-mt-md">
+              <q-btn
+                color="red"
+                no-caps
+                label="Katrin Beyer"
+                @click="openPeoplePage('katrin.beyer')"
+              />
+              <q-btn
+                class="on-right"
+                color="red"
+                no-caps
+                label="Mathias Haindl"
+                @click="openPeoplePage('mathias.haindl')"
+              />
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat :label="$t('close')" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -129,6 +138,7 @@ import ExperimentFilters from 'src/components/ExperimentFilters.vue';
 const route = useRoute();
 
 const showIntro = ref(false);
+const showContact = ref(false);
 
 onMounted(() => {
   const settings = getSettings();
@@ -169,7 +179,7 @@ const rightDrawerOpen = ref(false);
 watch(
   () => isBuildings.value,
   () => {
-    if (isBuildings.value) leftDrawerOpen.value = true;
+    leftDrawerOpen.value = isBuildings.value;
   }
 );
 
@@ -182,5 +192,13 @@ function toggleRightDrawer() {
 
 function onShowIntro() {
   showIntro.value = true;
+}
+
+function onShowContact() {
+  showContact.value = true;
+}
+
+function openPeoplePage(username: string) {
+  window.open(`https://people.epfl.ch/${username}?lang=en`);
 }
 </script>
