@@ -137,7 +137,7 @@
     >
       <q-tab name="details" :label="$t('details')" />
       <q-tab name="run_results" :label="$t('run_results')" />
-      <q-tab name="files" :label="$t('files')" />
+      <q-tab name="files" :label="$t('test_files')" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
 

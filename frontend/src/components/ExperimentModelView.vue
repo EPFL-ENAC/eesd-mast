@@ -118,7 +118,7 @@
       narrow-indicator
     >
       <q-tab name="details" :label="$t('modeling_assumptions')" />
-      <q-tab name="files" :label="$t('files')" />
+      <q-tab name="files" :label="$t('model_files')" />
       <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
 
