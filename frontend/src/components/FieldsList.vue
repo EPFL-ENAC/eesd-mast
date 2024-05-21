@@ -35,6 +35,12 @@
             }}
           </span>
           {{ item.unit }}
+          <div
+            v-if="item.comment && item.comment(dbobject)"
+            class="text-grey-6 q-mt-sm"
+          >
+            {{ item.comment(dbobject) }}
+          </div>
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -59,6 +65,7 @@ export interface FieldItem<T extends DBModel> {
   links?: (val: T) => string[] | null; // href
   html?: (val: T) => string;
   visible?: (val: T) => boolean;
+  comment?: (val: T) => string;
 }
 
 export interface FieldsListProps {

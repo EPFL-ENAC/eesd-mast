@@ -53,10 +53,10 @@
     <q-tabs
       v-model="tab"
       dense
-      class="text-grey q-mt-md q-ml-md q-mr-md"
+      class="text-grey-8 q-mt-md q-ml-md q-mr-md"
       active-color="primary"
       indicator-color="primary"
-      align="left"
+      align="center"
       narrow-indicator
     >
       <q-tab name="parallel" :label="$t('key_features')" />
