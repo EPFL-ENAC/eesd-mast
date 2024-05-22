@@ -32,6 +32,11 @@
           {{ $t('data') }}
         </a>
       </q-chip>
+    </div>
+    <div v-if="reference_experiments.length > 1" class="q-mb-md">
+      <span class="text-caption on-left">
+        {{ $t('other_experiments_of_reference') }}
+      </span>
       <span v-if="reference_experiments.length > 1">
         <q-btn
           v-for="exp in reference_experiments"
@@ -42,7 +47,7 @@
           :title="exp.description"
           :disable="exp.id === selected.id"
           class="on-left"
-          :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
+          :class="exp.id === selected.id ? 'bg-accent text-white' : ''"
           :to="`/model/${exp.id}`"
         />
       </span>
@@ -119,7 +124,6 @@
     >
       <q-tab name="details" :label="$t('modeling_assumptions')" />
       <q-tab name="files" :label="$t('model_files')" />
-      <q-tab name="reference" :label="$t('reference')" />
     </q-tabs>
 
     <q-separator />
@@ -133,10 +137,6 @@
 
       <q-tab-panel name="files">
         <experiment-files-view :experiment="selected" type="model" />
-      </q-tab-panel>
-
-      <q-tab-panel name="reference">
-        <reference-view :experiment="selected" />
       </q-tab-panel>
     </q-tab-panels>
 
@@ -154,7 +154,6 @@ export default defineComponent({
 import { withDefaults, ref, onMounted } from 'vue';
 import { cdnUrl } from 'src/boot/axios';
 import VtkViewer from './VtkViewer.vue';
-import ReferenceView from './ReferenceView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
 import NumericalModelFields from './NumericalModelFields.vue';
 import ImageDialog from './ImageDialog.vue';
@@ -226,6 +225,11 @@ function updateExperiment() {
     referencesStore
       .fetchExperiments(props.experiment.reference_id)
       .then((res) => {
+        res.sort((a, b) => {
+          const labelA = a.experiment_id || a.id + '';
+          const labelB = b.experiment_id || b.id + '';
+          return labelA.localeCompare(labelB);
+        });
         reference_experiments.value = res;
       });
     selected.value = props.experiment;

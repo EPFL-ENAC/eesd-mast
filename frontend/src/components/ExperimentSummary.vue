@@ -1,6 +1,6 @@
 <template>
   <div v-if="selected">
-    <div>
+    <div class="q-mt-md">
       <span class="text-subtitle1 on-left">{{
         selected.reference.reference
       }}</span>
@@ -34,29 +34,31 @@
           {{ $t('data') }}
         </a>
       </q-chip>
-      <span v-if="reference_experiments.length > 1">
+    </div>
+    <div class="text-caption text-grey-8">
+      {{ selected.reference.full_reference }}
+    </div>
+    <div v-if="reference_experiments.length > 1" class="q-mt-md">
+      <span class="text-caption on-left">
+        {{ $t('other_experiments_of_reference') }}
+      </span>
+      <span>
         <q-chip
           v-for="exp in reference_experiments"
           :key="exp.id"
           :label="exp.experiment_id || exp.id"
           :title="exp.description"
           :clickable="exp.id !== selected.id"
-          :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
+          :class="exp.id === selected.id ? 'bg-accent text-white' : ''"
           @click="onExperiment(exp)"
         />
       </span>
     </div>
-    <div class="text-h5 q-mb-md">
-      {{ selected.description }}
-      <span v-if="selected.experiment_id">
-        - {{ selected.experiment_id }}
-      </span>
-    </div>
-    <div v-if="selected.experimental_campaign_motivation">
+    <div v-if="selected.experimental_campaign_motivation" class="q-mt-md">
       <div class="text-caption">
         {{ $t('test_motivation') }}
       </div>
-      <div class="text-subtitle1 text-grey-8">
+      <div class="text-grey-8">
         {{ selected.experimental_campaign_motivation }}
       </div>
     </div>
@@ -106,9 +108,6 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-section>
-        <reference-view :experiment="selected" />
-      </q-card-section>
     </q-card>
   </div>
 </template>
@@ -122,7 +121,6 @@ export default defineComponent({
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import { cdnUrl } from 'src/boot/axios';
-import ReferenceView from './ReferenceView.vue';
 import { FileNode, Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
@@ -174,6 +172,11 @@ function updateExperiment() {
     referencesStore
       .fetchExperiments(props.experiment.reference_id)
       .then((res) => {
+        res.sort((a, b) => {
+          const labelA = a.experiment_id || a.id + '';
+          const labelB = b.experiment_id || b.id + '';
+          return labelA.localeCompare(labelB);
+        });
         reference_experiments.value = res;
       });
     selected.value = props.experiment;

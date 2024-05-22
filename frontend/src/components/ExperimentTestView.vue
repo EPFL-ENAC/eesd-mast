@@ -32,7 +32,12 @@
           {{ $t('data') }}
         </a>
       </q-chip>
-      <span v-if="reference_experiments.length > 1">
+    </div>
+    <div v-if="reference_experiments.length > 1" class="q-mb-md">
+      <span class="text-caption on-left">
+        {{ $t('other_experiments_of_reference') }}
+      </span>
+      <span>
         <q-btn
           v-for="exp in reference_experiments"
           :key="exp.id"
@@ -42,7 +47,7 @@
           :title="exp.description"
           :disable="exp.id === selected.id"
           class="on-left"
-          :class="exp.id === selected.id ? 'bg-primary text-white' : ''"
+          :class="exp.id === selected.id ? 'bg-accent text-white' : ''"
           :to="`/test/${exp.id}`"
         />
       </span>

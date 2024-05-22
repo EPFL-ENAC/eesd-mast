@@ -207,6 +207,12 @@
     >
       <q-card :style="$q.screen.lt.md ? '' : 'width: 800px; max-width: 80vw'">
         <q-bar class="bg-white q-pt-lg">
+          <div class="q-pl-xs" style="font-size: larger">
+            {{ experiment.description }}
+            <span v-if="experiment.experiment_id">
+              - {{ experiment.experiment_id }}
+            </span>
+          </div>
           <q-space />
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
