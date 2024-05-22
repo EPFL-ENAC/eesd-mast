@@ -1,64 +1,9 @@
 <template>
   <div v-if="selected">
     <div class="q-mb-md">
-      <span class="text-h6 on-left">{{ selected.reference.reference }}</span>
-      <q-chip
-        v-if="selected.reference.link_to_experimental_paper"
-        icon="article"
-        color="secondary"
-        text-color="white"
-        class="on-left"
-      >
-        <a
-          :href="selected.reference.link_to_experimental_paper"
-          target="_blank"
-          style="text-decoration: none; color: white"
-        >
-          {{ $t('paper') }}
-        </a>
-      </q-chip>
-      <q-chip
-        v-if="selected.reference.link_to_request_data"
-        icon="grid_on"
-        color="grey-7"
-        text-color="white"
-        class="on-left"
-      >
-        <a
-          :href="selected.reference.link_to_request_data"
-          target="_blank"
-          style="text-decoration: none; color: white"
-        >
-          {{ $t('data') }}
-        </a>
-      </q-chip>
-    </div>
-    <div v-if="reference_experiments.length > 1" class="q-mb-md">
-      <span class="text-caption on-left">
-        {{ $t('other_experiments_of_reference') }}
-      </span>
-      <span v-if="reference_experiments.length > 1">
-        <q-btn
-          v-for="exp in reference_experiments"
-          :key="exp.id"
-          no-caps
-          rounded
-          :label="exp.experiment_id || exp.id"
-          :title="exp.description"
-          :disable="exp.id === selected.id"
-          class="on-left"
-          :class="exp.id === selected.id ? 'bg-grey-8 text-white' : ''"
-          :to="`/model/${exp.id}`"
-        />
-      </span>
-    </div>
-    <div v-if="selected.experimental_campaign_motivation">
-      <div class="text-caption">
-        {{ $t('test_motivation') }}
-      </div>
-      <div class="text-subtitle1 text-grey-8">
-        {{ selected.experimental_campaign_motivation }}
-      </div>
+      <span class="text-subtitle1 on-left">{{
+        $t('model_of', { ref: selected.reference.reference })
+      }}</span>
     </div>
     <div class="row q-gutter-md q-mt-md q-mb-md">
       <div v-if="selected.scheme">

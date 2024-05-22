@@ -1,7 +1,9 @@
 <template>
   <div v-if="selected">
     <div class="q-mb-md">
-      <span class="text-h6 on-left">{{ selected.reference.reference }}</span>
+      <span class="text-subtitle1 on-left">{{
+        selected.reference.reference
+      }}</span>
       <q-chip
         v-if="selected.reference.link_to_experimental_paper"
         icon="article"

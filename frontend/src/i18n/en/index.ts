@@ -98,6 +98,7 @@ export default {
   max_top_drift_y: 'Max Top Drift Y-dir. [%]',
   mechanical_connectors: 'Mechanical Connectors',
   model: 'Model',
+  model_of: 'OpenSees model of {ref}',
   modeling_approach: 'Modeling approach',
   modeling_assumptions: 'Modeling assumptions',
   model_files: 'OpenSees Files',
