@@ -47,7 +47,7 @@
           :title="exp.description"
           :disable="exp.id === selected.id"
           class="on-left"
-          :class="exp.id === selected.id ? 'bg-accent text-white' : ''"
+          :class="exp.id === selected.id ? 'bg-grey-8 text-white' : ''"
           :to="`/model/${exp.id}`"
         />
       </span>

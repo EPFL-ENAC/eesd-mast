@@ -49,7 +49,7 @@
           :label="exp.experiment_id || exp.id"
           :title="exp.description"
           :clickable="exp.id !== selected.id"
-          :class="exp.id === selected.id ? 'bg-accent text-white' : ''"
+          :class="exp.id === selected.id ? 'bg-grey-8 text-white' : ''"
           @click="onExperiment(exp)"
         />
       </span>
@@ -71,7 +71,7 @@
                 :label="$t('view_test')"
                 no-caps
                 icon="analytics"
-                color="primary"
+                color="accent"
                 :to="`/test/${selected.id}`"
                 class="full-width q-mb-md"
               />

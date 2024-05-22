@@ -27,7 +27,6 @@
           dense
           round
           unelevated
-          color="accent"
           :icon="miniState ? 'chevron_right' : 'chevron_left'"
           @click="miniState = !miniState"
         />

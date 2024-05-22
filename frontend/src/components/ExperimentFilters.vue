@@ -24,6 +24,7 @@
       @filter="filterFn"
       style="width: 250px"
       class="q-ml-md q-mb-md"
+      color="secondary"
     >
       <template v-slot:no-option>
         <q-item>
@@ -39,6 +40,7 @@
       node-key="key"
       no-connectors
       tick-strategy="leaf"
+      control-color="secondary"
       v-model:ticked="filters.selections"
     >
     </q-tree>

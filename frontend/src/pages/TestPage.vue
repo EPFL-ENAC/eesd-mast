@@ -4,7 +4,7 @@
       <q-breadcrumbs-el
         :label="$t('buildings')"
         to="../buildings"
-        class="text-accent"
+        class="text-grey-6"
       />
       <q-breadcrumbs-el v-if="experiment" :label="title" icon="analytics" />
       <q-btn
