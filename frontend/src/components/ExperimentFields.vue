@@ -16,6 +16,8 @@ import FieldsList, { FieldItem } from './FieldsList.vue';
 import { Experiment } from 'src/components/models';
 import { testScaleLabel, makeLiteralLabel } from 'src/utils/numbers';
 
+const { t } = useI18n({ useScope: 'global' });
+
 interface ExperimentFieldsProps {
   experiment: Experiment;
 }
@@ -116,24 +118,15 @@ const items: FieldItem<Experiment>[] = [
     field: 'max_estimated_dg',
   },
   {
-    field: 'material_characterization_refs',
-    format: (val: Experiment) =>
-      val.material_characterization_refs
-        ? val.material_characterization_refs.join(' / ')
-        : '-',
-  },
-  {
     field: 'link_to_material_papers',
     links: (val: Experiment) => val.link_to_material_papers,
-  },
-  {
-    field: 'open_measured_data',
-    format: (val: Experiment) => (val.open_measured_data ? 'Yes' : 'No'),
   },
   {
     field: 'link_to_open_measured_data',
     links: (val: Experiment) =>
       val.link_to_open_measured_data ? [val.link_to_open_measured_data] : [],
+    comment: (val: Experiment) =>
+      val.open_measured_data ? '' : t('data_not_open'),
   },
 ];
 

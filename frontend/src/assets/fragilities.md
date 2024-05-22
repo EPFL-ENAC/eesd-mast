@@ -1,0 +1,1 @@
+Fragility curves derived according to Baker, J. W. (2015). Efficient analytical fragility function fitting using dynamic structural analysis. 465 Earthquake Spectra, 31(1), 579–599. [doi:10.1193/021113EQS025M](https://doi.org/10.1193/021113EQS025M)

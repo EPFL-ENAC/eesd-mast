@@ -1,6 +1,9 @@
 <template>
   <div class="q-mb-xl">
     <div class="q-pl-md q-pr-md">
+      <div class="text-subtitle2 q-mt-md">
+        {{ $t('aggregations_title') }}
+      </div>
       <span v-if="analysis.filters.length">
         <q-btn
           dense
@@ -41,7 +44,7 @@
         color="secondary"
         size="xl"
         keep-color
-        class="q-ma-md"
+        class="on-right"
       />
     </div>
 
@@ -74,6 +77,9 @@
           </div>
           <div class="col-12 col-md-6">
             <run-results-fragilities-chart class="q-ml-md q-mr-md" />
+            <div class="q-mt-md text-grey-9">
+              <q-markdown :src="FragilitiesMd" no-line-numbers />
+            </div>
           </div>
         </div>
       </q-tab-panel>
@@ -97,6 +103,7 @@ import RunResultsVulnerabilitiesChart from './charts/RunResultsVulnerabilitiesCh
 import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
+import FragilitiesMd from 'src/assets/fragilities.md';
 
 const router = useRouter();
 const analysis = useAnalysisStore();

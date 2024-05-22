@@ -4,6 +4,7 @@ a {
   color: black;
 }
 
+a.q-markdown--link,
 .field-item > a {
   text-decoration: underline;
   text-decoration-color: red;
@@ -12,6 +13,7 @@ a {
   color: black;
 }
 
+a:hover.q-markdown--link,
 .field-item > a:hover {
   text-decoration: underline;
   text-decoration-color: black;

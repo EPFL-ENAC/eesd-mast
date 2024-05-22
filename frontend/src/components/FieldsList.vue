@@ -10,7 +10,7 @@
         <q-item-label>
           <span v-if="item.html" v-html="item.html(dbobject)"></span>
           <div v-else-if="item.links">
-            <dt v-if="item.links(dbobject) && item.links(dbobject).length">
+            <dt v-if="item.links(dbobject)">
               <dl
                 v-for="link in item.links(dbobject)"
                 :key="link"
@@ -24,7 +24,9 @@
             </dt>
             <span v-else>-</span>
           </div>
-          <span v-else-if="item.format">{{ item.format(dbobject) }}</span>
+          <span v-else-if="item.format"
+            >{{ item.format(dbobject) }} {{ item.unit }}</span
+          >
           <span v-else>
             {{
               dbobject[item.field]
@@ -33,8 +35,9 @@
                   : dbobject[item.field]
                 : '-'
             }}
+            {{ item.unit }}
           </span>
-          {{ item.unit }}
+
           <div
             v-if="item.comment && item.comment(dbobject)"
             class="text-grey-6 q-mt-sm"

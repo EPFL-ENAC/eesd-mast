@@ -1,5 +1,3 @@
-### Masonry Shake Table Database
-
 Welcome to this web-based platform dedicated to shake table tests conducted on unreinforced masonry buildings!
 
 Here you will be able to explore our comprehensive repository and discover valuable data and insights derived from experimental tests.

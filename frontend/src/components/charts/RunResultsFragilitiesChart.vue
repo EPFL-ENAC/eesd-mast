@@ -76,7 +76,7 @@ const chartData = computed(() => {
         color: getDgColor(key),
       },
       name: `DG${key}`,
-      showlegend: false,
+      showlegend: true,
     };
   });
 
@@ -92,10 +92,10 @@ const chartData = computed(() => {
         color: getDgColor(key),
         width: 2,
       },
-      name: `DG${key}`,
+      name: `DG${key} (fitted)`,
     };
   });
 
-  return [...probTraces, ...fittedTraces];
+  return [...fittedTraces, ...probTraces];
 });
 </script>

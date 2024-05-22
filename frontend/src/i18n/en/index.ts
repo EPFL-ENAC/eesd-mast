@@ -7,7 +7,9 @@ export default {
   actual_pga_y: 'Actual PGA Y-dir. [g]',
   actual_pga_z_axis: 'PGA Z measured at the shake table',
   actual_pga_z: 'Actual PGA Z-dir. [g]',
+  aggregations_title: 'Features of the buildings included in the database',
   aggregations_hint: 'Select a category to filter tested buildings',
+  app_title: 'Masonry Shake Table Database',
   applied_excitation_directions: 'Applied Excitation Directions',
   associated_test_types: 'Associated Test Types',
   base_shear_coef: 'Base Shear Coefficient',
@@ -36,6 +38,8 @@ export default {
   damping_model: 'Damping model',
   damping_ratio: 'Damping ratio (ξ)',
   data: 'Data',
+  data_not_open:
+    'Data not openly available. Please contact the authors of the test.',
   description: 'Description',
   dg_axis: 'Damage grade',
   dg_derived_axis: 'Derived damage grade',

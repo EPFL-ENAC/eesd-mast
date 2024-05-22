@@ -15,7 +15,7 @@
       class="q-ml-sm q-mr-lg"
       :class="$q.screen.lt.md ? 'text-bold' : 'text-h6'"
     >
-      Masonry Shake Table Database
+      {{ $t('app_title') }}
     </span>
     <q-btn
       flat
@@ -70,6 +70,9 @@
   <q-dialog v-model="showIntro">
     <q-card>
       <q-card-section class="q-ml-md q-mr-md">
+        <div class="text-h6 q-mb-md">
+          {{ $t('app_title') }}
+        </div>
         <div class="text-subtitle1 text-grey-8">
           <q-markdown :src="OverViewMd" no-line-numbers />
         </div>
@@ -82,8 +85,11 @@
 
   <q-dialog v-model="showResources">
     <q-card>
-      <q-card-section class="q-mt-md q-ml-md q-mr-md">
-        <q-list>
+      <q-card-section class="q-ml-md q-mr-md">
+        <div class="text-h6 q-mb-sm">
+          {{ $t('resources') }}
+        </div>
+        <q-list class="bg-grey-2">
           <essential-link
             v-for="link in essentialLinks"
             :key="link.title"
