@@ -3,6 +3,7 @@
     <q-header bordered class="bg-white text-grey-10">
       <q-toolbar>
         <q-btn
+          v-if="$q.screen.lt.md && isBuildings"
           flat
           dense
           round
@@ -12,7 +13,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <span class="text-h6 q-ml-md q-mr-xl">
+        <span class="text-h6 q-ml-sm q-mr-lg">
           Masonry Shake-Table Database
         </span>
         <q-btn
@@ -21,7 +22,7 @@
           :label="$t('overview')"
           no-caps
           to="/"
-          :class="isHome ? 'bg-grey-3' : ''"
+          :class="isHome ? 'text-primary' : ''"
           class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
         />
         <q-btn
@@ -30,7 +31,7 @@
           :label="$t('buildings')"
           no-caps
           to="/buildings"
-          :class="isBuildings ? 'bg-grey-3' : ''"
+          :class="isBuildings ? 'text-primary' : ''"
           class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
         />
         <q-space />
@@ -51,7 +52,11 @@
           target="_blank"
           class="q-mt-sm"
         >
-          <img src="/EESD.svg" style="width: 88px" class="float-right" />
+          <img
+            src="/EESD.svg"
+            style="width: 88px"
+            class="float-right q-mb-xs"
+          />
         </a>
       </q-toolbar>
     </q-header>
@@ -59,7 +64,7 @@
     <q-drawer v-model="leftDrawerOpen" :show-if-above="isBuildings" bordered>
       <div v-if="isBuildings">
         <q-list>
-          <q-item-label header class="text-h5">{{
+          <q-item-label header class="text-h6 q-ml-md q-pl-xs">{{
             $t('filters')
           }}</q-item-label>
         </q-list>
@@ -97,26 +102,24 @@
     </q-dialog>
 
     <q-dialog v-model="showContact">
-      <q-card>
-        <q-card-section class="q-ml-md q-mr-md">
-          <div class="q-pa-md">
-            <p>{{ $t('contact_us_intro') }}</p>
+      <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
+        <q-card-section class="q-mt-md q-ml-md q-mr-md">
+          <p>{{ $t('contact_us_intro') }}</p>
 
-            <div class="q-mt-md">
-              <q-btn
-                color="red"
-                no-caps
-                label="Katrin Beyer"
-                @click="openPeoplePage('katrin.beyer')"
-              />
-              <q-btn
-                class="on-right"
-                color="red"
-                no-caps
-                label="Mathias Haindl"
-                @click="openPeoplePage('mathias.haindl')"
-              />
-            </div>
+          <div class="q-mt-md">
+            <q-btn
+              color="red"
+              no-caps
+              label="Katrin Beyer"
+              @click="openPeoplePage('katrin.beyer')"
+            />
+            <q-btn
+              class="on-right"
+              color="red"
+              no-caps
+              label="Mathias Haindl"
+              @click="openPeoplePage('mathias.haindl')"
+            />
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -130,15 +133,14 @@
 <script setup lang="ts">
 import { getSettings, saveSettings } from 'src/utils/settings';
 import OverViewMd from 'src/assets/overview.md';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
 import ExperimentFilters from 'src/components/ExperimentFilters.vue';
 
 const route = useRoute();
 
 const showIntro = ref(false);
 const showContact = ref(false);
+const leftDrawerOpen = ref(false);
+const rightDrawerOpen = ref(false);
 
 onMounted(() => {
   const settings = getSettings();
@@ -151,30 +153,6 @@ onMounted(() => {
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(() => route.path.startsWith('/buildings'));
-const isSubmit = computed(() => route.path.startsWith('/submit'));
-
-const essentialLinks: EssentialLinkProps[] = [
-  {
-    title: 'EPFL',
-    caption: 'epfl.ch',
-    icon: 'school',
-    link: 'https://epfl.ch',
-  },
-  {
-    title: 'EESD',
-    caption: 'epfl.ch/labs/eesd',
-    icon: 'record_voice_over',
-    link: 'https://www.epfl.ch/labs/eesd/',
-  },
-  {
-    title: 'MAST CLI',
-    caption: 'EPFL-ENAC/eesd-mast-cli',
-    icon: 'code',
-    link: 'https://github.com/EPFL-ENAC/eesd-mast-cli',
-  },
-];
-const leftDrawerOpen = ref(false);
-const rightDrawerOpen = ref(false);
 
 watch(
   () => isBuildings.value,
@@ -186,6 +164,7 @@ watch(
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
 function toggleRightDrawer() {
   rightDrawerOpen.value = !rightDrawerOpen.value;
 }

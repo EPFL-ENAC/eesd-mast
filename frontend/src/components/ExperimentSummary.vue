@@ -7,7 +7,7 @@
       <q-chip
         v-if="selected.reference.link_to_experimental_paper"
         icon="article"
-        color="primary"
+        color="secondary"
         text-color="white"
         class="on-left"
       >
@@ -121,7 +121,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import ReferenceView from './ReferenceView.vue';
 import { FileNode, Experiment } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
@@ -144,7 +144,7 @@ const modelsSchemeUrl = computed(() => {
       (child: FileNode) => child.name.startsWith('scheme')
     );
     return schemeInfo
-      ? `${baseUrl}/files/${
+      ? `${cdnUrl}${
           schemeInfo.alt_path ? schemeInfo.alt_path : schemeInfo.path
         }`
       : '';
@@ -154,7 +154,7 @@ const modelsSchemeUrl = computed(() => {
 
 const schemeUrl = computed(() => {
   if (selected.value) {
-    return `${baseUrl}/files/${selected.value.scheme.path}`;
+    return `${cdnUrl}${selected.value.scheme.path}`;
   }
   return '';
 });

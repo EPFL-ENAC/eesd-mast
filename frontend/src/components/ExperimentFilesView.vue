@@ -43,7 +43,7 @@
               :label="$t('download')"
               no-caps
               icon="download"
-              color="primary"
+              color="secondary"
               flat
               class="on-left"
               @click="downloadFiles"
@@ -83,7 +83,7 @@
                 <q-icon
                   v-if="!prop.node.is_file"
                   name="folder"
-                  color="primary"
+                  color="secondary"
                   class="on-left"
                 />
                 <q-icon
@@ -131,7 +131,7 @@
                 <q-card-section>
                   <q-img
                     v-if="prop.node.name.endsWith('.png')"
-                    :src="`${baseUrl}/files/${prop.node.path}`"
+                    :src="`${cdnUrl}${prop.node.path}`"
                     spinner-color="grey-6"
                     fit="scale-down"
                   />
@@ -173,7 +173,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { baseUrl } from 'src/boot/axios';
+import { baseUrl, cdnUrl } from 'src/boot/axios';
 import { withDefaults, computed, ref, watch } from 'vue';
 
 import { Experiment, FileNode } from 'src/components/models';
@@ -279,7 +279,7 @@ function fileSizeLabel(size: number) {
 }
 
 function downloadFile(path: string) {
-  window.open(`${baseUrl}/files/${path}`);
+  window.open(`${cdnUrl}${path}`);
 }
 
 function downloadFiles() {

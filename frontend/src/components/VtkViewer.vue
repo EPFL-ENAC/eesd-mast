@@ -39,7 +39,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import { FileNode } from './models';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
@@ -59,7 +59,7 @@ export interface VtkViewerProps {
 const props = withDefaults(defineProps<VtkViewerProps>(), {
   file: undefined,
   download: true,
-  withRepresentation: true,
+  withRepresentation: false,
   width: '400px',
 });
 
@@ -104,12 +104,12 @@ function initContext() {
 
     // Set up the HTTP dataset reader
     // const reader = vtkHttpDataSetReader.newInstance();
-    // reader.setUrl(`${baseUrl}/files/${props.file.path}`, { fullpath: true });
+    // reader.setUrl(`${cdnUrl}${props.file.path}`, { fullpath: true });
     const reader = vtkXMLPolyDataReader.newInstance();
     const path = props.file.path.endsWith('.vtp')
       ? props.file.path
       : props.file.alt_path;
-    reader.setUrl(`${baseUrl}/files/${path}`);
+    reader.setUrl(`${cdnUrl}${path}`);
 
     // Load the dataset
     reader.loadData().then(() => {
@@ -151,7 +151,7 @@ function cleanContext() {
 }
 
 function downloadFile(path: string) {
-  window.open(`${baseUrl}/files/${path}`);
+  window.open(`${cdnUrl}${path}`);
 }
 </script>
 

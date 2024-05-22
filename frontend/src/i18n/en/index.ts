@@ -16,6 +16,9 @@ export default {
   building_height: 'Building Height (without roof structure)',
   buildings_counts_label: 'Tests on unreinforced masonry buildings',
   buildings: 'Buildings',
+  buildings_intro:
+    'You can filter these tests (using the filter section located left-side) based on various characteristics of the buildings, such as construction materials, building geometry, and testing considerations.\n\nOnce you select a building from the list, you will be able to view detailed experimental results, including general information from the shake table tests.',
+  buildings_title: 'Shake Table Tests & Models',
   clear_all_selections: 'Clear all selections',
   close: 'Close',
   cohesion: 'Cohesion (c)',
@@ -23,7 +26,7 @@ export default {
   connectors_activation: 'Connectors Activation',
   contact_us_intro:
     'If you want to give us feedback on the content and usability of this platform, or want to share new experimental data to be included, please contact us:',
-  contact_us: 'Contact Us',
+  contact_us: 'Contact',
   corresponding_author_email: 'Corresponding Author Email',
   corresponding_author_name: 'Corresponding Author Name',
   corresponding_author: 'Corresponding Author',

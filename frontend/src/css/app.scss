@@ -4,6 +4,16 @@ a {
   color: black;
 }
 
+.field-item > a {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-thickness: min(0.08em, 0.1rem);
+  text-underline-offset: 0.14em;
+  color: black;
+}
+
 .field-item > a:hover {
   text-decoration: underline;
+  text-decoration-color: black;
+  color: red;
 }

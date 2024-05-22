@@ -16,6 +16,14 @@
       @row-click="onRowClick"
     >
       <template v-slot:top-left>
+        <span class="text-h6">{{ $t('buildings_title') }}</span>
+        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
+          <q-popup-proxy class="bg-grey-7 text-white">
+            <div class="q-ma-md" style="width: 400px">
+              <q-markdown :src="$t('buildings_intro')" />
+            </div>
+          </q-popup-proxy>
+        </q-btn>
         <q-toggle
           v-model="filters.with3dModel"
           :label="$t('show_numerical_models')"
@@ -31,7 +39,7 @@
           :label="$t('download_test_files')"
           no-caps
           icon="download"
-          color="primary"
+          color="secondary"
           flat
           class="on-left"
           @click="downloadFiles"
@@ -69,7 +77,7 @@
         <q-td :props="props">
           <q-img
             v-if="props.value"
-            :src="`${baseUrl}/files/${props.value.path}`"
+            :src="`${cdnUrl}${props.value.path}`"
             spinner-color="grey-6"
             width="100px"
           />
@@ -98,7 +106,7 @@
                   filters.with3dModel
                     ? getModelsSchemeUrl(props.row)
                     : props.row.scheme
-                    ? `${baseUrl}/files/${props.row.scheme.path}`
+                    ? `${cdnUrl}${props.row.scheme.path}`
                     : '/no-image.png'
                 "
                 :alt="`${props.row.description} [${props.row.reference}]`"
@@ -220,7 +228,7 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { getSettings, saveSettings } from 'src/utils/settings';
 import { ref, onMounted } from 'vue';
-import { api, baseUrl } from 'src/boot/axios';
+import { api, baseUrl, cdnUrl } from 'src/boot/axios';
 import { FileNode, Experiment, Reference } from 'src/components/models';
 import ExperimentSummary from 'src/components/ExperimentSummary.vue';
 import {
@@ -386,7 +394,7 @@ function getModelsSchemeUrl(row: Experiment) {
       (child: FileNode) => child.name.startsWith('scheme')
     );
     return schemeInfo
-      ? `${baseUrl}/files/${
+      ? `${cdnUrl}${
           schemeInfo.alt_path ? schemeInfo.alt_path : schemeInfo.path
         }`
       : '';

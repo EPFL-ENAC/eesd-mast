@@ -59,7 +59,7 @@ function initTxt() {
   withShowMore.value = false;
   showMore.value = true;
   api
-    .get(`/files/${props.node.path}`)
+    .get(`${cdnUrl}${props.node.path}`)
     .then((res) => {
       allText.value = res.data;
       if (res.data.length > 1000) {

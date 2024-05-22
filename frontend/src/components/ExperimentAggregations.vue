@@ -6,14 +6,14 @@
           dense
           flat
           no-caps
-          color="primary"
+          color="secondary"
           :label="$t('reset_filters')"
           @click="analysis.resetFilters()"
         ></q-btn>
         <q-chip
           removable
           size="sm"
-          color="primary"
+          color="secondary"
           text-color="white"
           v-for="criteria in analysis.filters"
           :key="criteria.field"
@@ -26,7 +26,7 @@
           flat
           no-caps
           icon="visibility"
-          color="secondary"
+          color="accent"
           :label="$t('show_buildings')"
           @click="onShowExperiments"
         ></q-btn>
@@ -62,6 +62,8 @@
       <q-tab name="parallel" :label="$t('key_features')" />
       <q-tab name="vulnerabilities" :label="$t('vulnerability')" />
     </q-tabs>
+
+    <div></div>
 
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="parallel">

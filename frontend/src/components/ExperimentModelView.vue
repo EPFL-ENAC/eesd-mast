@@ -5,7 +5,7 @@
       <q-chip
         v-if="selected.reference.link_to_experimental_paper"
         icon="article"
-        color="primary"
+        color="secondary"
         text-color="white"
         class="on-left"
       >
@@ -152,7 +152,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import VtkViewer from './VtkViewer.vue';
 import ReferenceView from './ReferenceView.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
@@ -210,11 +210,11 @@ const otherImages = computed(() => {
 });
 
 function getImageUrlAlt(file: FileNode) {
-  return `${baseUrl}/files/${file.alt_path ? file.alt_path : file.path}`;
+  return `${cdnUrl}${file.alt_path ? file.alt_path : file.path}`;
 }
 
 function getImageUrl(file: FileNode) {
-  return `${baseUrl}/files/${file.path}`;
+  return `${cdnUrl}${file.path}`;
 }
 
 watch(() => props.experiment, updateExperiment);

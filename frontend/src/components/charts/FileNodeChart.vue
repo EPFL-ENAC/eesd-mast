@@ -32,7 +32,7 @@ import {
   DataZoomComponent,
 } from 'echarts/components';
 import Papa from 'papaparse';
-import { api } from 'src/boot/axios';
+import { api, cdnUrl } from 'src/boot/axios';
 import { FileNode } from 'src/components/models';
 
 use([
@@ -136,7 +136,7 @@ function initChartOptions() {
   };
   option.value = newOption;
   loading.value = true;
-  api.get(`/files/${props.node.path}`).then((res) => {
+  api.get(`${cdnUrl}${props.node.path}`).then((res) => {
     Papa.parse(res.data, {
       header: false,
       dynamicTyping: true,

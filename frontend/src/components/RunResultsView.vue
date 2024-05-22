@@ -112,7 +112,7 @@
                 <q-card>
                   <q-card-section>
                     <q-img
-                      :src="`${baseUrl}/files/${
+                      :src="`${cdnUrl}${
                         getRunFiles(props.row.run_id).crack_maps?.path
                       }`"
                       spinner-color="grey-6"
@@ -139,7 +139,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { withDefaults, onMounted, ref, watch } from 'vue';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import { useRunResultsStore } from 'src/stores/run_results';
 import {
   Experiment,

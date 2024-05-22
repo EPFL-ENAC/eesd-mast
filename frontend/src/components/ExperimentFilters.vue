@@ -4,7 +4,7 @@
       dense
       flat
       no-caps
-      color="primary"
+      color="secondary"
       :label="$t('reset_filters')"
       class="q-ml-md q-mb-md"
       @click="filters.resetFilters()"
