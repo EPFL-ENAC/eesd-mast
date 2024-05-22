@@ -5,7 +5,7 @@
         $t('model_of', { ref: selected.reference.reference })
       }}</span>
     </div>
-    <div class="row q-gutter-md q-mt-md q-mb-md">
+    <div class="row q-gutter-md q-mt-md">
       <div v-if="selected.scheme">
         <div>
           <q-img
@@ -61,9 +61,9 @@
     <q-tabs
       v-model="tab"
       dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
+      class="text-grey q-mt-xl"
+      active-color="secondary"
+      indicator-color="secondary"
       align="justify"
       narrow-indicator
     >
