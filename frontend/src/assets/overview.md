@@ -1,4 +1,4 @@
-### Masonry Shake-Table Database
+### Masonry Shake Table Database
 
 Welcome to this web-based platform dedicated to shake table tests conducted on unreinforced masonry buildings!
 
