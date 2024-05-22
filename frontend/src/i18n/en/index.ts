@@ -115,7 +115,7 @@ export default {
   nominal_pga_z: 'Nominal PGA Z-dir. [g]',
   open_measured_data: 'Open Measured Data',
   original_size: 'Original',
-  other_experiments_of_reference: 'Other experiments of this reference',
+  other_experiments_of_reference: 'Other buildings from reference',
   overview: 'Overview',
   paper: 'Paper',
   pga_axis: 'PGA [g units]',
