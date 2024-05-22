@@ -36,7 +36,21 @@
       class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
     />
     <q-space />
-    <q-btn flat :label="$t('contact_us')" no-caps @click="onShowContact" />
+    <q-btn
+      flat
+      :label="$t('contact_us')"
+      no-caps
+      @click="onShowContact"
+      class="on-left"
+    />
+    <q-btn
+      flat
+      round
+      icon="menu_book"
+      :title="$t('resources')"
+      @click="onShowResources"
+      class="on-left"
+    ></q-btn>
     <q-btn
       flat
       round
@@ -59,6 +73,23 @@
         <div class="text-subtitle1 text-grey-8">
           <q-markdown :src="OverViewMd" no-line-numbers />
         </div>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat :label="$t('close')" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showResources">
+    <q-card>
+      <q-card-section class="q-mt-md q-ml-md q-mr-md">
+        <q-list>
+          <essential-link
+            v-for="link in essentialLinks"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn flat :label="$t('close')" color="primary" v-close-popup />
@@ -103,16 +134,47 @@ export default defineComponent({
 <script setup lang="ts">
 import { getSettings, saveSettings } from 'src/utils/settings';
 import OverViewMd from 'src/assets/overview.md';
+import EssentialLink, {
+  EssentialLinkProps,
+} from 'components/EssentialLink.vue';
 
 const emit = defineEmits(['toggle']);
 
 const route = useRoute();
 
 const showIntro = ref(false);
+const showResources = ref(false);
 const showContact = ref(false);
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(() => route.path.startsWith('/buildings'));
+
+const essentialLinks: EssentialLinkProps[] = [
+  {
+    title: 'EPFL',
+    caption: 'epfl.ch',
+    icon: 'school',
+    link: 'https://epfl.ch',
+  },
+  {
+    title: 'EESD',
+    caption: 'epfl.ch/labs/eesd',
+    icon: 'engineering',
+    link: 'https://www.epfl.ch/labs/eesd/',
+  },
+  {
+    title: 'ENAC IT4R',
+    caption: 'go.epfl.ch/it4r',
+    icon: 'construction',
+    link: 'https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/',
+  },
+  {
+    title: 'MAST CLI',
+    caption: 'EPFL-ENAC/eesd-mast-cli',
+    icon: 'code',
+    link: 'https://github.com/EPFL-ENAC/eesd-mast-cli',
+  },
+];
 
 onMounted(() => {
   const settings = getSettings();
@@ -125,6 +187,10 @@ onMounted(() => {
 
 function onShowIntro() {
   showIntro.value = true;
+}
+
+function onShowResources() {
+  showResources.value = true;
 }
 
 function onShowContact() {
