@@ -4,21 +4,21 @@ from pydantic import BaseModel
 
 class RunResultBase(SQLModel):
     run_id: str = Field(unique=True, index=True)
-    nominal_pga_x: float | None
-    nominal_pga_y: float | None
-    nominal_pga_z: float | None
-    actual_pga_x: float | None
-    actual_pga_y: float | None
-    actual_pga_z: float | None
-    dg_reported: float | None
-    dg_derived: float | None
-    max_top_drift_x: float | None
-    max_top_drift_y: float | None
-    residual_top_drift_x: float | None
-    residual_top_drift_y: float | None
-    base_shear_coef: float | None
-    reported_t1_x: float | None
-    reported_t1_y: float | None
+    nominal_pga_x: float | None = Field(default=None)
+    nominal_pga_y: float | None = Field(default=None)
+    nominal_pga_z: float | None = Field(default=None)
+    actual_pga_x: float | None = Field(default=None)
+    actual_pga_y: float | None = Field(default=None)
+    actual_pga_z: float | None = Field(default=None)
+    dg_reported: float | None = Field(default=None)
+    dg_derived: float | None = Field(default=None)
+    max_top_drift_x: float | None = Field(default=None)
+    max_top_drift_y: float | None = Field(default=None)
+    residual_top_drift_x: float | None = Field(default=None)
+    residual_top_drift_y: float | None = Field(default=None)
+    base_shear_coef: float | None = Field(default=None)
+    reported_t1_x: float | None = Field(default=None)
+    reported_t1_y: float | None = Field(default=None)
 
     experiment_id: int = Field(
         default=None, foreign_key="experiment.id", index=True
