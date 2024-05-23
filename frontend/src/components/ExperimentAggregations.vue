@@ -1,10 +1,20 @@
 <template>
   <div class="q-mb-xl">
     <div class="q-pl-md q-pr-md">
-      <div class="text-subtitle2 q-mt-md">
-        {{ $t('aggregations_title') }}
+      <div class="">
+        <span class="text-subtitle2">
+          {{ $t('aggregations_title') }}
+        </span>
+        <q-toggle
+          v-model="tabToggle"
+          :label="$t('show_vulnerability')"
+          color="secondary"
+          size="xl"
+          keep-color
+          class="on-right"
+        />
       </div>
-      <span v-if="analysis.filters.length">
+      <div v-if="analysis.filters.length">
         <q-btn
           dense
           flat
@@ -33,19 +43,11 @@
           :label="$t('show_buildings')"
           @click="onShowExperiments"
         ></q-btn>
-      </span>
-      <span v-else class="q-pa-xs text-caption text-grey-8">
+      </div>
+      <div v-else class="q-pt-xs q-pb-xs text-caption text-grey-8">
         <q-icon name="info" size="sm"></q-icon>
         <span class="on-right">{{ $t('aggregations_hint') }}</span>
-      </span>
-      <q-toggle
-        v-model="tabToggle"
-        :label="$t('show_vulnerability')"
-        color="secondary"
-        size="xl"
-        keep-color
-        class="on-right"
-      />
+      </div>
     </div>
 
     <div class="row">
