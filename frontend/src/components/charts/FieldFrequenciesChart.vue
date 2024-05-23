@@ -47,7 +47,7 @@ interface FieldFrequenciesChartProps {
 }
 const props = withDefaults(defineProps<FieldFrequenciesChartProps>(), {
   field: undefined,
-  height: 300,
+  height: 400,
 });
 const emit = defineEmits<{
   (e: 'change:filter', value?: FieldValue): void;
@@ -129,7 +129,7 @@ function initChartOptions() {
     height: props.height,
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b>: {c} ({d}%)',
+      formatter: '<b>{b}</b><br/>{c} ({d}%)',
     },
     legend: {
       show: false,
@@ -139,9 +139,9 @@ function initChartOptions() {
     series: [
       {
         type: 'pie',
-        radius: ['40%', '70%'],
+        radius: ['30%', '60%'],
         color: colors,
-        avoidLabelOverlap: false,
+        avoidLabelOverlap: true,
         // label: {
         //   show: false,
         //   position: 'center',
@@ -149,13 +149,13 @@ function initChartOptions() {
         // labelLine: {
         //   show: false,
         // },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 20,
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: true,
+        //     fontSize: 20,
+        //     fontWeight: 'bold',
+        //   },
+        // },
         data: dataset,
       },
     ],

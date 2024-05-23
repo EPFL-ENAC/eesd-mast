@@ -52,7 +52,7 @@
 
     <div class="row">
       <div
-        class="col-12 col-md-3 col-sm-12"
+        class="col-12 col-lg-3 col-md-6 col-sm-12"
         v-for="field in fields"
         :key="field"
       >
