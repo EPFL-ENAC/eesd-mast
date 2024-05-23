@@ -1,7 +1,13 @@
 <template>
   <q-page>
-    <metrics-banner />
-    <experiment-aggregations />
+    <div class="row">
+      <div :class="$q.screen.lt.xl ? 'col-0' : 'col-1'"></div>
+      <div :class="$q.screen.lt.xl ? 'col-12' : 'col-10'">
+        <metrics-banner />
+        <experiment-aggregations />
+      </div>
+      <div :class="$q.screen.lt.xl ? 'col-0' : 'col-1'"></div>
+    </div>
   </q-page>
 </template>
 

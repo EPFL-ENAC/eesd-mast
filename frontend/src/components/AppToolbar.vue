@@ -10,9 +10,11 @@
       :disable="!isBuildings"
       @click="toggleLeftDrawer"
     />
-
+    <a href="https://epfl.ch" target="_blank" class="q-mt-sm">
+      <img src="/EPFL.svg" style="width: 80px" />
+    </a>
     <span
-      class="q-ml-sm q-mr-lg"
+      class="q-ml-lg q-mr-lg"
       :class="$q.screen.lt.md ? 'text-bold' : 'text-h6'"
     >
       {{ $t('app_title') }}
@@ -59,9 +61,6 @@
       @click="onShowIntro"
       class="on-left"
     ></q-btn>
-    <a href="https://epfl.ch" target="_blank" class="q-mr-lg q-mt-sm">
-      <img src="/EPFL.svg" style="width: 80px" />
-    </a>
     <a href="https://www.epfl.ch/labs/eesd/" target="_blank" class="q-mt-sm">
       <img src="/EESD.svg" style="width: 88px" class="float-right q-mb-xs" />
     </a>
