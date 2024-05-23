@@ -73,6 +73,11 @@ export const useFiltersStore = defineStore('filters', {
           MIXED_MATERIAL.forEach((val) =>
             this.selections.push(`${filter.field}:${val}`)
           );
+        } else if (
+          filter.field === 'diaphragm_material' &&
+          filter.value === 'None'
+        ) {
+          this.selections.push(`${filter.field}:null`);
         } else {
           this.selections.push(`${filter.field}:${filter.value}`);
         }

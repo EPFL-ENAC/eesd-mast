@@ -20,6 +20,7 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
     'Steel & bricks': '#e78ac3',
     'RC & Timber': '#a6d854',
     'N/A': '#9467bd',
+    None: '#9467bd',
   },
   storeys_nb: {
     '1': '#a8ddb5',

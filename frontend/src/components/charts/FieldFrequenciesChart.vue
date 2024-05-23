@@ -93,7 +93,7 @@ function onClick(params: CallbackDataParams): void {
 }
 
 function keyLabel(key: string) {
-  if (key === 'null') {
+  if (key === 'null' || key === 'None') {
     return 'N/A';
   }
   if (props.field === 'test_scale') {

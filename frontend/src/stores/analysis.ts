@@ -117,6 +117,9 @@ export const useAnalysisStore = defineStore('analysis', {
         if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
           val = MIXED_MATERIAL;
         }
+        if (filter.field === 'diaphragm_material' && filter.value === 'None') {
+          val = null;
+        }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {
             dbFilters[filter.field].push(...val);
