@@ -18,10 +18,6 @@ const routes: RouteRecordRaw[] = [
         path: '/model/:id',
         component: () => import('src/pages/ModelPage.vue'),
       },
-      {
-        path: '/submit',
-        component: () => import('src/pages/ContactUsPage.vue'),
-      },
     ],
   },
 

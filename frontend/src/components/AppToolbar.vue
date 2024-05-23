@@ -152,7 +152,12 @@ const showResources = ref(false);
 const showContact = ref(false);
 
 const isHome = computed(() => route.path === '/');
-const isBuildings = computed(() => route.path.startsWith('/buildings'));
+const isBuildings = computed(
+  () =>
+    route.path.startsWith('/buildings') ||
+    route.path.startsWith('/test') ||
+    route.path.startsWith('/model')
+);
 
 const essentialLinks: EssentialLinkProps[] = [
   {
