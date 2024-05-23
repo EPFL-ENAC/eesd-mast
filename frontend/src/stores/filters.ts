@@ -37,7 +37,14 @@ export const useFiltersStore = defineStore('filters', {
           if (val === 'null') {
             val = null;
           }
-          if (dbFilters[field]) {
+          if (field === 'masonry_unit_material' && value === 'Stone') {
+            //val = STONES;
+            if (dbFilters[field]) {
+              dbFilters[field].push(...STONES);
+            } else {
+              dbFilters[field] = STONES;
+            }
+          } else if (dbFilters[field]) {
             dbFilters[field].push(val);
           } else {
             dbFilters[field] = [val];
@@ -62,17 +69,7 @@ export const useFiltersStore = defineStore('filters', {
     },
     applySelections(filters: FieldValue[]) {
       filters.forEach((filter) => {
-        if (
-          filter.field === 'masonry_unit_material' &&
-          filter.value === 'Stone'
-        ) {
-          STONES.forEach((val) =>
-            this.selections.push(`${filter.field}:${val}`)
-          );
-        } else if (
-          filter.field === 'diaphragm_material' &&
-          filter.value === 'Mixed'
-        ) {
+        if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
           MIXED_MATERIAL.forEach((val) =>
             this.selections.push(`${filter.field}:${val}`)
           );
