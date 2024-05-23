@@ -22,9 +22,9 @@ class RunResultsService:
 
     async def vulnerability(self, filter: dict | str) -> list[RunResultVulnerability]:
         """Get vulnerabilities from all run results"""
-        query = select(RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
+        query = select(RunResult.actual_pga_x, RunResult.actual_pga_y, RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
             .select_from(join(RunResult, Experiment)) \
-            .where(RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
+            .where(RunResult.actual_pga_x.isnot(None) | RunResult.actual_pga_y.isnot(None) | RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
             .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None)) \
             .where(not_(RunResult.run_id.in_(['Initial', 'Final'])))
 
@@ -36,7 +36,9 @@ class RunResultsService:
         data = {}
         for result in results.all():
             dg = result.dg_derived if result.dg_derived else result.dg_reported
-            pga = result.nominal_pga_x if result.nominal_pga_x else result.nominal_pga_y
+            pga = result.actual_pga_x if result.actual_pga_x else result.nominal_pga_x
+            if pga is None:
+                pga = result.actual_pga_y if result.actual_pga_y else result.nominal_pga_y
             if dg not in data:
                 data[dg] = []
             else:
