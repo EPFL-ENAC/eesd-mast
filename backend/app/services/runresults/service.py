@@ -41,8 +41,7 @@ class RunResultsService:
                 pga = result.actual_pga_y if result.actual_pga_y else result.nominal_pga_y
             if dg not in data:
                 data[dg] = []
-            else:
-                data[dg].append(pga)
+            data[dg].append(pga)
 
         vulnerabilities = []
         for dg, pgas in data.items():
