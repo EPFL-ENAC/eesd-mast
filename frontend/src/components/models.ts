@@ -88,6 +88,7 @@ export interface ExperimentParallelCount {
   storeys_nb: number | null;
   test_scale: number | null;
   count: number;
+  selected: boolean | null;
 }
 
 export interface RunResultVulnerability {

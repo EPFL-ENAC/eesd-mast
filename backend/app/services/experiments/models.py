@@ -109,3 +109,4 @@ class ExperimentParallelCount(BaseModel):
     simultaneous_excitations_nb: int | None
     retrofitting_application: str | None
     count: int
+    selected: bool | None = None
