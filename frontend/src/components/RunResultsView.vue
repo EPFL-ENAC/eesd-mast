@@ -131,7 +131,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { toMaxDecimals } from 'src/utils/numbers';
 export default defineComponent({
   name: 'RunResultsView',
 });
@@ -147,10 +146,11 @@ import {
   RunResultFileNodes,
 } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
+import { toMaxDecimals, toFixed } from 'src/utils/numbers';
 
 const { t } = useI18n({ useScope: 'global' });
 
-export interface RunResultsViewProps {
+interface RunResultsViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<RunResultsViewProps>(), {
@@ -190,7 +190,9 @@ const columns = [
         ? '-'
         : typeof val === 'string'
         ? val
-        : toMaxDecimals(val as number, 3),
+        : name.startsWith('dg_')
+        ? toMaxDecimals(val as number, 3)
+        : toFixed(val as number, 3),
     sortable: true,
   };
 });
