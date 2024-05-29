@@ -2,6 +2,10 @@
   <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
       <app-toolbar @toggle="toggleDrawer" />
+      <app-header
+        v-if="isBuildings2"
+        url="Website_Background_Title_Option2.webp"
+      />
     </q-header>
 
     <q-drawer
@@ -41,6 +45,7 @@
 
 <script setup lang="ts">
 import AppToolbar from 'src/components/AppToolbar.vue';
+import AppHeader from 'src/components/AppHeader.vue';
 import BuildingsPage from 'src/pages/BuildingsPage.vue';
 import ExperimentFilters from 'src/components/ExperimentFilters.vue';
 
@@ -49,7 +54,8 @@ const route = useRoute();
 const drawerOpen = ref(false);
 const miniState = ref(false);
 
-const isBuildings = computed(() => route.path.startsWith('/buildings'));
+const isBuildings = computed(() => route.path === '/buildings');
+const isBuildings2 = computed(() => route.path === '/buildings2');
 
 watch(
   () => isBuildings.value,

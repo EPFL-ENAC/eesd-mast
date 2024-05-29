@@ -14,6 +14,7 @@
       <img src="/EPFL_logo.png" style="height: 25px" />
     </a>
     <span
+      v-if="isBuildings"
       class="q-ml-lg q-mr-lg"
       :class="$q.screen.lt.md ? 'text-bold' : 'text-h6'"
     >
@@ -26,7 +27,7 @@
       no-caps
       to="/"
       :class="isHome ? 'text-primary' : ''"
-      class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
+      class="q-pt-sm q-pb-sm q-pr-md q-pl-md on-right"
       style="font-size: 1.15rem"
     />
     <q-btn
@@ -35,7 +36,7 @@
       :label="$t('buildings')"
       no-caps
       to="/buildings"
-      :class="isBuildings ? 'text-primary' : ''"
+      :class="isBuildings || isBuildings2 ? 'text-primary' : ''"
       class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
       style="font-size: 1.15rem"
     />
@@ -184,10 +185,11 @@ const showAcknowledgements = ref(false);
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(
   () =>
-    route.path.startsWith('/buildings') ||
+    route.path === '/buildings' ||
     route.path.startsWith('/test') ||
     route.path.startsWith('/model')
 );
+const isBuildings2 = computed(() => route.path === '/buildings2');
 
 const essentialLinks: EssentialLinkProps[] = [
   {
