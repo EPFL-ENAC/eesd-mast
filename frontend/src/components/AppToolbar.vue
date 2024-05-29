@@ -27,6 +27,7 @@
       to="/"
       :class="isHome ? 'text-primary' : ''"
       class="q-pt-sm q-pb-sm q-pr-md q-pl-md"
+      style="font-size: 1.15rem"
     />
     <q-btn
       flat
@@ -36,14 +37,15 @@
       to="/buildings"
       :class="isBuildings ? 'text-primary' : ''"
       class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
+      style="font-size: 1.15rem"
     />
     <q-space />
     <q-btn
       flat
-      :label="$t('contact_us')"
-      no-caps
+      round
+      icon="account_circle"
+      :title="$t('contact_us')"
       @click="onShowContact"
-      class="on-left"
     />
     <q-btn
       flat
@@ -51,7 +53,6 @@
       icon="menu_book"
       :title="$t('resources')"
       @click="onShowResources"
-      class="on-left"
     ></q-btn>
     <q-btn
       flat
@@ -59,6 +60,13 @@
       icon="info"
       :title="$t('introduction')"
       @click="onShowIntro"
+    ></q-btn>
+    <q-btn
+      flat
+      round
+      icon="handshake"
+      :title="$t('acknowledgements')"
+      @click="onShowAcknowledgements"
       class="on-left"
     ></q-btn>
     <a href="https://www.epfl.ch/labs/eesd/" target="_blank" class="q-mt-sm">
@@ -74,6 +82,22 @@
         </div>
         <div class="text-subtitle1 text-grey-8">
           <q-markdown :src="OverViewMd" no-line-numbers />
+        </div>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat :label="$t('close')" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showAcknowledgements">
+    <q-card>
+      <q-card-section class="q-ml-md q-mr-md">
+        <div class="text-h6 q-mb-md">
+          {{ $t('acknowledgements') }}
+        </div>
+        <div class="text-subtitle1 text-grey-8">
+          <q-markdown :src="AcknowledgementsMd" />
         </div>
       </q-card-section>
       <q-card-actions align="right">
@@ -139,6 +163,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { getSettings, saveSettings } from 'src/utils/settings';
 import OverViewMd from 'src/assets/overview.md';
+import AcknowledgementsMd from 'src/assets/acknowledgements.md';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
@@ -150,6 +175,7 @@ const route = useRoute();
 const showIntro = ref(false);
 const showResources = ref(false);
 const showContact = ref(false);
+const showAcknowledgements = ref(false);
 
 const isHome = computed(() => route.path === '/');
 const isBuildings = computed(
@@ -205,6 +231,10 @@ function onShowResources() {
 
 function onShowContact() {
   showContact.value = true;
+}
+
+function onShowAcknowledgements() {
+  showAcknowledgements.value = true;
 }
 
 function openPeoplePage(username: string) {

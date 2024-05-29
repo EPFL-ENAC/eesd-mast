@@ -1,6 +1,7 @@
 export default {
   '3d_model': '3D Model',
   acceleration_g: 'Acceleration (g)',
+  acknowledgements: 'Acknowledgements',
   actual_pga_x_axis: 'PGA X measured at the shake table',
   actual_pga_x: 'Actual PGA X-dir. [g]',
   actual_pga_y_axis: 'PGA Y measured at the shake table',
