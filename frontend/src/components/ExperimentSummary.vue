@@ -7,7 +7,7 @@
       <q-chip
         v-if="selected.reference.link_to_experimental_paper"
         icon="article"
-        color="primary"
+        color="accent"
         text-color="white"
         class="on-left"
       >
