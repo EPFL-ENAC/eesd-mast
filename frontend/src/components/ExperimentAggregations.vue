@@ -2,7 +2,7 @@
   <div class="q-mb-xl">
     <div class="q-pl-md q-pr-md">
       <div class="">
-        <span class="text-subtitle2">
+        <span class="text-h6">
           {{ $t('aggregations_title') }}
         </span>
         <q-toggle
