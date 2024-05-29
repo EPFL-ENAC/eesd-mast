@@ -22,7 +22,7 @@ const layout = {
     title: {
       text: t('pga_axis'),
     },
-    range: [0, 1.03],
+    range: [0, 1],
   },
   yaxis: {
     title: {
@@ -88,7 +88,7 @@ const chartData = computed(() => {
     .map((key) => {
       return {
         y: dgGroups[key].y,
-        x: dgGroups[key].x.filter((val) => val <= 1),
+        x: dgGroups[key].x,
         mode: 'lines',
         marker: {
           color: getDgColor(key),
