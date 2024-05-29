@@ -19,7 +19,6 @@ export const useNumericalModelsStore = defineStore('numerical_models', {
             method: 'get',
             url: `/experiments/${id}/numerical_model`,
           });
-          console.log(resp);
           if (resp.status === 200) {
             state.numerical_model = resp.data;
           }

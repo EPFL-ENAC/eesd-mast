@@ -12,7 +12,7 @@
             :src="modelsSchemeUrlAlt"
             :alt="`${selected.description} [${selected.reference}]`"
             spinner-color="grey-6"
-            width="250px"
+            width="300px"
           />
         </div>
         <div class="text-center">
@@ -32,7 +32,7 @@
           :src="getImageUrlAlt(img)"
           :alt="`${selected.description} [${selected.reference}]`"
           spinner-color="grey-6"
-          width="250px"
+          width="300px"
         />
         <div class="text-center">
           <q-btn
@@ -52,7 +52,7 @@
             :file="file"
             :download="false"
             :with-representation="false"
-            width="500px"
+            width="400px"
           />
         </div>
       </div>
