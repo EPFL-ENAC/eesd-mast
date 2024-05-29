@@ -112,10 +112,10 @@ export const useAnalysisStore = defineStore('analysis', {
           filter.field === 'masonry_unit_material' &&
           filter.value === 'Stone'
         ) {
-          val = STONES;
+          val = [...STONES];
         }
         if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
-          val = MIXED_MATERIAL;
+          val = [...MIXED_MATERIAL];
         }
         if (filter.field === 'diaphragm_material' && filter.value === 'None') {
           val = null;

@@ -42,7 +42,7 @@ export const useFiltersStore = defineStore('filters', {
             if (dbFilters[field]) {
               dbFilters[field].push(...STONES);
             } else {
-              dbFilters[field] = STONES;
+              dbFilters[field] = [...STONES];
             }
           } else if (dbFilters[field]) {
             dbFilters[field].push(val);
