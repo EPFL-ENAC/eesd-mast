@@ -12,7 +12,7 @@ export default {
   aggregations_hint: 'Select a category to filter tested buildings',
   app_title: 'Masonry Shake Table Database',
   app_subtitle:
-    'Open database of shake table tests and numerical models or URM buildings',
+    'Open database of shake table tests and numerical models of URM buildings',
   applied_excitation_directions: 'Applied Excitation Directions',
   associated_test_types: 'Associated Test Types',
   base_shear_coef: 'Base Shear Coefficient',
