@@ -7,7 +7,7 @@
       <q-chip
         v-if="selected.reference.link_to_experimental_paper"
         icon="article"
-        color="secondary"
+        color="primary"
         text-color="white"
         class="on-left"
       >
@@ -132,6 +132,7 @@ interface ExperimentViewProps {
 const props = withDefaults(defineProps<ExperimentViewProps>(), {
   experiment: undefined,
 });
+const emit = defineEmits(['select']);
 
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
@@ -161,6 +162,7 @@ const hasModels = computed(() => selected.value?.model_files);
 
 const onExperiment = (exp: Experiment) => {
   selected.value = exp;
+  emit('select', exp);
 };
 
 watch(() => props.experiment, updateExperiment);

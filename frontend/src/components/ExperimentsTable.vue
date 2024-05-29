@@ -217,7 +217,10 @@
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <experiment-summary :experiment="experiment"></experiment-summary>
+          <experiment-summary
+            :experiment="experiment"
+            @select="onReferenceExperimentSelection"
+          ></experiment-summary>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -420,5 +423,9 @@ function downloadFiles() {
       ? `?filter=${encodeURIComponent(query.filter)}`
       : '';
   window.open(`${baseUrl}/experiments-download/test-files${queryStr}`);
+}
+
+function onReferenceExperimentSelection(selected: Experiment) {
+  experiment.value = selected;
 }
 </script>

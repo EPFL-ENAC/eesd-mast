@@ -40,7 +40,7 @@
       node-key="key"
       no-connectors
       tick-strategy="leaf"
-      control-color="secondary"
+      control-color="primary"
       v-model:ticked="filters.selections"
     >
     </q-tree>
