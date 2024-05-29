@@ -1,17 +1,19 @@
 <template>
-  <div v-if="showIncNote" class="text-center text-caption text-grey-6">
-    {{ $t('increasing_pga_note') }}
-  </div>
-  <div v-if="option.series" :style="`height: ${height + 150}px;`">
-    <e-charts
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      class="q-ma-md"
-      :loading="loading"
-    />
+  <div>
+    <div v-if="option.series" :style="`height: ${height + 80}px;`">
+      <e-charts
+        ref="chart"
+        autoresize
+        :init-options="initOptions"
+        :option="option"
+        :update-options="updateOptions"
+        class="q-ma-md"
+        :loading="loading"
+      />
+    </div>
+    <div v-if="showIncNote" class="text-center text-caption text-grey-6">
+      {{ $t('increasing_pga_note') }}
+    </div>
   </div>
 </template>
 
