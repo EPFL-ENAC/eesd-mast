@@ -39,6 +39,7 @@ const items: FieldItem<Reference>[] = [
   },
   {
     field: 'link_to_experimental_paper',
+    format: (val: Reference) => '',
     links: (val: Reference) =>
       val.link_to_experimental_paper ? [val.link_to_experimental_paper] : [],
   },
@@ -51,6 +52,7 @@ const items: FieldItem<Reference>[] = [
   },
   {
     field: 'link_to_request_data',
+    format: (val: Reference) => '',
     links: (val: Reference) =>
       val.link_to_request_data ? [val.link_to_request_data] : [],
     visible: (val: Reference) => val.link_to_request_data !== null,

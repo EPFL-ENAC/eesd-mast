@@ -67,7 +67,7 @@ export default {
   first_estimated_fundamental_period: 'First Estimated Fundamental Period',
   fitted_size: 'Fitted',
   floor_connections: 'Floor-to-wall connections',
-  frame_elements: 'Element type for frame elements',
+  frame_elements: 'Element type for masonry elements',
   friction_coeff: 'Friction coefficient (μ0)',
   full_reference: 'Full Reference',
   general_information: 'General information',

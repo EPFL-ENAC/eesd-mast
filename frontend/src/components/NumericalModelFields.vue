@@ -42,6 +42,9 @@ const itemsInfo: FieldItem<NumericalModel>[] = [
   },
   {
     field: 'frame_elements',
+    links: (val: NumericalModel) => [
+      'https://github.com/eesd-epfl/OpenSees/wiki',
+    ],
     comment: (val: NumericalModel) => val.frame_elements_comment,
   },
   {

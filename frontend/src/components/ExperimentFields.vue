@@ -119,10 +119,12 @@ const items: FieldItem<Experiment>[] = [
   },
   {
     field: 'link_to_material_papers',
+    format: (val: Experiment) => '',
     links: (val: Experiment) => val.link_to_material_papers,
   },
   {
     field: 'link_to_open_measured_data',
+    format: (val: Experiment) => '',
     links: (val: Experiment) =>
       val.link_to_open_measured_data ? [val.link_to_open_measured_data] : [],
     comment: (val: Experiment) =>

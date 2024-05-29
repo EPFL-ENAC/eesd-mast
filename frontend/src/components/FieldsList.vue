@@ -9,7 +9,20 @@
       <q-item-section>
         <q-item-label>
           <span v-if="item.html" v-html="item.html(dbobject)"></span>
-          <div v-else-if="item.links">
+          <span v-else-if="item.format"
+            >{{ item.format(dbobject) }} {{ item.unit }}</span
+          >
+          <span v-else>
+            {{
+              dbobject[item.field]
+                ? typeof dbobject[item.field] === 'number'
+                  ? toMaxDecimals(dbobject[item.field], 3)
+                  : dbobject[item.field]
+                : '-'
+            }}
+            {{ item.unit }}
+          </span>
+          <div v-if="item.links">
             <dt v-if="item.links(dbobject)">
               <dl
                 v-for="link in item.links(dbobject)"
@@ -24,20 +37,6 @@
             </dt>
             <span v-else>-</span>
           </div>
-          <span v-else-if="item.format"
-            >{{ item.format(dbobject) }} {{ item.unit }}</span
-          >
-          <span v-else>
-            {{
-              dbobject[item.field]
-                ? typeof dbobject[item.field] === 'number'
-                  ? toMaxDecimals(dbobject[item.field], 3)
-                  : dbobject[item.field]
-                : '-'
-            }}
-            {{ item.unit }}
-          </span>
-
           <div
             v-if="item.comment && item.comment(dbobject)"
             class="text-grey-6 q-mt-sm"
