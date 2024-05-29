@@ -13,6 +13,7 @@ export default defineComponent({
 import { ExperimentParallelCount } from '../models';
 import VuePlotly from './VuePlotly.vue';
 import { testScaleLabel } from 'src/utils/numbers';
+import { getFieldValueColor } from 'src/utils/colors';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
 
 const { t } = useI18n({ useScope: 'global' });
@@ -40,6 +41,9 @@ const chartData = computed(() => {
     line: {
       shape: 'hspline',
     },
+    labelfont: {
+      size: 16,
+    },
   };
 
   if (analysis.experimentsParallelCounts !== null) {
@@ -63,14 +67,15 @@ const chartData = computed(() => {
       // enforce color when no filter
       parCatsData.line.color = 'lightsteelblue';
     } else {
-      // apply color to selected/not selected lines
-      const color = digestedCounts.map((line) => (line.selected ? 1 : 0));
-      const colorscale = [
-        [0, 'lightsteelblue'],
-        [1, 'firebrick'],
-      ];
-      parCatsData.line.color = color;
-      parCatsData.line.colorscale = colorscale;
+      const lineColor = digestedCounts.map((line) => {
+        return line.selected
+          ? getFieldValueColor(
+              'masonry_unit_material',
+              line.masonry_unit_material
+            )
+          : 'lightsteelblue';
+      });
+      parCatsData.line.color = lineColor;
     }
 
     [

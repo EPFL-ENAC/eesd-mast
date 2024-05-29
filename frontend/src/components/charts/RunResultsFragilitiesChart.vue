@@ -75,8 +75,9 @@ const chartData = computed(() => {
       line: {
         color: getDgColor(key),
       },
-      name: `DG${key}`,
+      name: `DG${key} (empirical)`,
       showlegend: true,
+      legendgroup: 'empirical',
     };
   });
 
@@ -93,6 +94,7 @@ const chartData = computed(() => {
         width: 2,
       },
       name: `DG${key} (fitted)`,
+      legendgroup: 'fitted',
     };
   });
 

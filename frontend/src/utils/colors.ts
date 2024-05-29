@@ -38,7 +38,13 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
   },
 };
 
-export function getFieldValueColor(field: string, value: string): string {
+export function getFieldValueColor(
+  field: string,
+  value: string | null
+): string {
+  if (value === null) {
+    return '#000000';
+  }
   return colorPalettes[field][value] || '#000000';
 }
 
