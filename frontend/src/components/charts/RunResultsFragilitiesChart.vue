@@ -63,40 +63,44 @@ const chartData = computed(() => {
     dgGroups[line.dg] = line;
   });
 
-  const probTraces: LineTrace[] = Object.keys(dgGroups).map((key) => {
-    return {
-      y: dgGroups[key].prob,
-      x: dgGroups[key].thresh,
-      mode: 'markers',
-      marker: {
-        color: getDgColor(key),
-        size: 3,
-      },
-      line: {
-        color: getDgColor(key),
-      },
-      name: `DG${key} (empirical)`,
-      showlegend: true,
-      legendgroup: 'empirical',
-    };
-  });
+  const probTraces: LineTrace[] = Object.keys(dgGroups)
+    .filter((key) => dgGroups[key].prob && dgGroups[key].thresh)
+    .map((key) => {
+      return {
+        y: dgGroups[key].prob,
+        x: dgGroups[key].thresh,
+        mode: 'markers',
+        marker: {
+          color: getDgColor(key),
+          size: 3,
+        },
+        line: {
+          color: getDgColor(key),
+        },
+        name: `DG${key} (empirical)`,
+        showlegend: true,
+        legendgroup: 'empirical',
+      };
+    });
 
-  const fittedTraces: LineTrace[] = Object.keys(dgGroups).map((key) => {
-    return {
-      y: dgGroups[key].y,
-      x: dgGroups[key].x.filter((val) => val <= 1),
-      mode: 'lines',
-      marker: {
-        color: getDgColor(key),
-      },
-      line: {
-        color: getDgColor(key),
-        width: 2,
-      },
-      name: `DG${key} (fitted)`,
-      legendgroup: 'fitted',
-    };
-  });
+  const fittedTraces: LineTrace[] = Object.keys(dgGroups)
+    .filter((key) => dgGroups[key].x && dgGroups[key].y)
+    .map((key) => {
+      return {
+        y: dgGroups[key].y,
+        x: dgGroups[key].x.filter((val) => val <= 1),
+        mode: 'lines',
+        marker: {
+          color: getDgColor(key),
+        },
+        line: {
+          color: getDgColor(key),
+          width: 2,
+        },
+        name: `DG${key} (fitted)`,
+        legendgroup: 'fitted',
+      };
+    });
 
   return [...fittedTraces, ...probTraces];
 });
