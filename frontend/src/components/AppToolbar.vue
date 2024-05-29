@@ -11,7 +11,7 @@
       @click="toggleLeftDrawer"
     />
     <a href="https://epfl.ch" target="_blank" class="q-mt-sm">
-      <img src="/EPFL.svg" style="width: 80px" />
+      <img src="/EPFL_logo.png" style="height: 25px" />
     </a>
     <span
       class="q-ml-lg q-mr-lg"
@@ -70,7 +70,11 @@
       class="on-left"
     ></q-btn>
     <a href="https://www.epfl.ch/labs/eesd/" target="_blank" class="q-mt-sm">
-      <img src="/EESD.svg" style="width: 88px" class="float-right q-mb-xs" />
+      <img
+        src="/EESD_logo.png"
+        style="height: 25px"
+        class="float-right q-mb-xs"
+      />
     </a>
   </q-toolbar>
 
