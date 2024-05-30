@@ -22,7 +22,7 @@ export default {
   buildings_counts_label: 'Tests on unreinforced masonry buildings',
   buildings: 'Buildings',
   buildings_help:
-    'You can filter these tests (using the filter section located left-side) based on various characteristics of the buildings, such as construction materials, building geometry, and testing considerations.\n\nOnce you select a building from the list, you will be able to view detailed experimental results, including general information from the shake table tests.',
+    'You can filter these tests (using the filter section located left-side) based on various characteristics of the buildings, such as construction materials, building geometry, and testing considerations.\n\nOnce you select a building from the list, you will be able to view detailed experimental results, including general information from the shake table tests.\n\nIn addition, by using the toggle "Show only buildings with numerical models" you can check the buildings for which a numerical model is available.',
   buildings_title: 'Shake Table Tests & Models',
   clear_all_selections: 'Clear all selections',
   close: 'Close',
