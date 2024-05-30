@@ -73,7 +73,7 @@
   </q-toolbar>
 
   <q-dialog v-model="showIntro">
-    <q-card>
+    <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
       <q-card-section class="q-ml-md q-mr-md">
         <div class="text-h6 q-mb-md">
           {{ $t('app_title') }}
@@ -89,7 +89,7 @@
   </q-dialog>
 
   <q-dialog v-model="showAcknowledgements">
-    <q-card>
+    <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
       <q-card-section class="q-ml-md q-mr-md">
         <div class="text-h6 q-mb-md">
           {{ $t('acknowledgements') }}
@@ -105,12 +105,12 @@
   </q-dialog>
 
   <q-dialog v-model="showResources">
-    <q-card>
+    <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
       <q-card-section class="q-ml-md q-mr-md">
         <div class="text-h6 q-mb-sm">
           {{ $t('resources') }}
         </div>
-        <q-list class="bg-grey-2">
+        <q-list class="bg-grey-2" bordered>
           <essential-link
             v-for="link in essentialLinks"
             :key="link.title"
@@ -126,7 +126,10 @@
 
   <q-dialog v-model="showContact">
     <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
-      <q-card-section class="q-mt-md q-ml-md q-mr-md">
+      <q-card-section class="q-ml-md q-mr-md">
+        <div class="text-h6 q-mb-sm">
+          {{ $t('contact_us') }}
+        </div>
         <p>{{ $t('contact_us_intro') }}</p>
 
         <div class="q-mt-md">

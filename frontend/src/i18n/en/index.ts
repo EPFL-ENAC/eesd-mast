@@ -31,7 +31,7 @@ export default {
   connectors_activation: 'Connectors Activation',
   contact_us_intro:
     'If you want to give us feedback on the content and usability of this platform, or want to share new experimental data to be included, please contact us:',
-  contact_us: 'Contact',
+  contact_us: 'Contact Us',
   corresponding_author_email: 'Corresponding Author Email',
   corresponding_author_name: 'Corresponding Author Name',
   corresponding_author: 'Corresponding Author',
