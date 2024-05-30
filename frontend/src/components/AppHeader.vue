@@ -5,10 +5,10 @@
       spinner-color="white"
       :style="
         $q.screen.lt.sm
-          ? 'height: 190px'
+          ? 'height: 144px'
           : $q.screen.lt.md
-          ? 'height: 165px'
-          : 'height: 180px'
+          ? 'height: 136px'
+          : 'height: 172px'
       "
     >
       <div
@@ -25,7 +25,7 @@
               $q.screen.lt.sm
                 ? 'text-h4'
                 : $q.screen.lt.md
-                ? 'text-h3'
+                ? 'text-h4'
                 : 'text-h2'
             "
             class="text-weight-thin text-white"

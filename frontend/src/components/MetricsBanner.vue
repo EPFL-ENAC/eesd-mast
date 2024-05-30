@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="col-12 col-md-4 col-sm-12 text-center">
-            <div class="text-h4 q-mt-sm">
+            <div class="text-h4">
               {{ $t('downloadable') }}
             </div>
             <div class="text-subtitle1">
