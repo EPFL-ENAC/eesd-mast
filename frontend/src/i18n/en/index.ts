@@ -21,7 +21,7 @@ export default {
   building_height: 'Building Height (without roof structure)',
   buildings_counts_label: 'Tests on unreinforced masonry buildings',
   buildings: 'Buildings',
-  buildings_intro:
+  buildings_help:
     'You can filter these tests (using the filter section located left-side) based on various characteristics of the buildings, such as construction materials, building geometry, and testing considerations.\n\nOnce you select a building from the list, you will be able to view detailed experimental results, including general information from the shake table tests.',
   buildings_title: 'Shake Table Tests & Models',
   clear_all_selections: 'Clear all selections',
@@ -124,6 +124,8 @@ export default {
   original_size: 'Original',
   other_experiments_of_reference: 'Other buildings from reference',
   overview: 'Overview',
+  overview_help:
+    'You can select a feature of the buildings to see how they are related to other features. This selection also serves as a filter when you go to the Buildings section (where you can find the complete list of buildings included in this database).\n\nFurthermore, based on your feature selection, you can check the results of a vulnerability analysis by using the toggle "Show vulnerability plots".',
   paper: 'Paper',
   pga_axis: 'PGA [g units]',
   points: 'Points',

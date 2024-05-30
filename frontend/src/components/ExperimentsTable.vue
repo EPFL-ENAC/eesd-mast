@@ -20,7 +20,7 @@
         <q-btn flat round icon="help_outline" class="on-right text-grey-8">
           <q-popup-proxy class="bg-grey-7 text-white">
             <div class="q-ma-md" style="width: 400px">
-              <q-markdown :src="$t('buildings_intro')" />
+              <q-markdown :src="$t('buildings_help')" />
             </div>
           </q-popup-proxy>
         </q-btn>

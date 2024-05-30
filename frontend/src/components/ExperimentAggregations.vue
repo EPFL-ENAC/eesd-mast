@@ -5,6 +5,13 @@
         <span class="text-h6">
           {{ $t('aggregations_title') }}
         </span>
+        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
+          <q-popup-proxy class="bg-grey-7 text-white">
+            <div class="q-ma-md" style="width: 400px">
+              <q-markdown :src="$t('overview_help')" />
+            </div>
+          </q-popup-proxy>
+        </q-btn>
         <q-toggle
           v-model="tabToggle"
           :label="$t('show_vulnerability')"
@@ -41,13 +48,11 @@
           icon="visibility"
           color="accent"
           :label="$t('show_buildings')"
+          class="on-right"
           @click="onShowExperiments"
         ></q-btn>
       </div>
-      <div v-else class="q-pt-xs q-pb-xs text-caption text-grey-8">
-        <q-icon name="info" size="sm"></q-icon>
-        <span class="on-right">{{ $t('aggregations_hint') }}</span>
-      </div>
+      <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
 
     <div class="row">
@@ -56,23 +61,19 @@
         v-for="field in fields"
         :key="field"
       >
-        <field-frequencies-chart
-          :field="field"
-          @change:filter="onFilter"
-          class="q-ml-md q-mr-md"
-        />
+        <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
     </div>
 
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="parallel">
+      <q-tab-panel name="parallel" class="q-pa-none">
         <div class="row">
           <div class="col-12">
             <experiments-parallel-chart class="q-ml-md q-mr-md" />
           </div>
         </div>
       </q-tab-panel>
-      <q-tab-panel name="vulnerabilities">
+      <q-tab-panel name="vulnerabilities" class="q-pa-none">
         <div class="row">
           <div class="col-12 col-md-6">
             <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />

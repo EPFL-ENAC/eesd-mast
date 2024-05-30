@@ -1,5 +1,5 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height - 20}px;`">
+  <div v-if="option.series" :style="`height: ${height}px;`">
     <e-charts
       ref="chart"
       autoresize
@@ -47,7 +47,7 @@ interface FieldFrequenciesChartProps {
 }
 const props = withDefaults(defineProps<FieldFrequenciesChartProps>(), {
   field: undefined,
-  height: 400,
+  height: 300,
 });
 const emit = defineEmits<{
   (e: 'change:filter', value?: FieldValue): void;
@@ -139,7 +139,7 @@ function initChartOptions() {
     series: [
       {
         type: 'pie',
-        radius: ['30%', '60%'],
+        radius: ['40%', '70%'],
         color: colors,
         avoidLabelOverlap: true,
         // label: {
