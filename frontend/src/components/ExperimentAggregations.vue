@@ -5,7 +5,12 @@
         <span class="text-h6">
           {{ $t('aggregations_title') }}
         </span>
-        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
+        <q-btn
+          flat
+          round
+          icon="help_outline"
+          class="on-right text-grey-8 q-pb-xs"
+        >
           <q-popup-proxy class="bg-grey-7 text-white">
             <div class="q-ma-md" style="width: 400px">
               <q-markdown :src="$t('overview_help')" />
@@ -18,7 +23,7 @@
           color="accent"
           size="xl"
           keep-color
-          class="on-right"
+          class="on-right q-pb-xs"
         />
       </div>
       <div v-if="analysis.filters.length">
