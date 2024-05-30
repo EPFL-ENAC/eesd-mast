@@ -354,7 +354,8 @@ function fetchFromServer(
     sort: sortBy
       ? JSON.stringify([sortBy, descending ? 'DESC' : 'ASC'])
       : undefined,
-    range: JSON.stringify([startRow, startRow + count - 1]),
+    range:
+      count > 0 ? JSON.stringify([startRow, startRow + count - 1]) : undefined,
   };
   return api({
     method: 'get',
