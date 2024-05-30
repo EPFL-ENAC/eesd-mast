@@ -69,7 +69,7 @@
       <q-tab-panel name="parallel" class="q-pa-none">
         <div class="row">
           <div class="col-12">
-            <experiments-parallel-chart class="q-ml-md q-mr-md" />
+            <experiments-parallel-chart class="q-ml-lg q-mr-lg" />
           </div>
         </div>
       </q-tab-panel>
