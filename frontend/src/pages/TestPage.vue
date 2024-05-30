@@ -1,11 +1,6 @@
 <template>
   <q-page>
     <q-breadcrumbs class="q-pa-md q-mt-sm q-mb-sm text-h6">
-      <q-breadcrumbs-el
-        :label="$t('buildings')"
-        to="../buildings"
-        class="text-grey"
-      />
       <q-breadcrumbs-el v-if="experiment" :label="title" icon="analytics" />
       <q-btn
         v-if="hasModels"

@@ -13,17 +13,10 @@
     <a href="https://epfl.ch" target="_blank" class="q-mt-sm">
       <img src="/EPFL_logo.png" style="height: 25px" />
     </a>
-    <span
-      v-if="isBuildings"
-      class="q-ml-lg q-mr-lg"
-      :class="$q.screen.lt.md ? 'text-bold' : 'text-h6'"
-    >
-      {{ $t('app_title') }}
-    </span>
     <q-btn
       flat
       dense
-      :label="$t('overview')"
+      :label="$t('app_title')"
       no-caps
       to="/"
       :class="isHome ? 'text-primary' : ''"
