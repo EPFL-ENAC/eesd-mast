@@ -123,7 +123,7 @@ export default {
   open_measured_data: 'Open Measured Data',
   original_size: 'Original',
   other_experiments_of_reference: 'Other buildings from reference',
-  overview: 'Overview',
+  overview: 'DB Overview',
   overview_help:
     'You can select a feature of the buildings to see how they are related to other features. This selection also serves as a filter when you go to the Buildings section (where you can find the complete list of buildings included in this database).\n\nFurthermore, based on your feature selection, you can check the results of a vulnerability analysis by using the toggle "Show vulnerability plots".',
   paper: 'Paper',

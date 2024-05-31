@@ -16,7 +16,7 @@
     <q-btn
       flat
       dense
-      :label="$t('app_title')"
+      :label="$t('overview')"
       no-caps
       to="/"
       :class="isHome ? 'text-primary' : ''"
