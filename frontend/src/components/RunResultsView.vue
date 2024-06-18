@@ -112,7 +112,7 @@
                 <q-card>
                   <q-card-section>
                     <q-img
-                      :src="`${baseUrl}/files/${
+                      :src="`${cdnUrl}${
                         getRunFiles(props.row.run_id).crack_maps?.path
                       }`"
                       spinner-color="grey-6"
@@ -131,7 +131,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { toMaxDecimals } from 'src/utils/numbers';
 export default defineComponent({
   name: 'RunResultsView',
 });
@@ -139,7 +138,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { withDefaults, onMounted, ref, watch } from 'vue';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import { useRunResultsStore } from 'src/stores/run_results';
 import {
   Experiment,
@@ -147,10 +146,11 @@ import {
   RunResultFileNodes,
 } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
+import { toMaxDecimals, toFixed } from 'src/utils/numbers';
 
 const { t } = useI18n({ useScope: 'global' });
 
-export interface RunResultsViewProps {
+interface RunResultsViewProps {
   experiment: Experiment;
 }
 const props = withDefaults(defineProps<RunResultsViewProps>(), {
@@ -190,7 +190,9 @@ const columns = [
         ? '-'
         : typeof val === 'string'
         ? val
-        : toMaxDecimals(val as number, 3),
+        : name.startsWith('dg_')
+        ? toMaxDecimals(val as number, 3)
+        : toFixed(val as number, 3),
     sortable: true,
   };
 });
@@ -226,7 +228,7 @@ function loadRunFiles(run_id: number) {
 }
 
 function hasFiles() {
-  return props.experiment.files;
+  return props.experiment.test_files;
 }
 
 function hasRunFiles(run_id: number) {
@@ -246,8 +248,8 @@ function getRunFiles(run_id: number): RunResultFileNodes {
     shake_table_accelerations: undefined,
     crack_maps: undefined,
   };
-  if (props.experiment.files && props.experiment.files.children) {
-    props.experiment.files.children.forEach((element) => {
+  if (props.experiment.test_files && props.experiment.test_files.children) {
+    props.experiment.test_files.children.forEach((element) => {
       if (element.name === 'Top displacement histories') {
         nodes.top_displacement_histories = element.children?.find(
           (child) => child.name === `${run_id}.txt`

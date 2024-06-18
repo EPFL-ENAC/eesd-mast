@@ -39,27 +39,22 @@ const items: FieldItem<Reference>[] = [
   },
   {
     field: 'link_to_experimental_paper',
-    html: (val: Reference) =>
-      val.link_to_experimental_paper
-        ? `<a href="${val.link_to_experimental_paper}" target="_blank">${val.link_to_experimental_paper}</a>`
-        : '-',
+    format: (val: Reference) => '',
+    links: (val: Reference) =>
+      val.link_to_experimental_paper ? [val.link_to_experimental_paper] : [],
   },
   {
-    field: 'corresponding_author_name',
-  },
-  {
-    field: 'corresponding_author_email',
+    field: 'corresponding_author',
     html: (val: Reference) =>
       val.corresponding_author_email
-        ? `<a href="mailto:${val.corresponding_author_email}" target="_blank">${val.corresponding_author_email}</a>`
+        ? `${val.corresponding_author_name} &lt;<a href="mailto:${val.corresponding_author_email}" target="_blank">${val.corresponding_author_email}</a>&gt;`
         : '-',
   },
   {
     field: 'link_to_request_data',
-    html: (val: Reference) =>
-      val.link_to_request_data
-        ? `<a href="${val.link_to_request_data}" target="_blank">${val.link_to_request_data}</a>`
-        : '-',
+    format: (val: Reference) => '',
+    links: (val: Reference) =>
+      val.link_to_request_data ? [val.link_to_request_data] : [],
     visible: (val: Reference) => val.link_to_request_data !== null,
   },
 ];

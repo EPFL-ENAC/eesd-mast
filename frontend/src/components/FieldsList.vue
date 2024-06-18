@@ -9,7 +9,9 @@
       <q-item-section>
         <q-item-label>
           <span v-if="item.html" v-html="item.html(dbobject)"></span>
-          <span v-else-if="item.format">{{ item.format(dbobject) }}</span>
+          <span v-else-if="item.format"
+            >{{ item.format(dbobject) }} {{ item.unit }}</span
+          >
           <span v-else>
             {{
               dbobject[item.field]
@@ -18,8 +20,29 @@
                   : dbobject[item.field]
                 : '-'
             }}
+            {{ item.unit }}
           </span>
-          {{ item.unit }}
+          <div v-if="item.links">
+            <dt v-if="item.links(dbobject)">
+              <dl
+                v-for="link in item.links(dbobject)"
+                :key="link"
+                class="q-mt-sm q-mb-sm field-item"
+              >
+                <a :href="link" target="_blank">
+                  {{ truncateString(link, 100) }}
+                  <q-icon name="open_in_new" />
+                </a>
+              </dl>
+            </dt>
+            <span v-else>-</span>
+          </div>
+          <div
+            v-if="item.comment && item.comment(dbobject)"
+            class="text-grey-6 q-mt-sm"
+          >
+            {{ item.comment(dbobject) }}
+          </div>
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -35,14 +58,16 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults } from 'vue';
-import { DBModel, Experiment, Reference } from '../models';
+import { DBModel, Experiment, Reference } from 'src/components/models';
 
 export interface FieldItem<T extends DBModel> {
   field: string;
   unit?: string;
   format?: (val: T) => string;
+  links?: (val: T) => string[] | null; // href
   html?: (val: T) => string;
   visible?: (val: T) => boolean;
+  comment?: (val: T) => string;
 }
 
 export interface FieldsListProps {
@@ -63,5 +88,11 @@ const visibleItems = computed(() => {
     return true;
   });
 });
+
+function truncateString(str: string, num: number) {
+  if (str.length <= num) {
+    return str;
+  }
+  return str.slice(0, num) + '...';
+}
 </script>
-./models

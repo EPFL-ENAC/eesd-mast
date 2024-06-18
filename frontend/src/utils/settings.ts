@@ -2,11 +2,13 @@ import { useCookies } from 'vue3-cookies';
 const { cookies } = useCookies();
 
 export type Settings = {
+  intro_shown: boolean;
   experiments_view: string;
 };
 
 export function getSettings(): Settings {
   let settings: Settings = {
+    intro_shown: false,
     experiments_view: 'grid',
   };
   const settingsSaved = cookies.get('mast_settings');
@@ -22,5 +24,5 @@ export function getSettings(): Settings {
 }
 
 export function saveSettings(settings: Settings) {
-  cookies.set('mast_settings', JSON.stringify(settings));
+  cookies.set('mast_settings', JSON.stringify(settings), '1y');
 }

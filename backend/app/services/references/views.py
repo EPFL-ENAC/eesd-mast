@@ -50,7 +50,7 @@ async def create_reference(
 ) -> ReferenceRead:
     """Creates an reference"""
     service = ReferencesService(session)
-    reference = await service.create(Reference.from_orm(reference))
+    reference = await service.create(Reference.model_validate(reference))
     return reference
 
 

@@ -9,15 +9,10 @@ export const STONES: string[] = [
 
 export const MASONRY_UNIT_MATERIAL: string[] = [
   'Clay',
-  'Calcareous sandstone',
   'Calcium silicate',
-  'Granite',
-  'Limestone',
-  'Tuff stone',
+  'Stone',
   'Concrete',
   'Adobe',
-  'Calcareous tuff stone',
-  'Neopolitan tuff stone',
 ];
 
 export const MASONRY_UNIT_TYPE: string[] = [

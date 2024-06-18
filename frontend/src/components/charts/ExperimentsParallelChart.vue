@@ -13,6 +13,7 @@ export default defineComponent({
 import { ExperimentParallelCount } from '../models';
 import VuePlotly from './VuePlotly.vue';
 import { testScaleLabel } from 'src/utils/numbers';
+import { getFieldValueColor } from 'src/utils/colors';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
 
 const { t } = useI18n({ useScope: 'global' });
@@ -38,10 +39,13 @@ const chartData = computed(() => {
     dimensions: [] as { label: string; values: string[] }[],
     counts: [] as number[],
     line: {
-      //color: 'gray',
       shape: 'hspline',
     },
+    labelfont: {
+      size: 16,
+    },
   };
+
   if (analysis.experimentsParallelCounts !== null) {
     // merge all stones into one category
     const digestedCounts: ExperimentParallelCount[] = [];
@@ -57,6 +61,23 @@ const chartData = computed(() => {
     });
 
     parCatsData.counts = digestedCounts.map((line) => line.count);
+
+    // Colors
+    if (digestedCounts.filter((line) => line.selected).length === 0) {
+      // enforce color when no filter
+      parCatsData.line.color = 'lightsteelblue';
+    } else {
+      const lineColor = digestedCounts.map((line) => {
+        return line.selected
+          ? getFieldValueColor(
+              'masonry_unit_material',
+              line.masonry_unit_material
+            )
+          : 'lightsteelblue';
+      });
+      parCatsData.line.color = lineColor;
+    }
+
     [
       'masonry_unit_material',
       'masonry_unit_type',
@@ -68,7 +89,7 @@ const chartData = computed(() => {
       'retrofitting_application',
     ].forEach((field: string) => {
       parCatsData.dimensions.push({
-        label: t(field),
+        label: t(`${field}_short`),
         values: digestedCounts.map((line) => {
           if (field === 'test_scale') {
             return testScaleLabel(line[field]);

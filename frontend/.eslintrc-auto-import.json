@@ -93,6 +93,7 @@
     "useFiltersStore": true,
     "useReferencesStore": true,
     "useRunResultsStore": true,
-    "useAnalysisStore": true
+    "useAnalysisStore": true,
+    "useNumericalModelsStore": true
   }
 }

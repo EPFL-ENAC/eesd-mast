@@ -5,6 +5,13 @@ export function toMaxDecimals(x: number | null, n: number): number | null {
   return +x.toFixed(n);
 }
 
+export function toFixed(x: number | null, n: number): string | null {
+  if (x === null) {
+    return null;
+  }
+  return x.toFixed(n);
+}
+
 const scale_labels: { [Key: string]: string } = {
   '1.0': '1',
   '0.5': '1/2',
@@ -23,4 +30,12 @@ export function testScaleValue(label: string): number {
     (key) => scale_labels[key] === label
   );
   return parseFloat(scale || label);
+}
+
+export function makeLiteralLabel(values: number[]): string {
+  const last = values.pop();
+  if (values.length === 0) {
+    return last + '';
+  }
+  return values.join(', ') + ' and ' + last;
 }

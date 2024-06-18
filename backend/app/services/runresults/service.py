@@ -1,10 +1,13 @@
-from app.services.runresults.models import RunResult, RunResultUpdate, RunResultVulnerability
+from app.services.runresults.models import RunResult, RunResultUpdate, RunResultVulnerability, RunResultFragility
 from app.services.experiments.models import Experiment
 from app.utils.query import QueryBuilder
 from sqlmodel import select, join, not_
 from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
+from scipy.stats import lognorm
+import statsmodels.api as sm
+import numpy as np
 
 
 class RunResultsService:
@@ -19,9 +22,9 @@ class RunResultsService:
 
     async def vulnerability(self, filter: dict | str) -> list[RunResultVulnerability]:
         """Get vulnerabilities from all run results"""
-        query = select(RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
+        query = select(RunResult.actual_pga_x, RunResult.actual_pga_y, RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
             .select_from(join(RunResult, Experiment)) \
-            .where(RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
+            .where(RunResult.actual_pga_x.isnot(None) | RunResult.actual_pga_y.isnot(None) | RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
             .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None)) \
             .where(not_(RunResult.run_id.in_(['Initial', 'Final'])))
 
@@ -30,15 +33,97 @@ class RunResultsService:
 
         # Execute query
         results = await self.session.exec(query)
-        vulnerabilities = []
+        data = {}
         for result in results.all():
-            vulnerability = RunResultVulnerability(
-                pga=result.nominal_pga_x if result.nominal_pga_x else result.nominal_pga_y,
-                dg=result.dg_derived if result.dg_derived else result.dg_reported,
-            )
-            vulnerabilities.append(vulnerability)
+            dg = result.dg_derived if result.dg_derived else result.dg_reported
+            pga = result.actual_pga_x if result.actual_pga_x else result.nominal_pga_x
+            if pga is None:
+                pga = result.actual_pga_y if result.actual_pga_y else result.nominal_pga_y
+            if dg not in data:
+                data[dg] = []
+            data[dg].append(pga)
+
+        vulnerabilities = []
+        for dg, pgas in data.items():
+            vulnerabilities.append(RunResultVulnerability(dg=dg, pgas=pgas))
 
         return vulnerabilities
+
+    def fragility(self, vulnerabilities: list[RunResultVulnerability]) -> list[RunResultFragility]:
+        """Compute fragility curves from vulnerabilities
+
+        Args:
+            vulnerabilities (_type_): PGA vs. DG values
+        """
+
+        # number of damage grades considered (5 according to EMS-98 (Grünthal et al., 1998))
+        num_grades = 5
+
+        # Define IM levels of interest
+        PGA_thresh = np.arange(0.025, 1.275, 0.025)
+
+        fragilities = []
+        for i in range(1, num_grades + 1):
+            # Compute the probability of exceedance for each damage grade
+            p_exceed = []
+            grade_pgas = list(
+                map(lambda vul: vul.pgas, [v for v in vulnerabilities if v.dg == i]))
+            if len(grade_pgas):
+                for pga in PGA_thresh:
+                    p_exceed.append(np.sum(grade_pgas <= pga) /
+                                    np.sum(~np.isnan(grade_pgas)))
+
+                # Fit a lognormal CDF to the data
+                b, theta, beta = self.probit(PGA_thresh, p_exceed)
+
+                x = np.linspace(0.0001, 1.25, 1000)
+                data = lognorm.cdf(x, beta, scale=theta)
+
+                # Store the results
+                fragilities.append(RunResultFragility(
+                    dg=i, thresh=PGA_thresh.tolist(), prob=p_exceed, x=x.tolist(), y=data.tolist()))
+
+        return fragilities
+
+    def probit(self, IM, p_exceed):
+        """
+        Fits a lognormal CDF to observed probability of collapse data using Probit regression.
+
+        Inputs:
+        num_gms: int or numpy array, number of ground motions used at each IM level
+        num_collapse: numpy array, number of collapses observed at each IM level
+
+        Outputs:
+        theta: float, median of fragility function
+        beta: float, lognormal standard deviation of fragility function
+        """
+
+        # Reshape vectors into column vectors
+        IM = IM.reshape((-1, 1))
+        p_exceed = np.array(p_exceed)
+        p_exceed = p_exceed.reshape((-1, 1))
+
+        # Probit regression
+        X = np.log(IM)
+        X = sm.add_constant(X)
+        Y = p_exceed
+
+        # , max_iter=100) #, cov_type='HC3')
+        model = sm.GLM(Y, X, family=sm.families.Binomial(
+            sm.families.links.probit()))
+        # model = sm.GLM(Y, X, family=sm.families.Gaussian(sm.families.links.log())) #, cov_type='HC3')
+        result = model.fit()
+
+        # Show results of the probit regression
+        # print(result.summary())
+
+        b = result.params
+
+        # Convert probit coefficients to lognormal distribution parameters
+        theta = np.exp(-b[0] / b[1])
+        beta = 1 / b[1]
+
+        return b, theta, beta
 
     async def get(self, run_result_id: int) -> RunResult:
         """Get a run result by id"""
@@ -106,6 +191,11 @@ class RunResultsService:
         if run_result:
             await self.session.delete(run_result)
             await self.session.commit()
+
+    async def get_by_experiment(self, experiment_id: int) -> list[RunResult]:
+        """Delete all run results by experiment id"""
+        start, stop, total_count, run_results = await self.find(filter={"experiment_id": experiment_id}, sort=None, range=None)
+        return run_results
 
     async def delete_by_experiment(self, experiment_id: int) -> None:
         """Delete all run results by experiment id"""

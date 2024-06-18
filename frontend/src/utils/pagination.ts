@@ -25,8 +25,8 @@ type PaginationFetchResult = {
 
 export type QueryParams = {
   filter: string | undefined;
-  sort: string | undefined;
-  range: string | undefined;
+  sort?: string | undefined;
+  range?: string | undefined;
 };
 
 export function makePaginationRequestHandler(
@@ -37,15 +37,12 @@ export function makePaginationRequestHandler(
     const { page, rowsPerPage, sortBy, descending } = props.pagination;
     const filter = props.filter;
 
-    // get all rows if "All" (0) is selected
-    const fetchCount =
-      rowsPerPage === 0 ? pagination.value.rowsNumber : rowsPerPage;
-
     // calculate starting row of data
+    // note rowsPerPage is 0 when "All" is selected
     const startRow = (page - 1) * rowsPerPage;
 
     // fetch data from "server"
-    fetchFromServer(startRow, fetchCount, filter, sortBy, descending)
+    fetchFromServer(startRow, rowsPerPage, filter, sortBy, descending)
       .then((result: PaginationFetchResult) => {
         pagination.value = { ...props.pagination, rowsNumber: result.total };
       })

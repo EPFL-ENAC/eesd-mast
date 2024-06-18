@@ -1,19 +1,44 @@
 <template>
   <div class="q-mb-xl">
-    <div class="q-pa-md">
+    <div class="q-pl-md q-pr-md">
+      <div class="">
+        <span class="text-h6">
+          {{ $t('aggregations_title') }}
+        </span>
+        <q-btn
+          flat
+          round
+          icon="help_outline"
+          class="on-right text-grey-8 q-pb-xs"
+        >
+          <q-popup-proxy class="bg-grey-7 text-white">
+            <div class="q-ma-md" style="width: 400px">
+              <q-markdown :src="$t('overview_help')" />
+            </div>
+          </q-popup-proxy>
+        </q-btn>
+        <q-toggle
+          v-model="tabToggle"
+          :label="$t('show_vulnerability')"
+          color="accent"
+          size="xl"
+          keep-color
+          class="on-right q-pb-xs"
+        />
+      </div>
       <div v-if="analysis.filters.length">
         <q-btn
           dense
           flat
           no-caps
-          color="primary"
+          color="secondary"
           :label="$t('reset_filters')"
           @click="analysis.resetFilters()"
         ></q-btn>
         <q-chip
           removable
           size="sm"
-          color="primary"
+          color="secondary"
           text-color="white"
           v-for="criteria in analysis.filters"
           :key="criteria.field"
@@ -26,39 +51,47 @@
           flat
           no-caps
           icon="visibility"
-          color="secondary"
-          :label="$t('show_tested_buildings')"
+          color="accent"
+          :label="$t('show_buildings')"
+          class="on-right"
           @click="onShowExperiments"
         ></q-btn>
       </div>
-      <div v-else class="q-pa-xs text-caption text-grey-8">
-        <q-icon name="info" size="sm"></q-icon>
-        <span class="on-right">{{ $t('aggregations_hint') }}</span>
-      </div>
+      <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
+
     <div class="row">
       <div
-        class="col-12 col-md-3 col-sm-12"
+        class="col-12 col-lg-3 col-md-6 col-sm-12"
         v-for="field in fields"
         :key="field"
       >
-        <field-frequencies-chart
-          :field="field"
-          @change:filter="onFilter"
-          class="q-ml-md q-mr-md"
-        />
+        <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <experiments-parallel-chart class="q-ml-md q-mr-md" />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <run-results-vulnerability-chart class="q-ml-md q-mr-md" />
-      </div>
-    </div>
+
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="parallel" class="q-pa-none">
+        <div class="row">
+          <div class="col-12">
+            <experiments-parallel-chart class="q-ml-lg q-mr-lg" />
+          </div>
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="vulnerabilities" class="q-pa-none">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
+          </div>
+          <div class="col-12 col-md-6">
+            <run-results-fragilities-chart class="q-ml-md q-mr-md" />
+            <div class="q-mt-md text-grey-9">
+              <q-markdown :src="FragilitiesMd" no-line-numbers />
+            </div>
+          </div>
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
@@ -74,14 +107,20 @@ export default defineComponent({
 import { FieldFrequencies } from './models';
 import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
 import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
-import RunResultsVulnerabilityChart from './charts/RunResultsVulnerabilityChart.vue';
+import RunResultsVulnerabilitiesChart from './charts/RunResultsVulnerabilitiesChart.vue';
+import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
+import FragilitiesMd from 'src/assets/fragilities.md';
 
 const router = useRouter();
 const analysis = useAnalysisStore();
 const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
+
+const tabToggle = ref(false);
+
+const tab = computed(() => (tabToggle.value ? 'vulnerabilities' : 'parallel'));
 
 const fields = computed(() => {
   // cumulate frequencies of stones

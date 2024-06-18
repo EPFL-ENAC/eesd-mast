@@ -4,6 +4,7 @@ import {
   ExperimentFrequencies,
   ExperimentParallelCount,
   RunResultVulnerability,
+  RunResultFragility,
   Counts,
   FieldValue,
 } from 'src/components/models';
@@ -14,7 +15,8 @@ interface State {
   counts: Counts;
   frequencies: ExperimentFrequencies | null;
   experimentsParallelCounts: ExperimentParallelCount[] | [];
-  runResultsVulnerability: RunResultVulnerability[] | [];
+  runResultsVulnerabilities: RunResultVulnerability[] | [];
+  runResultsFragilities: RunResultFragility[] | [];
   filters: FieldValue[];
 }
 
@@ -27,7 +29,8 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     frequencies: null,
     experimentsParallelCounts: [],
-    runResultsVulnerability: [],
+    runResultsVulnerabilities: [],
+    runResultsFragilities: [],
     filters: [],
   }),
   getters: {},
@@ -65,7 +68,7 @@ export const useAnalysisStore = defineStore('analysis', {
         this.experimentsParallelCounts = resp.data;
       });
     },
-    loadRunResultsVulnerability() {
+    loadRunResultsVulnerabilities() {
       const query: QueryParams = {
         filter: JSON.stringify(this.makeDbFilters()),
         sort: undefined,
@@ -73,16 +76,31 @@ export const useAnalysisStore = defineStore('analysis', {
       };
       api({
         method: 'get',
-        url: '/analysis/run_results/vulnerability',
+        url: '/analysis/run_results/vulnerabilities',
         params: query,
       }).then((resp) => {
-        this.runResultsVulnerability = resp.data;
+        this.runResultsVulnerabilities = resp.data;
+      });
+    },
+    loadRunResultsFragilities() {
+      const query: QueryParams = {
+        filter: JSON.stringify(this.makeDbFilters()),
+        sort: undefined,
+        range: undefined,
+      };
+      api({
+        method: 'get',
+        url: '/analysis/run_results/fragilities',
+        params: query,
+      }).then((resp) => {
+        this.runResultsFragilities = resp.data;
       });
     },
     loadExperimentsAnalysis() {
       this.loadExperimentsFrequencies();
       this.loadExperimentsParallelCounts();
-      this.loadRunResultsVulnerability();
+      this.loadRunResultsVulnerabilities();
+      this.loadRunResultsFragilities();
     },
     makeDbFilters() {
       const dbFilters: { [Key: string]: (string | number | null)[] } = {};
@@ -94,10 +112,13 @@ export const useAnalysisStore = defineStore('analysis', {
           filter.field === 'masonry_unit_material' &&
           filter.value === 'Stone'
         ) {
-          val = STONES;
+          val = [...STONES];
         }
         if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
-          val = MIXED_MATERIAL;
+          val = [...MIXED_MATERIAL];
+        }
+        if (filter.field === 'diaphragm_material' && filter.value === 'None') {
+          val = null;
         }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {

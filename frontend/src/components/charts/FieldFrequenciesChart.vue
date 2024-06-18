@@ -1,5 +1,5 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height - 20}px;`">
+  <div v-if="option.series" :style="`height: ${height}px; width: 90%;`">
     <e-charts
       ref="chart"
       autoresize
@@ -44,10 +44,12 @@ use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent]);
 interface FieldFrequenciesChartProps {
   field: string;
   height?: number;
+  width?: number;
 }
 const props = withDefaults(defineProps<FieldFrequenciesChartProps>(), {
   field: undefined,
   height: 300,
+  width: 400,
 });
 const emit = defineEmits<{
   (e: 'change:filter', value?: FieldValue): void;
@@ -93,7 +95,7 @@ function onClick(params: CallbackDataParams): void {
 }
 
 function keyLabel(key: string) {
-  if (key === 'null') {
+  if (key === 'null' || key === 'None') {
     return 'N/A';
   }
   if (props.field === 'test_scale') {
@@ -129,7 +131,7 @@ function initChartOptions() {
     height: props.height,
     tooltip: {
       trigger: 'item',
-      formatter: '<b>{b}</b>: {c} ({d}%)',
+      formatter: '<b>{b}</b><br/>{c} ({d}%)',
     },
     legend: {
       show: false,
@@ -141,7 +143,7 @@ function initChartOptions() {
         type: 'pie',
         radius: ['40%', '70%'],
         color: colors,
-        avoidLabelOverlap: false,
+        avoidLabelOverlap: true,
         // label: {
         //   show: false,
         //   position: 'center',
@@ -149,13 +151,13 @@ function initChartOptions() {
         // labelLine: {
         //   show: false,
         // },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 20,
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: true,
+        //     fontSize: 20,
+        //     fontWeight: 'bold',
+        //   },
+        // },
         data: dataset,
       },
     ],

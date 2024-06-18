@@ -1,14 +1,19 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height + 150}px;`">
-    <e-charts
-      ref="chart"
-      autoresize
-      :init-options="initOptions"
-      :option="option"
-      :update-options="updateOptions"
-      class="q-ma-md"
-      :loading="loading"
-    />
+  <div>
+    <div v-if="option.series" :style="`height: ${height + 80}px;`">
+      <e-charts
+        ref="chart"
+        autoresize
+        :init-options="initOptions"
+        :option="option"
+        :update-options="updateOptions"
+        class="q-ma-md"
+        :loading="loading"
+      />
+    </div>
+    <div v-if="showIncNote" class="text-center text-caption text-grey-6">
+      {{ $t('increasing_pga_note') }}
+    </div>
   </div>
 </template>
 
@@ -54,6 +59,9 @@ const props = withDefaults(defineProps<PgaChartProps>(), {
   direction: 'x',
   height: 300,
 });
+const emit = defineEmits<{
+  (e: 'loaded', value: boolean): void;
+}>();
 
 const { t } = useI18n({ useScope: 'global' });
 const runResultsStore = useRunResultsStore();
@@ -62,6 +70,7 @@ const runResults = ref<RunResult[]>([]);
 const chart = shallowRef(null);
 const option = ref<EChartsOption>({});
 const loading = ref(false);
+const showIncNote = ref(false);
 
 watch(
   () => props.experiment,
@@ -105,16 +114,31 @@ function buildOptions() {
     !visibleColumns.includes(periodColumn)
   ) {
     loading.value = false;
+    emit('loaded', false);
     return;
   }
 
-  const datasetPGA = runResults.value
+  const datasetPGA: number[][] = runResults.value
     .filter(
       (result) => result[pgaColumn] !== null && result[periodColumn] !== null
     )
     .map((result) => {
       return [result[pgaColumn], result[periodColumn]];
     });
+  emit('loaded', true);
+
+  // keep only increasing pga values
+  const datasetPGAInc = [];
+  let previous = 0;
+  for (let i = 0; i < datasetPGA.length; i++) {
+    const pga = datasetPGA[i][0];
+    if (pga > previous) {
+      datasetPGAInc.push([pga, datasetPGA[i][1]]);
+      previous = pga;
+    } else {
+      showIncNote.value = true;
+    }
+  }
 
   const newOption: EChartsOption = {
     // title: {
@@ -138,7 +162,7 @@ function buildOptions() {
     },
     xAxis: {
       type: 'value',
-      name: `${t(pgaColumn + '_axis')} (g units)`,
+      name: `${t(pgaColumn + '_axis')} [g units]`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -148,7 +172,7 @@ function buildOptions() {
     },
     yAxis: {
       type: 'value',
-      name: `${t(periodColumn + '_axis')} (sec.)`,
+      name: `${t(periodColumn + '_axis')} [sec.]`,
       nameLocation: 'middle',
       nameTextStyle: {
         fontWeight: 'bold',
@@ -159,7 +183,7 @@ function buildOptions() {
     series: [
       {
         name: t(pgaColumn),
-        data: datasetPGA,
+        data: datasetPGAInc,
         type: 'line',
         symbolSize: 5,
       },

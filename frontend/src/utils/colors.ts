@@ -20,6 +20,7 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
     'Steel & bricks': '#e78ac3',
     'RC & Timber': '#a6d854',
     'N/A': '#9467bd',
+    None: '#9467bd',
   },
   storeys_nb: {
     '1': '#a8ddb5',
@@ -37,6 +38,24 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
   },
 };
 
-export function getFieldValueColor(field: string, value: string): string {
+export function getFieldValueColor(
+  field: string,
+  value: string | null
+): string {
+  if (value === null) {
+    return '#000000';
+  }
   return colorPalettes[field][value] || '#000000';
+}
+
+const dgColors: { [Key: string]: string } = {
+  '1': 'blue',
+  '2': 'green',
+  '3': 'yellow',
+  '4': 'orange',
+  '5': 'red',
+};
+
+export function getDgColor(dg: string): string {
+  return dgColors[dg] || '#000000';
 }

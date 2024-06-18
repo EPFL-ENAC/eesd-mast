@@ -25,7 +25,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
+import { api, cdnUrl } from 'src/boot/axios';
 import { FileNode } from 'src/components/models';
 
 export interface FileNodeMarkdownProps {
@@ -60,7 +60,7 @@ function initMd() {
   withShowMore.value = false;
   showMore.value = true;
   api
-    .get(`/files/${props.node.path}`)
+    .get(`${cdnUrl}${props.node.path}`)
     .then((res) => {
       allText.value = res.data;
       if (res.data.length > 1000) {

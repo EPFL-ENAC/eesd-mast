@@ -79,6 +79,7 @@ declare global {
   const useFiltersStore: typeof import('./stores/filters')['useFiltersStore']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useLink: typeof import('vue-router')['useLink']
+  const useNumericalModelsStore: typeof import('./stores/numerical_models')['useNumericalModelsStore']
   const useReferencesStore: typeof import('./stores/references')['useReferencesStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
@@ -172,6 +173,7 @@ declare module 'vue' {
     readonly useFiltersStore: UnwrapRef<typeof import('./stores/filters')['useFiltersStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useNumericalModelsStore: UnwrapRef<typeof import('./stores/numerical_models')['useNumericalModelsStore']>
     readonly useReferencesStore: UnwrapRef<typeof import('./stores/references')['useReferencesStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
@@ -258,6 +260,7 @@ declare module '@vue/runtime-core' {
     readonly useFiltersStore: UnwrapRef<typeof import('./stores/filters')['useFiltersStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useNumericalModelsStore: UnwrapRef<typeof import('./stores/numerical_models')['useNumericalModelsStore']>
     readonly useReferencesStore: UnwrapRef<typeof import('./stores/references')['useReferencesStore']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="props.experiment?.files == null" class="text-grey-6">
+    <div v-if="!hasFiles" class="text-grey-6">
       {{ $t('no_files') }}
     </div>
     <div v-else>
@@ -43,8 +43,7 @@
               :label="$t('download')"
               no-caps
               icon="download"
-              color="primary"
-              dense
+              color="secondary"
               flat
               class="on-left"
               @click="downloadFiles"
@@ -84,7 +83,7 @@
                 <q-icon
                   v-if="!prop.node.is_file"
                   name="folder"
-                  color="primary"
+                  color="secondary"
                   class="on-left"
                 />
                 <q-icon
@@ -132,12 +131,15 @@
                 <q-card-section>
                   <q-img
                     v-if="prop.node.name.endsWith('.png')"
-                    :src="`${baseUrl}/files/${prop.node.path}`"
+                    :src="`${cdnUrl}${prop.node.path}`"
                     spinner-color="grey-6"
                     fit="scale-down"
                   />
                   <div v-else-if="prop.node.name.endsWith('.md')">
                     <file-node-markdown :node="prop.node" />
+                  </div>
+                  <div v-else-if="prop.node.name.endsWith('.tcl')">
+                    <file-node-txt :node="prop.node" />
                   </div>
                   <div v-else-if="prop.node.name.endsWith('.txt')">
                     <file-node-chart
@@ -171,12 +173,13 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { baseUrl } from 'src/boot/axios';
+import { baseUrl, cdnUrl } from 'src/boot/axios';
 import { withDefaults, computed, ref, watch } from 'vue';
 
 import { Experiment, FileNode } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import FileNodeMarkdown from './FileNodeMarkdown.vue';
+import FileNodeTxt from './FileNodeTxt.vue';
 import VtkViewer from './VtkViewer.vue';
 
 const displayed = ref<string[]>([]);
@@ -186,13 +189,20 @@ const mdTab = ref<string>('');
 
 interface ExperimentFilesViewProps {
   experiment: Experiment;
+  type: 'test' | 'model';
 }
 const props = withDefaults(defineProps<ExperimentFilesViewProps>(), {
   experiment: undefined,
+  type: 'test',
 });
 
+const hasFiles = computed(() =>
+  props.experiment ? props.experiment[getAttribute()] != null : false
+);
+
 const fileNodes = computed(() => {
-  const files = props.experiment && props.experiment.files;
+  const files =
+    props.experiment && (props.experiment[getAttribute()] as FileNode);
   sortFilesRecursively(files);
   return files.children ? files.children : [];
 });
@@ -202,11 +212,15 @@ const mdFiles = computed(() =>
 );
 
 const filesCount = computed<number>(() => {
-  return countFiles(props.experiment?.files);
+  return props.experiment
+    ? countFiles(props.experiment[getAttribute()] as FileNode)
+    : 0;
 });
 
 const filesSize = computed<number>(() => {
-  return totalFilesSize(props.experiment?.files);
+  return props.experiment
+    ? totalFilesSize(props.experiment[getAttribute()] as FileNode)
+    : 0;
 });
 
 watch(
@@ -218,12 +232,19 @@ onMounted(() => {
   initViewer();
 });
 
+function getAttribute() {
+  return `${props.type}_files`;
+}
+
 function initViewer() {
   displayed.value = [];
   filter.value = '';
-  const mds = props.experiment?.files?.children?.filter((node) =>
-    node.name.endsWith('.md')
-  );
+  const mds =
+    props.experiment && props.experiment[getAttribute()]
+      ? (props.experiment[getAttribute()] as FileNode).children?.filter(
+          (node: FileNode) => node.name.endsWith('.md')
+        )
+      : [];
   if (mds && mds.length) {
     mdTab.value =
       mds.find((md) => md.name.toLocaleLowerCase() === 'readme.md')?.name ||
@@ -258,11 +279,16 @@ function fileSizeLabel(size: number) {
 }
 
 function downloadFile(path: string) {
-  window.open(`${baseUrl}/files/${path}`);
+  window.open(`${cdnUrl}${path}`);
 }
 
 function downloadFiles() {
-  window.open(`${baseUrl}/experiments/${props.experiment.id}/files`);
+  window.open(
+    `${baseUrl}/experiments/${props.experiment.id}/${getAttribute().replace(
+      '_',
+      '-'
+    )}`
+  );
 }
 
 function canBeDisplayed(node: FileNode) {
@@ -270,6 +296,7 @@ function canBeDisplayed(node: FileNode) {
     node.name.endsWith('.png') ||
     node.name.endsWith('.md') ||
     node.name.endsWith('.txt') ||
+    node.name.endsWith('.tcl') ||
     node.name.endsWith('.vtp') ||
     node.alt_name?.endsWith('.vtp')
   );

@@ -38,7 +38,7 @@ make install; make run
 
 Swagger docs
 ```
-http://0.0.0.0:5050/docs
+http://localhost:8000/docs
 ```
 
 To provide .env use Dockerfile.

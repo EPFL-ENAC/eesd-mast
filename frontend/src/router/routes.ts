@@ -2,21 +2,25 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/buildings',
+    component: () => import('layouts/BuildingsLayout.vue'),
+  },
+  {
+    path: '/buildings2',
+    component: () => import('layouts/BuildingsLayout.vue'),
+  },
+  {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
       {
-        path: '/buildings',
-        component: () => import('src/pages/BuildingsPage.vue'),
+        path: '/test/:id',
+        component: () => import('src/pages/TestPage.vue'),
       },
       {
-        path: '/building/:id',
-        component: () => import('src/pages/BuildingPage.vue'),
-      },
-      {
-        path: '/submit',
-        component: () => import('src/pages/ContactUsPage.vue'),
+        path: '/model/:id',
+        component: () => import('src/pages/ModelPage.vue'),
       },
     ],
   },

@@ -16,16 +16,34 @@
       @row-click="onRowClick"
     >
       <template v-slot:top-left>
-        <q-chip
-          removable
-          v-for="sel in filters.references"
-          :key="sel.id"
-          @remove="onRemoveReferenceFilter(sel)"
-        >
-          {{ sel.reference }}
-        </q-chip>
+        <span class="text-h6">{{ $t('buildings_title') }}</span>
+        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
+          <q-popup-proxy class="bg-grey-7 text-white">
+            <div class="q-ma-md" style="width: 400px">
+              <q-markdown :src="$t('buildings_help')" />
+            </div>
+          </q-popup-proxy>
+        </q-btn>
+        <q-toggle
+          v-model="filters.with3dModel"
+          :label="$t('show_numerical_models')"
+          color="secondary"
+          keep-color
+          icon="house_siding"
+          size="70px"
+        />
       </template>
       <template v-slot:top-right>
+        <q-btn
+          v-if="!filters.with3dModel"
+          :label="$t('download_test_files')"
+          no-caps
+          icon="download"
+          color="secondary"
+          flat
+          class="on-left"
+          @click="downloadFiles"
+        />
         <q-input
           dense
           clearable
@@ -59,7 +77,17 @@
         <q-td :props="props">
           <q-img
             v-if="props.value"
-            :src="`${baseUrl}/files/${props.value.path}`"
+            :src="`${cdnUrl}${props.value.path}`"
+            spinner-color="grey-6"
+            width="100px"
+          />
+        </q-td>
+      </template>
+      <template v-slot:body-cell-models="props">
+        <q-td :props="props">
+          <q-img
+            v-if="hasModels(props.row)"
+            :src="getModelsSchemeUrl(props.row)"
             spinner-color="grey-6"
             width="100px"
           />
@@ -75,14 +103,26 @@
             >
               <q-img
                 :src="
-                  props.row.scheme
-                    ? `${baseUrl}/files/${props.row.scheme.path}`
+                  filters.with3dModel
+                    ? getModelsSchemeUrl(props.row)
+                    : props.row.scheme
+                    ? `${cdnUrl}${props.row.scheme.path}`
                     : '/no-image.png'
                 "
                 :alt="`${props.row.description} [${props.row.reference}]`"
                 spinner-color="grey-6"
                 height="250px"
               >
+                <div
+                  v-if="!filters.with3dModel && hasModels(props.row)"
+                  class="absolute-top text-right"
+                >
+                  <q-icon
+                    name="house_siding"
+                    class="bg-secondary text-white"
+                    size="sm"
+                  />
+                </div>
                 <div class="absolute-bottom text-center">
                   <div class="text-subtitle2">
                     {{ props.row.reference.reference }}
@@ -126,7 +166,7 @@
             <q-chip
               v-if="props.row.reference.link_to_experimental_paper"
               icon="article"
-              color="primary"
+              color="accent"
               text-color="white"
               size="sm"
               class="q-ml-none"
@@ -142,7 +182,7 @@
             <q-chip
               v-if="props.row.reference.link_to_request_data"
               icon="grid_on"
-              color="secondary"
+              color="grey-7"
               text-color="white"
               size="sm"
             >
@@ -165,13 +205,22 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card :style="$q.screen.lt.md ? '' : 'width: 1000px; max-width: 90vw'">
+      <q-card :style="$q.screen.lt.md ? '' : 'width: 800px; max-width: 80vw'">
         <q-bar class="bg-white q-pt-lg">
+          <div class="q-pl-xs" style="font-size: larger">
+            {{ experiment.description }}
+            <span v-if="experiment.experiment_id">
+              - {{ experiment.experiment_id }}
+            </span>
+          </div>
           <q-space />
           <q-btn dense flat size="xl" icon="close" v-close-popup />
         </q-bar>
         <q-card-section>
-          <experiment-summary :experiment="experiment"></experiment-summary>
+          <experiment-summary
+            :experiment="experiment"
+            @select="onReferenceExperimentSelection"
+          ></experiment-summary>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -188,8 +237,8 @@ export default defineComponent({
 import { useI18n } from 'vue-i18n';
 import { getSettings, saveSettings } from 'src/utils/settings';
 import { ref, onMounted } from 'vue';
-import { api, baseUrl } from 'src/boot/axios';
-import { Experiment, Reference } from 'src/components/models';
+import { api, baseUrl, cdnUrl } from 'src/boot/axios';
+import { FileNode, Experiment, Reference } from 'src/components/models';
 import ExperimentSummary from 'src/components/ExperimentSummary.vue';
 import {
   makePaginationRequestHandler,
@@ -216,11 +265,11 @@ const experiment = ref<Experiment>();
 
 const columns = [
   {
-    name: 'id',
+    name: 'building_id',
     required: true,
     label: '#',
     align: 'left',
-    field: 'id',
+    field: 'building_id',
     sortable: true,
   },
   {
@@ -230,6 +279,13 @@ const columns = [
     align: 'left',
     field: 'scheme',
     sortable: false,
+  },
+  {
+    name: 'models',
+    required: true,
+    label: t('model'),
+    align: 'left',
+    field: 'models',
   },
   {
     name: 'experiment_id',
@@ -298,7 +354,8 @@ function fetchFromServer(
     sort: sortBy
       ? JSON.stringify([sortBy, descending ? 'DESC' : 'ASC'])
       : undefined,
-    range: JSON.stringify([startRow, startRow + count - 1]),
+    range:
+      count > 0 ? JSON.stringify([startRow, startRow + count - 1]) : undefined,
   };
   return api({
     method: 'get',
@@ -326,10 +383,6 @@ function onExperiment(selected: Experiment) {
   showExperiment.value = true;
 }
 
-function onRemoveReferenceFilter(reference: Reference) {
-  filters.references = filters.references.filter((r) => r.id !== reference.id);
-}
-
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
 });
@@ -339,5 +392,41 @@ function toggleView(newView: string) {
   const settings = getSettings();
   settings.experiments_view = view.value;
   saveSettings(settings);
+}
+
+function hasModels(row: Experiment) {
+  return row.model_files;
+}
+
+function getModelsSchemeUrl(row: Experiment) {
+  if (row.model_files) {
+    const schemeInfo = (row.model_files as FileNode).children?.find(
+      (child: FileNode) => child.name.startsWith('scheme')
+    );
+    return schemeInfo
+      ? `${cdnUrl}${
+          schemeInfo.alt_path ? schemeInfo.alt_path : schemeInfo.path
+        }`
+      : '';
+  }
+  return '';
+}
+
+function downloadFiles() {
+  const dbFilter = filters.dbFilters;
+  const query: QueryParams = {
+    filter: JSON.stringify(
+      filter.value ? { description: filter, ...dbFilter } : dbFilter
+    ),
+  };
+  const queryStr =
+    query.filter && query.filter !== '{}'
+      ? `?filter=${encodeURIComponent(query.filter)}`
+      : '';
+  window.open(`${baseUrl}/experiments-download/test-files${queryStr}`);
+}
+
+function onReferenceExperimentSelection(selected: Experiment) {
+  experiment.value = selected;
 }
 </script>

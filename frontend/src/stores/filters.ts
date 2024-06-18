@@ -8,15 +8,15 @@ interface RefenceSelection {
 }
 
 interface State {
+  with3dModel: boolean;
   selections: string[];
-  references: Reference[];
   referenceSelections: RefenceSelection[];
 }
 
 export const useFiltersStore = defineStore('filters', {
   state: (): State => ({
+    with3dModel: false,
     selections: [],
-    references: [],
     referenceSelections: [],
   }),
   getters: {
@@ -37,7 +37,14 @@ export const useFiltersStore = defineStore('filters', {
           if (val === 'null') {
             val = null;
           }
-          if (dbFilters[field]) {
+          if (field === 'masonry_unit_material' && value === 'Stone') {
+            //val = STONES;
+            if (dbFilters[field]) {
+              dbFilters[field].push(...STONES);
+            } else {
+              dbFilters[field] = [...STONES];
+            }
+          } else if (dbFilters[field]) {
             dbFilters[field].push(val);
           } else {
             dbFilters[field] = [val];
@@ -49,13 +56,8 @@ export const useFiltersStore = defineStore('filters', {
           (ref) => ref.value.id
         );
       }
-      if (state.references && state.references.length > 0) {
-        const ids = state.references.map((ref) => ref.id);
-        if (dbFilters['reference_id']) {
-          dbFilters['reference_id'].push(...ids);
-        } else {
-          dbFilters['reference_id'] = ids;
-        }
+      if (state.with3dModel) {
+        dbFilters['model_files'] = { $exists: true };
       }
       return dbFilters;
     },
@@ -63,25 +65,19 @@ export const useFiltersStore = defineStore('filters', {
   actions: {
     resetFilters() {
       this.selections = [];
-      this.references = [];
       this.referenceSelections = [];
     },
     applySelections(filters: FieldValue[]) {
       filters.forEach((filter) => {
-        if (
-          filter.field === 'masonry_unit_material' &&
-          filter.value === 'Stone'
-        ) {
-          STONES.forEach((val) =>
+        if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
+          MIXED_MATERIAL.forEach((val) =>
             this.selections.push(`${filter.field}:${val}`)
           );
         } else if (
           filter.field === 'diaphragm_material' &&
-          filter.value === 'Mixed'
+          filter.value === 'None'
         ) {
-          MIXED_MATERIAL.forEach((val) =>
-            this.selections.push(`${filter.field}:${val}`)
-          );
+          this.selections.push(`${filter.field}:null`);
         } else {
           this.selections.push(`${filter.field}:${filter.value}`);
         }

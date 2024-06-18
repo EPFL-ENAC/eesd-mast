@@ -1,9 +1,13 @@
 <template>
   <div v-if="file">
     <div class="row">
-      <div class="col-lg-6 col-md-8 col-sm-12">
-        <div class="q-mb-md row">
+      <div
+        class="col-lg-6 col-md-8 col-sm-12"
+        :style="`width: ${width}; height: ${width};`"
+      >
+        <div v-if="withRepresentation || download" class="q-mb-md row">
           <q-select
+            v-if="withRepresentation"
             v-model="representation"
             :options="representationOptions"
             map-options
@@ -35,7 +39,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { baseUrl } from 'src/boot/axios';
+import { cdnUrl } from 'src/boot/axios';
 import { FileNode } from './models';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
@@ -49,10 +53,14 @@ import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 export interface VtkViewerProps {
   file: FileNode | undefined;
   download: boolean;
+  withRepresentation: boolean;
+  width: string;
 }
 const props = withDefaults(defineProps<VtkViewerProps>(), {
   file: undefined,
   download: true,
+  withRepresentation: false,
+  width: '400px',
 });
 
 const { t } = useI18n({ useScope: 'global' });
@@ -96,12 +104,12 @@ function initContext() {
 
     // Set up the HTTP dataset reader
     // const reader = vtkHttpDataSetReader.newInstance();
-    // reader.setUrl(`${baseUrl}/files/${props.file.path}`, { fullpath: true });
+    // reader.setUrl(`${cdnUrl}${props.file.path}`, { fullpath: true });
     const reader = vtkXMLPolyDataReader.newInstance();
     const path = props.file.path.endsWith('.vtp')
       ? props.file.path
       : props.file.alt_path;
-    reader.setUrl(`${baseUrl}/files/${path}`);
+    reader.setUrl(`${cdnUrl}${path}`);
 
     // Load the dataset
     reader.loadData().then(() => {
@@ -143,7 +151,7 @@ function cleanContext() {
 }
 
 function downloadFile(path: string) {
-  window.open(`${baseUrl}/files/${path}`);
+  window.open(`${cdnUrl}${path}`);
 }
 </script>
 

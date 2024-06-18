@@ -1,17 +1,15 @@
 <template>
   <q-page>
-    <div class="q-pa-md">
-      <div class="text-subtitle1 text-grey-8">
-        <q-markdown :src="OverViewMd" no-line-numbers />
-      </div>
+    <div>
+      <app-header url="/Website_Background_Title_Option1_blue.webp" />
+      <metrics-banner />
+      <experiment-aggregations />
     </div>
-    <metrics-banner />
-    <experiment-aggregations />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import OverViewMd from 'src/assets/overview.md';
+import AppHeader from 'src/components/AppHeader.vue';
 import MetricsBanner from 'src/components/MetricsBanner.vue';
 import ExperimentAggregations from 'src/components/ExperimentAggregations.vue';
 </script>
