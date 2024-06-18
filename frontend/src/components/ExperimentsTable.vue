@@ -25,12 +25,21 @@
     >
       <template v-slot:top-left>
         <span class="text-h6">{{ $t('buildings_title') }}</span>
-        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
-          <q-popup-proxy class="bg-grey-7 text-white">
-            <div class="q-ma-md" style="width: 400px">
+        <q-btn
+          flat
+          round
+          size="lg"
+          icon="help_outline"
+          class="on-right text-primary"
+        >
+          <q-tooltip class="bg-grey-7 text-white">
+            <div
+              class="q-pt-md q-pl-md q-pr-md"
+              style="width: 400px; font-size: medium"
+            >
               <q-markdown :src="$t('buildings_help')" />
             </div>
-          </q-popup-proxy>
+          </q-tooltip>
         </q-btn>
         <q-toggle
           v-model="filters.with3dModel"

@@ -1,21 +1,25 @@
 <template>
   <div class="q-mb-xl">
     <div class="q-pl-md q-pr-md">
-      <div class="">
+      <div class="q-mt-md q-pl-xl">
         <span class="text-h6">
           {{ $t('aggregations_title') }}
         </span>
         <q-btn
           flat
           round
+          size="lg"
           icon="help_outline"
-          class="on-right text-grey-8 q-pb-xs"
+          class="on-right text-primary q-pb-xs"
         >
-          <q-popup-proxy class="bg-grey-7 text-white">
-            <div class="q-ma-md" style="width: 400px">
+          <q-tooltip class="bg-grey-7 text-white">
+            <div
+              class="q-pt-md q-pl-md q-pr-md"
+              style="width: 400px; font-size: medium"
+            >
               <q-markdown :src="$t('overview_help')" />
             </div>
-          </q-popup-proxy>
+          </q-tooltip>
         </q-btn>
         <q-toggle
           v-model="tabToggle"
