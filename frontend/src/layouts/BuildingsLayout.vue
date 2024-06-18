@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
-      <app-toolbar @toggle="toggleDrawer" />
+      <app-toolbar />
       <app-header
         v-if="isBuildings2"
         url="Website_Background_Title_Option2.webp"
@@ -63,8 +63,4 @@ watch(
     drawerOpen.value = isBuildings.value;
   }
 );
-
-function toggleDrawer() {
-  drawerOpen.value = !drawerOpen.value;
-}
 </script>

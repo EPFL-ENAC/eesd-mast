@@ -1,5 +1,13 @@
 <template>
   <div>
+    <!-- <q-page-sticky expand position="top">
+      <q-toolbar class="bg-accent text-white">
+        <q-avatar>
+          <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
+        </q-avatar>
+        <q-toolbar-title> Page Title </q-toolbar-title>
+      </q-toolbar>
+    </q-page-sticky> -->
     <q-table
       flat
       :grid="view === 'grid'"

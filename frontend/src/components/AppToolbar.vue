@@ -8,31 +8,14 @@
       icon="menu"
       aria-label="Menu"
       :disable="!isBuildings"
-      @click="toggleLeftDrawer"
     />
     <a href="https://epfl.ch" target="_blank" class="q-mt-sm">
       <img src="/EPFL_logo.png" style="height: 25px" />
     </a>
-    <q-btn
-      flat
-      dense
-      :label="$t('overview')"
-      no-caps
-      to="/"
-      :class="isHome ? 'text-primary' : ''"
-      class="q-pt-sm q-pb-sm q-pr-md q-pl-md on-right"
-      style="font-size: 1.15rem"
-    />
-    <q-btn
-      flat
-      dense
-      :label="$t('buildings')"
-      no-caps
-      to="/buildings"
-      :class="isBuildings || isBuildings2 ? 'text-primary' : ''"
-      class="on-left on-right q-pt-sm q-pb-sm q-pr-md q-pl-md"
-      style="font-size: 1.15rem"
-    />
+    <q-tabs shrink stretch active-color="primary" class="q-ml-md">
+      <q-route-tab no-caps to="/" :label="$t('overview')" exact />
+      <q-route-tab no-caps :label="$t('buildings')" to="/buildings" exact />
+    </q-tabs>
     <q-space />
     <q-btn
       flat
@@ -72,21 +55,11 @@
     </a>
   </q-toolbar>
 
-  <q-dialog v-model="showIntro">
-    <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
-      <q-card-section class="q-ml-md q-mr-md">
-        <div class="text-h6 q-mb-md">
-          {{ $t('app_title') }}
-        </div>
-        <div class="text-subtitle1 text-grey-8">
-          <q-markdown :src="OverViewMd" no-line-numbers />
-        </div>
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn flat :label="$t('close')" color="primary" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <simple-dialog
+    v-model="showIntro"
+    :title="$t('app_title')"
+    :content="OverViewMd"
+  />
 
   <q-dialog v-model="showAcknowledgements">
     <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
@@ -104,25 +77,15 @@
     </q-card>
   </q-dialog>
 
-  <q-dialog v-model="showResources">
-    <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
-      <q-card-section class="q-ml-md q-mr-md">
-        <div class="text-h6 q-mb-sm">
-          {{ $t('resources') }}
-        </div>
-        <q-list class="bg-grey-2" bordered>
-          <essential-link
-            v-for="link in essentialLinks"
-            :key="link.title"
-            v-bind="link"
-          />
-        </q-list>
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn flat :label="$t('close')" color="primary" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <simple-dialog v-model="showResources" :title="$t('resources')">
+    <q-list separator>
+      <essential-link
+        v-for="link in essentialLinks"
+        :key="link.title"
+        v-bind="link"
+      />
+    </q-list>
+  </simple-dialog>
 
   <q-dialog v-model="showContact">
     <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
@@ -168,8 +131,7 @@ import AcknowledgementsMd from 'src/assets/acknowledgements.md';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
-
-const emit = defineEmits(['toggle']);
+import SimpleDialog from 'src/components/SimpleDialog.vue';
 
 const route = useRoute();
 
@@ -178,14 +140,12 @@ const showResources = ref(false);
 const showContact = ref(false);
 const showAcknowledgements = ref(false);
 
-const isHome = computed(() => route.path === '/');
 const isBuildings = computed(
   () =>
     route.path === '/buildings' ||
     route.path.startsWith('/test') ||
     route.path.startsWith('/model')
 );
-const isBuildings2 = computed(() => route.path === '/buildings2');
 
 const essentialLinks: EssentialLinkProps[] = [
   {
@@ -241,9 +201,5 @@ function onShowAcknowledgements() {
 
 function openPeoplePage(username: string) {
   window.open(`https://people.epfl.ch/${username}?lang=en`);
-}
-
-function toggleLeftDrawer() {
-  emit('toggle');
 }
 </script>

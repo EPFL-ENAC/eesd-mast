@@ -30,7 +30,7 @@ export default {
   compression_strength: 'Compression strength (fm)',
   connectors_activation: 'Connectors Activation',
   contact_us_intro:
-    'If you want to give us feedback on the content and usability of this platform, or want to share new experimental data to be included, please contact us:',
+    'If you want to give us feedback on the content and usability of this platform, or want to share new experimental data or numerical model to be included, please contact us:',
   contact_us: 'Contact Us',
   corresponding_author_email: 'Corresponding Author Email',
   corresponding_author_name: 'Corresponding Author Name',
@@ -123,7 +123,7 @@ export default {
   open_measured_data: 'Open Measured Data',
   original_size: 'Original',
   other_experiments_of_reference: 'Other buildings from reference',
-  overview: 'DB Overview',
+  overview: 'Database Overview',
   overview_help:
     'You can select a feature of the buildings to see how they are related to other features. This selection also serves as a filter when you go to the Buildings section (where you can find the complete list of buildings included in this database).\n\nFurthermore, based on your feature selection, you can check the results of a vulnerability analysis by using the toggle "Show vulnerability plots".',
   paper: 'Paper',
@@ -149,7 +149,7 @@ export default {
   retrofitting_type: 'Retrotifitting Type',
   roof_material_geometry: 'Roof Material Geometry',
   run_id: 'Run ID',
-  run_results_counts_label: 'Experimental results',
+  run_results_counts_label: 'Experimental results and numerical models',
   run_results: 'Test Results',
   scheme: 'Scheme',
   search_files: 'Search files',
