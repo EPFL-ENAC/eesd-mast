@@ -1,15 +1,15 @@
 <template>
   <q-dialog :maximized="$q.screen.lt.sm" v-model="showDialog" @hide="onHide">
-    <q-card :style="$q.screen.lt.sm ? '' : 'width: 500px; max-width: 80vw'">
+    <q-card :style="$q.screen.lt.sm ? '' : 'width: 600px; max-width: 80vw'">
       <q-card-actions v-if="$q.screen.lt.sm" align="right">
         <q-btn flat icon="close" color="primary" v-close-popup />
       </q-card-actions>
-      <q-card-section>
+      <q-card-section class="q-pb-none">
         <div v-if="title" class="text-h6 q-mb-sm">
           {{ title }}
         </div>
         <div v-if="props.content">
-          <q-markdown :src="props.content" />
+          <q-markdown :src="props.content" class="epfl-md" />
         </div>
         <slot></slot>
       </q-card-section>

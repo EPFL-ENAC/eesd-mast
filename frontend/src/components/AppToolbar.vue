@@ -55,11 +55,14 @@
     </a>
   </q-toolbar>
 
-  <simple-dialog
-    v-model="showIntro"
-    :title="$t('app_title')"
-    :content="OverViewMd"
-  />
+  <simple-dialog v-model="showIntro" :title="$t('app_title')">
+    <div>
+      <div class="text-grey-8" style="font-size: larger">
+        <q-markdown :src="OverViewMd" />
+      </div>
+      <q-markdown :src="CiteMd" class="epfl-md" />
+    </div>
+  </simple-dialog>
 
   <q-dialog v-model="showAcknowledgements">
     <q-card :style="$q.screen.lt.md ? '' : 'width: 500px; max-width: 80vw'">
@@ -127,6 +130,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { getSettings, saveSettings } from 'src/utils/settings';
 import OverViewMd from 'src/assets/overview.md';
+import CiteMd from 'src/assets/cite.md';
 import AcknowledgementsMd from 'src/assets/acknowledgements.md';
 import EssentialLink, {
   EssentialLinkProps,
