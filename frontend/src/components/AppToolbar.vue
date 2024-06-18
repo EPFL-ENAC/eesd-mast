@@ -34,6 +34,13 @@
     <q-btn
       flat
       round
+      icon="add_box"
+      :title="$t('how_to_cite')"
+      @click="onShowCite"
+    ></q-btn>
+    <q-btn
+      flat
+      round
       icon="info"
       :title="$t('introduction')"
       @click="onShowIntro"
@@ -62,6 +69,13 @@
       </div>
       <q-markdown :src="CiteMd" class="epfl-md" />
     </div>
+  </simple-dialog>
+
+  <simple-dialog
+    v-model="showCite"
+    :title="$t('how_to_cite')"
+    :content="CiteMd"
+  >
   </simple-dialog>
 
   <q-dialog v-model="showAcknowledgements">
@@ -140,6 +154,7 @@ import SimpleDialog from 'src/components/SimpleDialog.vue';
 const route = useRoute();
 
 const showIntro = ref(false);
+const showCite = ref(false);
 const showResources = ref(false);
 const showContact = ref(false);
 const showAcknowledgements = ref(false);
@@ -189,6 +204,10 @@ onMounted(() => {
 
 function onShowIntro() {
   showIntro.value = true;
+}
+
+function onShowCite() {
+  showCite.value = true;
 }
 
 function onShowResources() {

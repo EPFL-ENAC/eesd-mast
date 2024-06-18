@@ -77,6 +77,7 @@ export default {
   global_force_displacement_curve: 'Global Force-Displacement Curve',
   global_geometry_def: 'Global geometry definition',
   gravity_loads_def: 'Gravity loads Definition',
+  how_to_cite: 'How to cite',
   id: 'ID',
   initial_material_properties: 'Initial material properties',
   image_size: 'Image size:',
