@@ -140,7 +140,6 @@
       active-color="secondary"
       indicator-color="secondary"
       align="justify"
-      narrow-indicator
     >
       <q-tab name="details" :label="$t('details')" />
       <q-tab name="run_results" :label="$t('run_results')" />

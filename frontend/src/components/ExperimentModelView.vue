@@ -65,7 +65,6 @@
       active-color="secondary"
       indicator-color="secondary"
       align="justify"
-      narrow-indicator
     >
       <q-tab name="details" :label="$t('modeling_assumptions')" />
       <q-tab name="files" :label="$t('model_files')" />
