@@ -121,6 +121,8 @@ export default {
   nominal_pga_y: 'Nominal PGA Y-dir. [g]',
   nominal_pga_z_axis: 'Nominal PGA in the Z-dir.',
   nominal_pga_z: 'Nominal PGA Z-dir. [g]',
+  numerical_models: 'Numerical models',
+  numerical_models_label: 'Available for downloading',
   open_measured_data: 'Open Measured Data',
   original_size: 'Original',
   other_experiments_of_reference: 'Other buildings from reference',
