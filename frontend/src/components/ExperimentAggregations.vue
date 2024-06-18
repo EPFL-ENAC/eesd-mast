@@ -96,7 +96,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { FieldValue } from './models';
 import { testScaleLabel } from 'src/utils/numbers';
 export default defineComponent({

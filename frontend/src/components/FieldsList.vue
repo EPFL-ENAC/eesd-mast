@@ -50,7 +50,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { toMaxDecimals } from 'src/utils/numbers';
 export default defineComponent({
   name: 'FieldsList',
