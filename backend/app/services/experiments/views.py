@@ -3,6 +3,7 @@ import zipfile
 import tempfile
 import shutil
 import os
+import re
 from urllib.parse import unquote
 
 from pathlib import Path
@@ -177,6 +178,7 @@ async def get_experiment_model_files(
 ):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
+    base_name = nomalize_base_name(experiment.reference.reference)
     if experiment.model_files:
         # extract from S3 and archive files
         try:
@@ -187,7 +189,7 @@ async def get_experiment_model_files(
             with open(zip_file_path, "rb") as file:
                 content = file.read()
 
-            response.headers["Content-Disposition"] = f"attachment; filename={folder_name}.zip"
+            response.headers["Content-Disposition"] = f"attachment; filename={base_name}_EFMmodel.zip"
             response.headers["Content-Type"] = "application/zip"
             response.status_code = 200
             response.body = content
@@ -211,6 +213,7 @@ async def get_experiment_test_files(
 ):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
+    base_name = nomalize_base_name(experiment.reference.reference)
     if experiment.test_files:
         # extract from S3 and archive files
         try:
@@ -221,7 +224,7 @@ async def get_experiment_test_files(
             with open(zip_file_path, "rb") as file:
                 content = file.read()
 
-            response.headers["Content-Disposition"] = f"attachment; filename={folder_name}.zip"
+            response.headers["Content-Disposition"] = f"attachment; filename={base_name}_Test.zip"
             response.headers["Content-Type"] = "application/zip"
             response.status_code = 200
             response.body = content
@@ -232,6 +235,13 @@ async def get_experiment_test_files(
             shutil.rmtree(temp_dir)
     else:
         raise HTTPException(status_code=404, detail="Test files not found")
+
+
+def nomalize_base_name(text: str):
+    base_name = text
+    base_name = base_name.replace(' ', '_')
+    base_name = re.sub('[\.\(\)]', '', base_name, flags=re.IGNORECASE)
+    return base_name
 
 
 @router.post("/{experiment_id}/scheme",
