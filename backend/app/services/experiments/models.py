@@ -97,6 +97,7 @@ class ExperimentFrequencies(BaseModel):
     diaphragm_material: dict
     storeys_nb: dict
     test_scale: dict
+    model_files: dict
 
 
 class ExperimentParallelCount(BaseModel):

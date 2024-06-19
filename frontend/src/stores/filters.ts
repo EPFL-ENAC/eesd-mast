@@ -8,25 +8,27 @@ interface RefenceSelection {
 }
 
 interface State {
-  with3dModel: boolean;
+  with3dModel: boolean | null;
   selections: string[];
   referenceSelections: RefenceSelection[];
 }
 
 export const useFiltersStore = defineStore('filters', {
   state: (): State => ({
-    with3dModel: false,
+    with3dModel: null,
     selections: [],
     referenceSelections: [],
   }),
   getters: {
     dbFilters: (state) => {
-      const dbFilters = {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const dbFilters: { [Key: string]: any } = {};
       state.selections.forEach((selection) => {
         const tokens = selection.split(':');
         if (tokens.length === 2) {
           const [field, value] = tokens;
-          let val = [
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let val: any = [
             'storeys_nb',
             'test_scale',
             'wall_leaves_nb',
@@ -56,8 +58,8 @@ export const useFiltersStore = defineStore('filters', {
           (ref) => ref.value.id
         );
       }
-      if (state.with3dModel) {
-        dbFilters['model_files'] = { $exists: true };
+      if (state.with3dModel !== null) {
+        dbFilters['model_files'] = { $exists: state.with3dModel };
       }
       return dbFilters;
     },
@@ -68,6 +70,7 @@ export const useFiltersStore = defineStore('filters', {
       this.referenceSelections = [];
     },
     applySelections(filters: FieldValue[]) {
+      this.with3dModel = null;
       filters.forEach((filter) => {
         if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
           MIXED_MATERIAL.forEach((val) =>
@@ -78,6 +81,8 @@ export const useFiltersStore = defineStore('filters', {
           filter.value === 'None'
         ) {
           this.selections.push(`${filter.field}:null`);
+        } else if (filter.field === 'model_files') {
+          this.with3dModel = filter.value === 'Yes';
         } else {
           this.selections.push(`${filter.field}:${filter.value}`);
         }

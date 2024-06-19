@@ -36,6 +36,10 @@ const colorPalettes: { [Key: string]: { [Key: string]: string } } = {
     '1/3': '#fbb4b9',
     '1/4': '#feebe2',
   },
+  model_files: {
+    No: '#AD9DD1',
+    Yes: '#F7B7E7',
+  },
 };
 
 export function getFieldValueColor(

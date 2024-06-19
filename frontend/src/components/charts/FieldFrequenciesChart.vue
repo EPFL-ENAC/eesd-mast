@@ -1,7 +1,7 @@
 <template>
   <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
     <div class="text-center q-mt-sm" style="font-size: 16px">
-      {{ $t(props.field) }}
+      {{ $t(fieldTitle) }}
     </div>
     <e-charts
       ref="chart"
@@ -66,6 +66,13 @@ const frequencies = computed(() => {
   return analysis.frequencies === null ? {} : analysis.frequencies[props.field];
 });
 
+const fieldTitle = computed(() => {
+  if (props.field === 'model_files') {
+    return 'numerical_model';
+  }
+  return props.field;
+});
+
 watch(
   () => props.field,
   () => {
@@ -101,6 +108,9 @@ function keyLabel(key: string) {
   }
   if (props.field === 'test_scale') {
     return testScaleLabel(key);
+  }
+  if (props.field === 'model_files') {
+    return key === '0' ? t('no') : t('yes');
   }
   return key;
 }

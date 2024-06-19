@@ -113,6 +113,7 @@ export default {
   modeling_assumptions: 'Modeling assumptions',
   model_files: 'OpenSees Files',
   mortar_type: 'Mortar Type',
+  no: 'No',
   no_3d_model: 'No 3D Model',
   no_files: 'No files',
   no_period_evolution: 'Evolution of fundamental period not available.',
@@ -123,6 +124,7 @@ export default {
   nominal_pga_y: 'Nominal PGA Y-dir. [g]',
   nominal_pga_z_axis: 'Nominal PGA in the Z-dir.',
   nominal_pga_z: 'Nominal PGA Z-dir. [g]',
+  numerical_model: 'Numerical model',
   numerical_models: 'Numerical models',
   numerical_models_label: 'Available for downloading',
   open_measured_data: 'Open Measured Data',
@@ -195,5 +197,6 @@ export default {
   wall_leaves_nb: 'Number of Wall Leaves',
   wireframe: 'Wireframe',
   year: 'Year',
+  yes: 'Yes',
   zoom_image: 'Zoom image',
 };

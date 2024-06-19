@@ -65,12 +65,8 @@
       <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
 
-    <div class="row q-mt-md">
-      <div
-        class="col-12 col-lg-3 col-md-6 col-sm-12"
-        v-for="field in fields"
-        :key="field"
-      >
+    <div class="row q-mt-md justify-center">
+      <div v-for="field in fields" :key="field" style="width: 350px">
         <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
     </div>
@@ -195,8 +191,10 @@ function criteriaLabel(criteria: FieldValue) {
   if (criteria.field === 'test_scale') {
     return `${t(criteria.field)}: ${testScaleLabel(criteria.value)}`;
   }
+  const field =
+    criteria.field === 'model_files' ? 'numerical_model' : criteria.field;
   const val = criteria.value === null ? 'N/A' : criteria.value;
-  return `${t(criteria.field)}: ${val}`;
+  return `${t(field)}: ${val}`;
 }
 
 function onFilter(criteria: FieldValue | undefined) {

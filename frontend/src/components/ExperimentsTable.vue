@@ -48,6 +48,7 @@
           keep-color
           icon="house_siding"
           size="70px"
+          toggle-indeterminate
         />
       </template>
       <template v-slot:top-right>

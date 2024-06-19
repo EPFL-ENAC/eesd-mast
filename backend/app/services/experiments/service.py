@@ -7,7 +7,7 @@ from app.services.numericalmodels.models import NumericalModel
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
-from sqlalchemy.sql import text, func
+from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -30,6 +30,16 @@ class ExperimentsService:
             query = builder.build_frequencies_query(field)
             results = await self.session.exec(query)
             rows = results.fetchall()
+            # exclude 0 counts
+            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
+            field_counts[field] = counts
+
+        for field in ["model_files"]:
+            builder = QueryBuilder(Experiment, filter, [], [])
+            query = builder.build_frequencies_exists_query(field)
+            results = await self.session.exec(query)
+            rows = results.fetchall()
+            print(rows)
             # exclude 0 counts
             counts = {row[0]: row[1] for row in rows if row[1] is not 0}
             field_counts[field] = counts

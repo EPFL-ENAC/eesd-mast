@@ -103,9 +103,11 @@ export const useAnalysisStore = defineStore('analysis', {
       this.loadRunResultsFragilities();
     },
     makeDbFilters() {
-      const dbFilters: { [Key: string]: (string | number | null)[] } = {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const dbFilters: { [Key: string]: any } = {};
       this.filters.forEach((filter) => {
-        let val = ['storeys_nb'].includes(filter.field)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let val: any = ['storeys_nb'].includes(filter.field)
           ? Number(filter.value)
           : filter.value;
         if (
@@ -120,6 +122,9 @@ export const useAnalysisStore = defineStore('analysis', {
         if (filter.field === 'diaphragm_material' && filter.value === 'None') {
           val = null;
         }
+        if (filter.field === 'model_files') {
+          val = { $exists: filter.value === 'Yes' };
+        }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {
             dbFilters[filter.field].push(...val);
@@ -128,6 +133,8 @@ export const useAnalysisStore = defineStore('analysis', {
           }
         } else if (dbFilters[filter.field]) {
           dbFilters[filter.field].push(val);
+        } else if (typeof val === 'object') {
+          dbFilters[filter.field] = val;
         } else {
           dbFilters[filter.field] = [val];
         }
