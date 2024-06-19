@@ -66,7 +66,7 @@
       <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
 
-    <div class="row q-mt-md justify-center">
+    <div class="row q-col-gutter-md q-mt-md justify-center">
       <div v-for="field in fields" :key="field" style="width: 350px">
         <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
