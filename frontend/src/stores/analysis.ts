@@ -42,7 +42,7 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     loadExperimentsFrequencies() {
       const query: QueryParams = {
-        filter: JSON.stringify(this.makeDbFilters()),
+        filter: JSON.stringify(this.makeDbFilters(true)),
         sort: undefined,
         range: undefined,
       };
@@ -56,7 +56,7 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     loadExperimentsParallelCounts() {
       const query: QueryParams = {
-        filter: JSON.stringify(this.makeDbFilters()),
+        filter: JSON.stringify(this.makeDbFilters(true)),
         sort: undefined,
         range: undefined,
       };
@@ -70,7 +70,7 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     loadRunResultsVulnerabilities() {
       const query: QueryParams = {
-        filter: JSON.stringify(this.makeDbFilters()),
+        filter: JSON.stringify(this.makeDbFilters(false)),
         sort: undefined,
         range: undefined,
       };
@@ -84,7 +84,7 @@ export const useAnalysisStore = defineStore('analysis', {
     },
     loadRunResultsFragilities() {
       const query: QueryParams = {
-        filter: JSON.stringify(this.makeDbFilters()),
+        filter: JSON.stringify(this.makeDbFilters(false)),
         sort: undefined,
         range: undefined,
       };
@@ -102,43 +102,51 @@ export const useAnalysisStore = defineStore('analysis', {
       this.loadRunResultsVulnerabilities();
       this.loadRunResultsFragilities();
     },
-    makeDbFilters() {
+    makeDbFilters(with3dModel: boolean) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const dbFilters: { [Key: string]: any } = {};
-      this.filters.forEach((filter) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let val: any = ['storeys_nb'].includes(filter.field)
-          ? Number(filter.value)
-          : filter.value;
-        if (
-          filter.field === 'masonry_unit_material' &&
-          filter.value === 'Stone'
-        ) {
-          val = [...STONES];
-        }
-        if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
-          val = [...MIXED_MATERIAL];
-        }
-        if (filter.field === 'diaphragm_material' && filter.value === 'None') {
-          val = null;
-        }
-        if (filter.field === 'model_files') {
-          val = { $exists: filter.value === 'Yes' };
-        }
-        if (Array.isArray(val)) {
-          if (dbFilters[filter.field]) {
-            dbFilters[filter.field].push(...val);
-          } else {
-            dbFilters[filter.field] = val;
+      this.filters
+        .filter((filter) => with3dModel || filter.field !== 'model_files')
+        .forEach((filter) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let val: any = ['storeys_nb'].includes(filter.field)
+            ? Number(filter.value)
+            : filter.value;
+          if (
+            filter.field === 'masonry_unit_material' &&
+            filter.value === 'Stone'
+          ) {
+            val = [...STONES];
           }
-        } else if (dbFilters[filter.field]) {
-          dbFilters[filter.field].push(val);
-        } else if (typeof val === 'object') {
-          dbFilters[filter.field] = val;
-        } else {
-          dbFilters[filter.field] = [val];
-        }
-      });
+          if (
+            filter.field === 'diaphragm_material' &&
+            filter.value === 'Mixed'
+          ) {
+            val = [...MIXED_MATERIAL];
+          }
+          if (
+            filter.field === 'diaphragm_material' &&
+            filter.value === 'None'
+          ) {
+            val = null;
+          }
+          if (filter.field === 'model_files') {
+            val = { $exists: filter.value === 'Yes' };
+          }
+          if (Array.isArray(val)) {
+            if (dbFilters[filter.field]) {
+              dbFilters[filter.field].push(...val);
+            } else {
+              dbFilters[filter.field] = val;
+            }
+          } else if (dbFilters[filter.field]) {
+            dbFilters[filter.field].push(val);
+          } else if (typeof val === 'object') {
+            dbFilters[filter.field] = val;
+          } else {
+            dbFilters[filter.field] = [val];
+          }
+        });
       return dbFilters;
     },
     updateFilters(criteria: FieldValue | undefined) {
