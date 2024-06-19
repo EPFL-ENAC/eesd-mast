@@ -85,10 +85,13 @@
           <div class="row">
             <div class="col-12 col-md-6">
               <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
+              <div class="q-ma-md text-grey-9">
+                <q-markdown :src="VulnerabilitiesMd" no-line-numbers />
+              </div>
             </div>
             <div class="col-12 col-md-6">
               <run-results-fragilities-chart class="q-ml-md q-mr-md" />
-              <div class="q-mt-md text-grey-9">
+              <div class="q-ma-md text-grey-9">
                 <q-markdown :src="FragilitiesMd" no-line-numbers />
               </div>
             </div>
@@ -129,6 +132,7 @@ import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue'
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
 import { getSettings, saveSettings } from 'src/utils/settings';
+import VulnerabilitiesMd from 'src/assets/vulnerabilities.md';
 import FragilitiesMd from 'src/assets/fragilities.md';
 
 const router = useRouter();
