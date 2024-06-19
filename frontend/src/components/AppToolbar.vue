@@ -112,20 +112,43 @@
         </div>
         <p>{{ $t('contact_us_intro') }}</p>
 
-        <div class="q-mt-md">
-          <q-btn
-            color="red"
-            no-caps
-            label="Katrin Beyer"
-            @click="openPeoplePage('katrin.beyer')"
-          />
-          <q-btn
-            class="on-right"
-            color="red"
-            no-caps
-            label="Mathias Haindl"
-            @click="openPeoplePage('mathias.haindl')"
-          />
+        <div class="row q-col-gutter-xl justify-center">
+          <div>
+            <div>
+              <q-img
+                src="https://people.epfl.ch/private/common/photos/links/198189.jpg?ts=1718704378"
+                style="height: 130px; max-width: 130px"
+              />
+            </div>
+            <div class="text-center">
+              <q-btn
+                color="red"
+                no-caps
+                label="Katrin Beyer"
+                @click="openPeoplePage('katrin.beyer')"
+                class="q-mt-sm"
+                style="width: 130px"
+              />
+            </div>
+          </div>
+          <div>
+            <div>
+              <q-img
+                src="https://people.epfl.ch/private/common/photos/links/332416.jpg?ts=1718704677"
+                style="height: 130px; max-width: 130px"
+              />
+            </div>
+            <div class="text-center">
+              <q-btn
+                color="red"
+                no-caps
+                label="Mathias Haindl"
+                @click="openPeoplePage('mathias.haindl')"
+                class="q-mt-sm"
+                style="width: 130px"
+              />
+            </div>
+          </div>
         </div>
       </q-card-section>
       <q-card-actions align="right">
