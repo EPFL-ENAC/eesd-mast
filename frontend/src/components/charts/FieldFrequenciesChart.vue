@@ -1,12 +1,14 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 90%;`">
+  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+    <div class="text-center q-mt-sm" style="font-size: 16px">
+      {{ $t(props.field) }}
+    </div>
     <e-charts
       ref="chart"
       autoresize
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      class="q-ma-md"
       :loading="loading"
       @click="onClick"
     />
@@ -122,10 +124,10 @@ function initChartOptions() {
   );
 
   const newOption: EChartsOption = {
-    title: {
-      text: `${t(props.field)}`,
-      left: 'center',
-    },
+    // title: {
+    //   text: `${t(props.field)}`,
+    //   left: 'center',
+    // },
     animation: false,
     height: props.height,
     tooltip: {
