@@ -44,6 +44,7 @@
         <q-toggle
           v-model="filters.with3dModel"
           :label="$t('show_numerical_models')"
+          left-label
           color="secondary"
           keep-color
           icon="house_siding"

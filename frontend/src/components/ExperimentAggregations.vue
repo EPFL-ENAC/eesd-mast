@@ -24,6 +24,7 @@
         <q-toggle
           v-model="tabToggle"
           :label="$t('show_vulnerability')"
+          left-label
           color="accent"
           size="xl"
           keep-color
