@@ -208,7 +208,13 @@ const essentialLinks: EssentialLinkProps[] = [
     link: 'https://www.epfl.ch/schools/enac/about/data-at-enac/enac-it4research/',
   },
   {
-    title: 'MAST CLI',
+    title: 'Suggestions and bug reports',
+    caption: 'EPFL-ENAC/eesd-mast',
+    icon: 'tips_and_updates',
+    link: 'https://github.com/EPFL-ENAC/eesd-mast/issues',
+  },
+  {
+    title: 'Python API and command line',
     caption: 'EPFL-ENAC/eesd-mast-cli',
     icon: 'code',
     link: 'https://github.com/EPFL-ENAC/eesd-mast-cli',
