@@ -1,7 +1,7 @@
 <template>
-  <div class="q-mb-xl">
-    <div class="q-pl-md q-pr-md">
-      <div class="q-mt-md q-pl-xl">
+  <div class="q-mb-md">
+    <div class="q-ml-xl q-mr-xl">
+      <div class="q-mt-md">
         <span class="text-h6">
           {{ $t('aggregations_title') }}
         </span>
@@ -31,14 +31,6 @@
         />
       </div>
       <div v-if="analysis.filters.length">
-        <q-btn
-          dense
-          flat
-          no-caps
-          color="secondary"
-          :label="$t('reset_filters')"
-          @click="analysis.resetFilters()"
-        ></q-btn>
         <q-chip
           removable
           size="sm"
@@ -47,9 +39,17 @@
           v-for="criteria in analysis.filters"
           :key="criteria.field"
           :label="criteriaLabel(criteria)"
-          class="on-right"
+          class="on-left q-ml-none"
           @remove="analysis.updateFilters(criteria)"
         />
+        <q-btn
+          dense
+          flat
+          no-caps
+          color="secondary"
+          :label="$t('reset_filters')"
+          @click="analysis.resetFilters()"
+        ></q-btn>
         <q-btn
           dense
           flat
