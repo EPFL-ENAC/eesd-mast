@@ -293,12 +293,12 @@ function getRunFiles(run_id: number): RunResultFileNodes {
 }
 
 function triggerChartsTip() {
-  if (!showChartsTip.value && !getSettings().experiment_test_tips) {
+  if (!showChartsTip.value && !getSettings().run_results_tips) {
     showChartsTip.value = true;
     setTimeout(() => {
       showChartsTip.value = false;
       const settings = getSettings();
-      settings.experiment_test_tips = true;
+      settings.run_results_tips = true;
       saveSettings(settings);
     }, 5000);
   }

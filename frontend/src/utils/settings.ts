@@ -6,7 +6,7 @@ export type Settings = {
   intro_shown: boolean;
   experiments_view: string;
   vulnerabilities_tips: boolean;
-  experiment_test_tips: boolean;
+  run_results_tips: boolean;
 };
 
 export function getSettings(): Settings {
@@ -14,7 +14,7 @@ export function getSettings(): Settings {
     intro_shown: false,
     experiments_view: 'grid',
     vulnerabilities_tips: false,
-    experiment_test_tips: false,
+    run_results_tips: false,
   };
   const settingsSaved = LocalStorage.getItem(APP_COOKIE_NAME);
   // cookies.get() declares to return a string but apparently it automatically parses the JSON string to an object
