@@ -35,7 +35,7 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%" class="q-pa-none">
-            <div class="text-left">
+            <div class="justify-left">
               <q-expansion-item
                 v-if="getRunFiles(props.row.run_id).top_displacement_histories"
                 :label="$t('top_displacement_histories')"
@@ -126,6 +126,20 @@
         </q-tr>
       </template>
     </q-table>
+    <q-tooltip
+      v-model="showChartsTip"
+      anchor="center middle"
+      self="center middle"
+      no-parent-event
+      class="bg-grey-7 text-white"
+    >
+      <div
+        class="q-pt-md q-pl-md q-pr-md"
+        style="width: 400px; font-size: medium"
+      >
+        <q-markdown :src="$t('echarts_zoom_help')" />
+      </div>
+    </q-tooltip>
   </div>
 </template>
 
@@ -146,6 +160,7 @@ import {
 } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import { toMaxDecimals, toFixed } from 'src/utils/numbers';
+import { getSettings, saveSettings } from 'src/utils/settings';
 
 const { t } = useI18n({ useScope: 'global' });
 
@@ -159,6 +174,7 @@ const props = withDefaults(defineProps<RunResultsViewProps>(), {
 const runResultsStore = useRunResultsStore();
 const runResults = ref();
 const displayed = ref<string[]>([]);
+const showChartsTip = ref(false);
 
 const columns = [
   'run_id',
@@ -223,6 +239,7 @@ function updateRunResults() {
 function loadRunFiles(run_id: number) {
   if (!displayed.value.includes(run_id.toString())) {
     displayed.value.push(run_id.toString());
+    triggerChartsTip();
   }
 }
 
@@ -273,6 +290,18 @@ function getRunFiles(run_id: number): RunResultFileNodes {
   }
 
   return nodes;
+}
+
+function triggerChartsTip() {
+  if (!showChartsTip.value && !getSettings().experiment_test_tips) {
+    showChartsTip.value = true;
+    setTimeout(() => {
+      showChartsTip.value = false;
+      const settings = getSettings();
+      settings.experiment_test_tips = true;
+      saveSettings(settings);
+    }, 5000);
+  }
 }
 </script>
 

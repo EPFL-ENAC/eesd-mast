@@ -58,6 +58,8 @@ export default {
   download_test_files: 'Download tests',
   download: 'Download',
   downloadable: 'Downloadable',
+  echarts_zoom_help:
+    'Tip: you can use the horizontal and vertical sroll bars to zoom in and out.',
   elastic_modulus: 'Elastic modulus of elasticity (Em)',
   element_geometry_def: 'Element geometry definition',
   experiment_id: 'Experiment ID',
@@ -131,6 +133,8 @@ export default {
     'You can select a feature of the buildings to see how they are related to other features. This selection also serves as a filter when you go to the Buildings section (where you can find the complete list of buildings included in this database).\n\nFurthermore, based on your feature selection, you can check the results of a vulnerability analysis by using the toggle "Show vulnerability plots".',
   paper: 'Paper',
   pga_axis: 'PGA [g units]',
+  plotly_help:
+    'Tips: you can select a graph area to zoom-in and double-click to zoom-out.',
   points: 'Points',
   publication_year: 'Publication Year',
   reference: 'Reference',

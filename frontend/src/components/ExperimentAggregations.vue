@@ -28,6 +28,7 @@
           size="xl"
           keep-color
           class="on-right q-pb-xs"
+          @update:model-value="onTabToggle"
         />
       </div>
       <div v-if="analysis.filters.length">
@@ -74,28 +75,44 @@
       </div>
     </div>
 
-    <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="parallel" class="q-pa-none">
-        <div class="row">
-          <div class="col-12">
-            <experiments-parallel-chart class="q-ml-lg q-mr-lg" />
-          </div>
-        </div>
-      </q-tab-panel>
-      <q-tab-panel name="vulnerabilities" class="q-pa-none">
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
-          </div>
-          <div class="col-12 col-md-6">
-            <run-results-fragilities-chart class="q-ml-md q-mr-md" />
-            <div class="q-mt-md text-grey-9">
-              <q-markdown :src="FragilitiesMd" no-line-numbers />
+    <div>
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="parallel" class="q-pa-none">
+          <div class="row">
+            <div class="col-12">
+              <experiments-parallel-chart class="q-ml-lg q-mr-lg" />
             </div>
           </div>
+        </q-tab-panel>
+        <q-tab-panel name="vulnerabilities" class="q-pa-none">
+          <div class="row">
+            <div class="col-12 col-md-6">
+              <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
+            </div>
+            <div class="col-12 col-md-6">
+              <run-results-fragilities-chart class="q-ml-md q-mr-md" />
+              <div class="q-mt-md text-grey-9">
+                <q-markdown :src="FragilitiesMd" no-line-numbers />
+              </div>
+            </div>
+          </div>
+        </q-tab-panel>
+      </q-tab-panels>
+      <q-tooltip
+        v-model="showPlotlyTip"
+        anchor="top middle"
+        self="top middle"
+        no-parent-event
+        class="bg-grey-7 text-white"
+      >
+        <div
+          class="q-pt-md q-pl-md q-pr-md"
+          style="width: 400px; font-size: medium"
+        >
+          <q-markdown :src="$t('plotly_help')" />
         </div>
-      </q-tab-panel>
-    </q-tab-panels>
+      </q-tooltip>
+    </div>
   </div>
 </template>
 
@@ -114,6 +131,7 @@ import RunResultsVulnerabilitiesChart from './charts/RunResultsVulnerabilitiesCh
 import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
+import { getSettings, saveSettings } from 'src/utils/settings';
 import FragilitiesMd from 'src/assets/fragilities.md';
 
 const router = useRouter();
@@ -122,6 +140,7 @@ const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
 
 const tabToggle = ref(false);
+const showPlotlyTip = ref(false);
 
 const tab = computed(() => (tabToggle.value ? 'vulnerabilities' : 'parallel'));
 
@@ -186,5 +205,19 @@ function onShowExperiments() {
   filters.resetFilters();
   filters.applySelections(analysis.filters);
   router.push('/buildings');
+}
+
+function onTabToggle() {
+  if (tabToggle.value && !getSettings().vulnerabilities_tips) {
+    showPlotlyTip.value = true;
+    setTimeout(() => {
+      showPlotlyTip.value = false;
+      const settings = getSettings();
+      settings.vulnerabilities_tips = true;
+      saveSettings(settings);
+    }, 5000);
+  } else if (!tabToggle.value) {
+    showPlotlyTip.value = false;
+  }
 }
 </script>

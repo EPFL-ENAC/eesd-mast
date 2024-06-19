@@ -132,7 +132,6 @@
     </div>
 
     <div class="q-ma-md"></div>
-    <div class="q-ma-md"></div>
     <q-tabs
       v-model="tab"
       dense

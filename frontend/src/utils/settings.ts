@@ -1,17 +1,22 @@
-import { useCookies } from 'vue3-cookies';
-const { cookies } = useCookies();
+import { LocalStorage } from 'quasar';
+
+const APP_COOKIE_NAME = 'mast_settings';
 
 export type Settings = {
   intro_shown: boolean;
   experiments_view: string;
+  vulnerabilities_tips: boolean;
+  experiment_test_tips: boolean;
 };
 
 export function getSettings(): Settings {
   let settings: Settings = {
     intro_shown: false,
     experiments_view: 'grid',
+    vulnerabilities_tips: false,
+    experiment_test_tips: false,
   };
-  const settingsSaved = cookies.get('mast_settings');
+  const settingsSaved = LocalStorage.getItem(APP_COOKIE_NAME);
   // cookies.get() declares to return a string but apparently it automatically parses the JSON string to an object
   if (settingsSaved !== null) {
     if (typeof settingsSaved === 'string') {
@@ -24,5 +29,5 @@ export function getSettings(): Settings {
 }
 
 export function saveSettings(settings: Settings) {
-  cookies.set('mast_settings', JSON.stringify(settings), '1y');
+  LocalStorage.set(APP_COOKIE_NAME, JSON.stringify(settings));
 }
