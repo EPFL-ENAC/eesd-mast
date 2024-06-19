@@ -12,7 +12,7 @@
           icon="help_outline"
           class="on-right text-primary q-pb-xs"
         >
-          <q-tooltip class="bg-grey-7 text-white">
+          <q-tooltip v-model="showPieTips" class="bg-grey-7 text-white">
             <div
               class="q-pt-md q-pl-md q-pr-md"
               style="width: 400px; font-size: medium"
@@ -65,7 +65,7 @@
       <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
 
-    <div class="row">
+    <div class="row q-mt-md">
       <div
         class="col-12 col-lg-3 col-md-6 col-sm-12"
         v-for="field in fields"
@@ -141,6 +141,7 @@ const { t } = useI18n({ useScope: 'global' });
 
 const tabToggle = ref(false);
 const showPlotlyTip = ref(false);
+const showPieTips = ref(false);
 
 const tab = computed(() => (tabToggle.value ? 'vulnerabilities' : 'parallel'));
 
@@ -187,6 +188,7 @@ const fields = computed(() => {
 
 onMounted(() => {
   analysis.loadExperimentsAnalysis();
+  triggerPieTips();
 });
 
 function criteriaLabel(criteria: FieldValue) {
@@ -218,6 +220,18 @@ function onTabToggle() {
     }, 5000);
   } else if (!tabToggle.value) {
     showPlotlyTip.value = false;
+  }
+}
+
+function triggerPieTips() {
+  if (!showPieTips.value && !getSettings().frequencies_tips) {
+    showPieTips.value = true;
+    setTimeout(() => {
+      showPieTips.value = false;
+      const settings = getSettings();
+      settings.frequencies_tips = true;
+      saveSettings(settings);
+    }, 5000);
   }
 }
 </script>

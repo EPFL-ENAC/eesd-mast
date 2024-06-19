@@ -32,7 +32,7 @@
           icon="help_outline"
           class="on-right text-primary"
         >
-          <q-tooltip class="bg-grey-7 text-white">
+          <q-tooltip v-model="showFilterTips" class="bg-grey-7 text-white">
             <div
               class="q-pt-md q-pl-md q-pr-md"
               style="width: 400px; font-size: medium"
@@ -278,6 +278,7 @@ const pagination = ref({
 });
 const showExperiment = ref(false);
 const experiment = ref<Experiment>();
+const showFilterTips = ref(false);
 
 const columns = [
   {
@@ -401,6 +402,7 @@ function onExperiment(selected: Experiment) {
 
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
+  triggerFilterTips();
 });
 
 function toggleView(newView: string) {
@@ -444,5 +446,17 @@ function downloadFiles() {
 
 function onReferenceExperimentSelection(selected: Experiment) {
   experiment.value = selected;
+}
+
+function triggerFilterTips() {
+  if (!showFilterTips.value && !getSettings().filter_tips) {
+    showFilterTips.value = true;
+    setTimeout(() => {
+      showFilterTips.value = false;
+      const settings = getSettings();
+      settings.filter_tips = true;
+      saveSettings(settings);
+    }, 5000);
+  }
 }
 </script>

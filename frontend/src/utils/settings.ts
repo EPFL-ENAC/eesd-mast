@@ -5,7 +5,9 @@ const APP_COOKIE_NAME = 'mast_settings';
 export type Settings = {
   intro_shown: boolean;
   experiments_view: string;
+  frequencies_tips: boolean;
   vulnerabilities_tips: boolean;
+  filter_tips: boolean;
   run_results_tips: boolean;
 };
 
@@ -13,7 +15,9 @@ export function getSettings(): Settings {
   let settings: Settings = {
     intro_shown: false,
     experiments_view: 'grid',
+    frequencies_tips: false,
     vulnerabilities_tips: false,
+    filter_tips: false,
     run_results_tips: false,
   };
   const settingsSaved = LocalStorage.getItem(APP_COOKIE_NAME);
