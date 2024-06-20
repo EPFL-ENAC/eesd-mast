@@ -26,8 +26,7 @@ class QueryBuilder:
     def build_frequencies_exists_query(self, field: str):
         column = getattr(self.model, field)
         case_expr = case(
-            (cast(column, String) != 'null', 1),
-            (column.is_(None), 1),
+            (and_(column.isnot(None), cast(column, String) != 'null'), 1),
             else_=0)
         query_ = select(case_expr.label(field), func.count().label(
             'count')).order_by(text("count DESC")).group_by(case_expr)
