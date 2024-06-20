@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-table
-      :rows="runResults"
+      :rows="runResultsStore.run_results_digest"
       :columns="visibleColummns"
       row-key="run_id"
       hide-pagination
@@ -172,7 +172,6 @@ const props = withDefaults(defineProps<RunResultsViewProps>(), {
 });
 
 const runResultsStore = useRunResultsStore();
-const runResults = ref();
 const displayed = ref<string[]>([]);
 const showChartsTip = ref(false);
 
@@ -215,26 +214,11 @@ const columns = [
 const visibleColummns = computed(() => {
   return columns.filter(
     (col) =>
-      runResults.value?.filter((run: RunResult) => run[col.name] !== null)
-        .length > 0
+      runResultsStore.run_results_digest.filter(
+        (run: RunResult) => run[col.name] !== null
+      ).length > 0
   );
 });
-
-watch(() => props.experiment, updateRunResults);
-
-onMounted(updateRunResults);
-
-function updateRunResults() {
-  if (props.experiment) {
-    runResultsStore
-      .fetchRunResults(props.experiment.id)
-      .then((res: RunResult[]) => {
-        runResults.value = res.filter(
-          (run) => !['Initial', 'Final'].includes(run.run_id)
-        );
-      });
-  }
-}
 
 function loadRunFiles(run_id: number) {
   if (!displayed.value.includes(run_id.toString())) {

@@ -189,6 +189,7 @@ import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
+const runResultsStore = useRunResultsStore();
 
 interface ExperimentViewProps {
   experiment: Experiment;
@@ -247,6 +248,7 @@ function updateExperiment() {
         reference_experiments.value = res;
       });
     selected.value = props.experiment;
+    runResultsStore.initRunResults(props.experiment.id);
   }
 }
 
