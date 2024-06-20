@@ -66,6 +66,7 @@ export default {
   experiment: 'Experiment',
   experimental_results_reported: 'Experimental Results Reported',
   experiments: 'Experiments',
+  export: 'Export',
   files_count: 'No files | One file | {n} files',
   files_size_uncompressed: '{size} uncompressed',
   filters: 'Filters',

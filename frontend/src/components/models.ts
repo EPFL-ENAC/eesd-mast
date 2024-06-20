@@ -13,6 +13,7 @@ export interface Reference extends DBModel {
 
 export interface Experiment extends DBModel {
   reference_id: number;
+  reference: Reference | undefined;
   experiment_id: string | null;
   description: string | null;
   applied_excitation_directions: string[] | null;

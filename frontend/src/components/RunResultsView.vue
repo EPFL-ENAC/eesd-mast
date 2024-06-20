@@ -7,6 +7,16 @@
       hide-pagination
       :rows-per-page-options="[0]"
     >
+      <template v-slot:top-right>
+        <q-btn
+          :label="$t('export')"
+          no-caps
+          icon="download"
+          color="secondary"
+          flat
+          @click="exportData"
+        />
+      </template>
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width v-if="hasFiles()" />
@@ -149,6 +159,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
+import { exportFile } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { withDefaults, ref } from 'vue';
 import { cdnUrl } from 'src/boot/axios';
@@ -283,6 +294,33 @@ function triggerChartsTip() {
       showChartsTip.value = false;
       settingsStore.saveSettings({ run_results_tips: true } as Settings);
     }, 5000);
+  }
+}
+
+function exportData() {
+  const colNames = visibleColummns.value.map((col) => col.name);
+  const lines = runResultsStore.run_results_digest.map((run: RunResult) =>
+    colNames.map((col) => run[col]).join(',')
+  );
+  const colLabels = visibleColummns.value.map((col) => col.label);
+  lines.unshift(colLabels.join(','));
+
+  const baseName = props.experiment.reference
+    ? props.experiment.reference.reference
+        .replaceAll(' ', '_')
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('.', '')
+    : props.experiment.reference_id;
+
+  const status = exportFile(
+    `${baseName}_TestSummary.csv`,
+    lines.join('\r\n'),
+    'text/csv'
+  );
+
+  if (status !== true) {
+    console.error(status);
   }
 }
 </script>
