@@ -46,13 +46,6 @@
     <q-btn
       flat
       round
-      icon="add_box"
-      :title="$t('how_to_cite')"
-      @click="onShowCite"
-    ></q-btn>
-    <q-btn
-      flat
-      round
       icon="info"
       :title="$t('introduction')"
       @click="onShowIntro"
@@ -63,6 +56,13 @@
       icon="handshake"
       :title="$t('acknowledgements')"
       @click="onShowAcknowledgements"
+    ></q-btn>
+    <q-btn
+      flat
+      round
+      icon="add_box"
+      :title="$t('how_to_cite')"
+      @click="onShowCite"
       class="on-left"
     ></q-btn>
     <a href="https://www.epfl.ch/labs/eesd/" target="_blank" class="q-mt-sm">
@@ -79,19 +79,15 @@
     :title="$t('app_title')"
     @update:model-value="onIntroUpdate"
   >
-    <div>
-      <div class="text-grey-8" style="font-size: larger">
-        <q-markdown :src="OverViewMd" />
-      </div>
-      <q-markdown :src="CiteMd" class="epfl-md" />
+    <div class="text-grey-8" style="font-size: larger">
+      <q-markdown :src="OverViewMd" />
     </div>
   </simple-dialog>
 
-  <simple-dialog
-    v-model="showCite"
-    :title="$t('how_to_cite')"
-    :content="CiteMd"
-  >
+  <simple-dialog v-model="showCite" :title="$t('how_to_cite')">
+    <div class="text-subtitle1 text-grey-8">
+      <q-markdown :src="CiteMd" class="epfl-md" />
+    </div>
   </simple-dialog>
 
   <q-dialog v-model="showAcknowledgements">
