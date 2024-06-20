@@ -129,7 +129,7 @@
             <div>
               <q-img
                 src="https://people.epfl.ch/private/common/photos/links/198189.jpg?ts=1718704378"
-                style="height: 130px; max-width: 130px"
+                style="height: 130px; max-width: 130px; border-radius: 50%"
               />
             </div>
             <div class="text-center">
@@ -147,7 +147,7 @@
             <div>
               <q-img
                 src="https://people.epfl.ch/private/common/photos/links/332416.jpg?ts=1718704677"
-                style="height: 130px; max-width: 130px"
+                style="height: 130px; max-width: 130px; border-radius: 50%"
               />
             </div>
             <div class="text-center">
