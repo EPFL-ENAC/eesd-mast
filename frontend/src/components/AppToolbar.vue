@@ -62,7 +62,11 @@
     </a>
   </q-toolbar>
 
-  <simple-dialog v-model="showIntro" :title="$t('app_title')">
+  <simple-dialog
+    v-model="showIntro"
+    :title="$t('app_title')"
+    @update:model-value="onIntroUpdate"
+  >
     <div>
       <div class="text-grey-8" style="font-size: larger">
         <q-markdown :src="OverViewMd" />
@@ -164,7 +168,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { getSettings, saveSettings } from 'src/utils/settings';
 import OverViewMd from 'src/assets/overview.md';
 import CiteMd from 'src/assets/cite.md';
 import AcknowledgementsMd from 'src/assets/acknowledgements.md';
@@ -172,8 +175,10 @@ import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
 import SimpleDialog from 'src/components/SimpleDialog.vue';
+import { Settings } from 'src/stores/settings';
 
 const route = useRoute();
+const settingsStore = useSettingsStore();
 
 const showIntro = ref(false);
 const showCite = ref(false);
@@ -222,11 +227,8 @@ const essentialLinks: EssentialLinkProps[] = [
 ];
 
 onMounted(() => {
-  const settings = getSettings();
-  if (!settings.intro_shown) {
+  if (!settingsStore.settings?.intro_shown) {
     showIntro.value = true;
-    settings.intro_shown = true;
-    saveSettings(settings);
   }
 });
 
@@ -252,5 +254,9 @@ function onShowAcknowledgements() {
 
 function openPeoplePage(username: string) {
   window.open(`https://people.epfl.ch/${username}?lang=en`);
+}
+
+function onIntroUpdate() {
+  settingsStore.saveSettings({ intro_shown: !showIntro.value } as Settings);
 }
 </script>

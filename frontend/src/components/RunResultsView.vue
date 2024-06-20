@@ -150,9 +150,8 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { withDefaults, onMounted, ref, watch } from 'vue';
+import { withDefaults, ref } from 'vue';
 import { cdnUrl } from 'src/boot/axios';
-import { useRunResultsStore } from 'src/stores/run_results';
 import {
   Experiment,
   RunResult,
@@ -160,9 +159,10 @@ import {
 } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import { toMaxDecimals, toFixed } from 'src/utils/numbers';
-import { getSettings, saveSettings } from 'src/utils/settings';
+import { Settings } from 'src/stores/settings';
 
 const { t } = useI18n({ useScope: 'global' });
+const settingsStore = useSettingsStore();
 
 interface RunResultsViewProps {
   experiment: Experiment;
@@ -277,13 +277,11 @@ function getRunFiles(run_id: number): RunResultFileNodes {
 }
 
 function triggerChartsTip() {
-  if (!showChartsTip.value && !getSettings().run_results_tips) {
+  if (!showChartsTip.value && !settingsStore.settings?.run_results_tips) {
     showChartsTip.value = true;
     setTimeout(() => {
       showChartsTip.value = false;
-      const settings = getSettings();
-      settings.run_results_tips = true;
-      saveSettings(settings);
+      settingsStore.saveSettings({ run_results_tips: true } as Settings);
     }, 5000);
   }
 }

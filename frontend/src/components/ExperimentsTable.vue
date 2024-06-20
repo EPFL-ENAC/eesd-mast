@@ -253,7 +253,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { getSettings, saveSettings } from 'src/utils/settings';
+import { Settings } from 'src/stores/settings';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl, cdnUrl } from 'src/boot/axios';
 import { FileNode, Experiment, Reference } from 'src/components/models';
@@ -266,7 +266,13 @@ import { useFiltersStore } from 'src/stores/filters';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
-const view = ref(getSettings().experiments_view);
+const settingsStore = useSettingsStore();
+
+const view = ref(
+  settingsStore.settings && settingsStore.settings.experiments_view
+    ? settingsStore.settings.experiments_view
+    : 'grid'
+);
 const tableRef = ref();
 const rows = ref([]);
 const filter = ref('');
@@ -404,14 +410,23 @@ function onExperiment(selected: Experiment) {
 
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
-  triggerFilterTips();
+  if (settingsStore.settings?.intro_shown) {
+    triggerFilterTips();
+  }
 });
+
+watch(
+  () => settingsStore.settings,
+  () => {
+    if (settingsStore.settings?.intro_shown) {
+      triggerFilterTips();
+    }
+  }
+);
 
 function toggleView(newView: string) {
   view.value = newView;
-  const settings = getSettings();
-  settings.experiments_view = view.value;
-  saveSettings(settings);
+  settingsStore.saveSettings({ experiments_view: view.value } as Settings);
 }
 
 function hasModels(row: Experiment) {
@@ -451,13 +466,11 @@ function onReferenceExperimentSelection(selected: Experiment) {
 }
 
 function triggerFilterTips() {
-  if (!showFilterTips.value && !getSettings().filter_tips) {
+  if (!showFilterTips.value && !settingsStore.settings?.filter_tips) {
     showFilterTips.value = true;
     setTimeout(() => {
       showFilterTips.value = false;
-      const settings = getSettings();
-      settings.filter_tips = true;
-      saveSettings(settings);
+      settingsStore.saveSettings({ filter_tips: true } as Settings);
     }, 5000);
   }
 }

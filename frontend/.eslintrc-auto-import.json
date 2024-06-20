@@ -94,6 +94,7 @@
     "useReferencesStore": true,
     "useRunResultsStore": true,
     "useAnalysisStore": true,
-    "useNumericalModelsStore": true
+    "useNumericalModelsStore": true,
+    "useSettingsStore": true
   }
 }

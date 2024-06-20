@@ -131,11 +131,12 @@ import RunResultsVulnerabilitiesChart from './charts/RunResultsVulnerabilitiesCh
 import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
 import { useAnalysisStore } from 'src/stores/analysis';
 import { isStone, isMixedMaterial } from 'src/utils/criteria';
-import { getSettings, saveSettings } from 'src/utils/settings';
 import VulnerabilitiesMd from 'src/assets/vulnerabilities.md';
 import FragilitiesMd from 'src/assets/fragilities.md';
+import { Settings } from 'src/stores/settings';
 
 const router = useRouter();
+const settingsStore = useSettingsStore();
 const analysis = useAnalysisStore();
 const filters = useFiltersStore();
 const { t } = useI18n({ useScope: 'global' });
@@ -189,8 +190,19 @@ const fields = computed(() => {
 
 onMounted(() => {
   analysis.loadExperimentsAnalysis();
-  triggerPieTips();
+  if (settingsStore.settings?.intro_shown) {
+    triggerPieTips();
+  }
 });
+
+watch(
+  () => settingsStore.settings,
+  () => {
+    if (settingsStore.settings?.intro_shown) {
+      triggerPieTips();
+    }
+  }
+);
 
 function criteriaLabel(criteria: FieldValue) {
   if (criteria.field === 'test_scale') {
@@ -213,13 +225,13 @@ function onShowExperiments() {
 }
 
 function onTabToggle() {
-  if (tabToggle.value && !getSettings().vulnerabilities_tips) {
+  if (tabToggle.value && !settingsStore.settings?.vulnerabilities_tips) {
     showPlotlyTip.value = true;
     setTimeout(() => {
       showPlotlyTip.value = false;
-      const settings = getSettings();
+      const settings = { ...settingsStore.settings } as Settings;
       settings.vulnerabilities_tips = true;
-      saveSettings(settings);
+      settingsStore.saveSettings(settings);
     }, 5000);
   } else if (!tabToggle.value) {
     showPlotlyTip.value = false;
@@ -227,13 +239,13 @@ function onTabToggle() {
 }
 
 function triggerPieTips() {
-  if (!showPieTips.value && !getSettings().frequencies_tips) {
+  if (!showPieTips.value && !settingsStore.settings?.frequencies_tips) {
     showPieTips.value = true;
     setTimeout(() => {
       showPieTips.value = false;
-      const settings = getSettings();
+      const settings = { ...settingsStore.settings } as Settings;
       settings.frequencies_tips = true;
-      saveSettings(settings);
+      settingsStore.saveSettings(settings);
     }, 5000);
   }
 }
