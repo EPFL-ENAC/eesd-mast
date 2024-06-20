@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, select
-from sqlalchemy import func, text, or_, cast, String, case
+from sqlalchemy import func, text, or_, and_, cast, String, case
 import json
 
 
@@ -25,7 +25,10 @@ class QueryBuilder:
 
     def build_frequencies_exists_query(self, field: str):
         column = getattr(self.model, field)
-        case_expr = case((cast(column, String) != 'null', 1), else_=0)
+        case_expr = case(
+            (cast(column, String) != 'null', 1),
+            (column.is_(None), 1),
+            else_=0)
         query_ = select(case_expr.label(field), func.count().label(
             'count')).order_by(text("count DESC")).group_by(case_expr)
         return self._apply_filter(query_)
@@ -86,9 +89,11 @@ class QueryBuilder:
     def _apply_filter_object(self, query_, field, column, value):
         if '$exists' in value:
             if value['$exists']:
-                query_ = query_.where(cast(column, String) != 'null')
+                query_ = query_.where(
+                    and_(column.isnot(None), cast(column, String) != 'null'))
             elif not value['$exists']:
-                query_ = query_.where(cast(column, String) == 'null')
+                query_ = query_.where(
+                    or_(column.is_(None), cast(column, String) == 'null'))
         return query_
 
     def _apply_sort(self, query_):
