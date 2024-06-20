@@ -13,8 +13,20 @@
       <img src="/EPFL_logo.png" style="height: 25px" />
     </a>
     <q-tabs shrink stretch active-color="primary" class="q-ml-md">
-      <q-route-tab no-caps to="/" :label="$t('overview')" exact />
-      <q-route-tab no-caps :label="$t('buildings')" to="/buildings" exact />
+      <q-route-tab
+        no-caps
+        to="/"
+        :label="$t('overview')"
+        exact
+        content-class="app-tab"
+      />
+      <q-route-tab
+        no-caps
+        :label="$t('buildings')"
+        to="/buildings"
+        exact
+        content-class="app-tab"
+      />
     </q-tabs>
     <q-space />
     <q-btn
