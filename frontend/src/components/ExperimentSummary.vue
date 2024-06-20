@@ -39,7 +39,7 @@
       {{ selected.reference.full_reference }}
     </div>
     <div v-if="reference_experiments.length > 1" class="q-mt-md">
-      <span class="text-caption on-left">
+      <span class="text-subtitle1 on-left">
         {{ $t('other_experiments_of_reference') }}
       </span>
       <span>
@@ -55,10 +55,10 @@
       </span>
     </div>
     <div v-if="selected.experimental_campaign_motivation" class="q-mt-md">
-      <div class="text-caption">
+      <div class="text-subtitle1">
         {{ $t('test_motivation') }}
       </div>
-      <div class="text-grey-8">
+      <div class="text-subtitle1 text-grey-8">
         {{ selected.experimental_campaign_motivation }}
       </div>
     </div>

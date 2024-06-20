@@ -36,7 +36,7 @@
       </q-chip>
     </div>
     <div v-if="reference_experiments.length > 1" class="q-mb-md">
-      <span class="text-caption on-left">
+      <span class="text-subtitle1 on-left">
         {{ $t('other_experiments_of_reference') }}
       </span>
       <span>
@@ -55,7 +55,7 @@
       </span>
     </div>
     <div v-if="selected.experimental_campaign_motivation">
-      <div class="text-caption">
+      <div class="text-subtitle1">
         {{ $t('test_motivation') }}
       </div>
       <div class="text-subtitle1 text-grey-8">
