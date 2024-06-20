@@ -1,1 +1,1 @@
-Note: curves are kernel density estimations truncated at the extreme data
+- Note: curves are kernel density estimations truncated at the extreme data
