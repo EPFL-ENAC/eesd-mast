@@ -139,7 +139,7 @@ function initContext() {
 
       // Adjust the camera
       //camera.setPosition(0, 0, 0);
-      camera.setFocalPoint(10, 20, -10);
+      camera.setFocalPoint(20, 20, -10);
       camera.setViewUp(0, 0, 1);
 
       // Initialize the rendering process
