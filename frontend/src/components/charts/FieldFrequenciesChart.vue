@@ -1,6 +1,6 @@
 <template>
   <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
-    <div class="text-center q-mt-sm" style="font-size: 16px">
+    <div class="text-center q-mt-sm text-bold" style="font-size: 16px">
       {{ $t(fieldTitle) }}
     </div>
     <e-charts
