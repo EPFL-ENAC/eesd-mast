@@ -2,10 +2,7 @@
   <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
       <app-toolbar />
-      <app-header
-        v-if="isBuildings2"
-        url="Website_Background_Title_Option2.webp"
-      />
+      <app-header url="Website_Background_Title_Option2.webp" />
     </q-header>
 
     <q-drawer
@@ -55,7 +52,6 @@ const drawerOpen = ref(false);
 const miniState = ref(false);
 
 const isBuildings = computed(() => route.path === '/buildings');
-const isBuildings2 = computed(() => route.path === '/buildings2');
 
 watch(
   () => isBuildings.value,
