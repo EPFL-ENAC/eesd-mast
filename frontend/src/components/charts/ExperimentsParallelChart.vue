@@ -45,10 +45,6 @@ const chartData = computed(() => {
       size: 16,
       weight: 'bold',
     },
-    tickfont: {
-      family: 'Roboto, Helvetica',
-      size: 12,
-    },
   };
 
   if (analysis.experimentsParallelCounts !== null) {

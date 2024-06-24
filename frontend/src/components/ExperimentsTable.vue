@@ -170,7 +170,6 @@
             keep-color
             icon="house_siding"
             size="70px"
-            toggle-indeterminate
           />
           <q-space />
           <q-btn

@@ -8,14 +8,14 @@ interface RefenceSelection {
 }
 
 interface State {
-  with3dModel: boolean | null;
+  with3dModel: boolean;
   selections: string[];
   referenceSelections: RefenceSelection[];
 }
 
 export const useFiltersStore = defineStore('filters', {
   state: (): State => ({
-    with3dModel: null,
+    with3dModel: false,
     selections: [],
     referenceSelections: [],
   }),
@@ -58,8 +58,8 @@ export const useFiltersStore = defineStore('filters', {
           (ref) => ref.value.id
         );
       }
-      if (state.with3dModel !== null) {
-        dbFilters['model_files'] = { $exists: state.with3dModel };
+      if (state.with3dModel) {
+        dbFilters['model_files'] = { $exists: true };
       }
       return dbFilters;
     },
@@ -70,7 +70,6 @@ export const useFiltersStore = defineStore('filters', {
       this.referenceSelections = [];
     },
     applySelections(filters: FieldValue[]) {
-      this.with3dModel = null;
       filters.forEach((filter) => {
         if (filter.field === 'diaphragm_material' && filter.value === 'Mixed') {
           MIXED_MATERIAL.forEach((val) =>
