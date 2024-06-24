@@ -4,7 +4,7 @@
       <app-header url="/Website_Background_Title_Option1_blue.webp" />
       <metrics-banner />
       <experiment-aggregations />
-      <div class="q-ml-xl q-mr-xl">
+      <div class="q-ml-xl q-mr-xl q-mb-xl">
         <div class="text-h6 q-mb-md">{{ $t('how_to_cite') }}</div>
         <q-markdown :src="CiteMd" class="epfl-md" />
       </div>

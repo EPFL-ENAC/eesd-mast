@@ -26,10 +26,9 @@ a:hover.q-markdown--link,
 
 .epfl-md {
   blockquote.q-markdown--note {
-    border-width: 0px 0px 0px 8px;
-    border-radius: 0;
-    border-style: solid;
-    border-color: #9e9e9e #009688;
+    border: none;
+    background-color: white;
+    padding: 0;
   }
 }
 
