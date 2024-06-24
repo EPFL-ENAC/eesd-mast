@@ -32,7 +32,7 @@
           @update:model-value="onTabToggle"
         />
       </div>
-      <div v-if="analysis.filters.length">
+      <div class="row">
         <q-chip
           removable
           size="sm"
@@ -41,33 +41,38 @@
           v-for="criteria in analysis.filters"
           :key="criteria.field"
           :label="criteriaLabel(criteria)"
-          class="on-left q-ml-none"
+          class="on-left q-ml-none q-mt-sm"
           @remove="analysis.updateFilters(criteria)"
         />
         <q-btn
+          v-if="analysis.filters.length"
           dense
           flat
           no-caps
           color="secondary"
           :label="$t('reset_filters')"
           @click="analysis.resetFilters()"
+          class="q-mb-sm"
         ></q-btn>
         <q-btn
+          v-if="analysis.filters.length"
           dense
           flat
           no-caps
           icon="visibility"
           color="accent"
           :label="$t('show_buildings')"
-          class="on-right"
+          class="on-right on-left q-mb-sm"
           @click="onShowExperiments"
         ></q-btn>
+        <div class="q-mt-sm q-mb-sm q-pb-xs">
+          {{ countLabel }}
+        </div>
       </div>
-      <div v-else class="q-pt-xs q-pb-sm text-caption text-grey-8">&nbsp;</div>
     </div>
 
     <div class="row q-col-gutter-md q-mt-md justify-center">
-      <div v-for="field in fields" :key="field" style="width: 350px">
+      <div v-for="field in fields" :key="field" style="width: 450px">
         <field-frequencies-chart :field="field" @change:filter="onFilter" />
       </div>
     </div>
@@ -146,6 +151,12 @@ const showPlotlyTip = ref(false);
 const showPieTips = ref(false);
 
 const tab = computed(() => (tabToggle.value ? 'vulnerabilities' : 'parallel'));
+const countLabel = computed(() => {
+  return `${t('buildings_count', { count: analysis.buildings_counts })} / ${t(
+    'models_count',
+    { count: analysis.models_counts }
+  )}`;
+});
 
 const fields = computed(() => {
   // cumulate frequencies of stones
@@ -185,7 +196,7 @@ const fields = computed(() => {
     });
   analysis.frequencies.diaphragm_material = newMatFreq;
 
-  return Object.keys(analysis.frequencies);
+  return Object.keys(analysis.frequencies).filter((f) => f !== 'model_files');
 });
 
 onMounted(() => {
