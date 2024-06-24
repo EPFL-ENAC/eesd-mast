@@ -66,6 +66,7 @@ export interface RunResultFileNodes {
 
 export interface Counts {
   experiments_count: number;
+  models_count: number;
   references_count: number;
   run_results_count: number;
 }

@@ -18,11 +18,12 @@ async def get_general_counts(
     """Get some counts about the database"""
     exp_service = ExperimentsService(session)
     exp_count = await exp_service.count()
+    mod_count = await exp_service.count(True)
     ref_service = ReferencesService(session)
     ref_count = await ref_service.count()
     runres_service = RunResultsService(session)
     runres_count = await runres_service.count()
-    return Counts(experiments_count=exp_count, references_count=ref_count, run_results_count=runres_count)
+    return Counts(experiments_count=exp_count, models_count=mod_count, references_count=ref_count, run_results_count=runres_count)
 
 
 @router.get("/experiments/frequencies", response_model=ExperimentFrequencies)

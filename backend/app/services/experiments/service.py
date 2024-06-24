@@ -17,10 +17,11 @@ class ExperimentsService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def count(self) -> int:
+    async def count(self, withModel: bool = None) -> int:
         """Count all experiments"""
-        count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
-        return count
+        if withModel:
+            return (await self.session.exec(text("select count(id) from experiment where cast(model_files as varchar) != 'null' and model_files is not null"))).scalar()
+        return (await self.session.exec(text("select count(id) from experiment"))).scalar()
 
     async def frequencies(self, filter: dict | str) -> ExperimentFrequencies:
         """Get aggregations for the experiments matching filter"""

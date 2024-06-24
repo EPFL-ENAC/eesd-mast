@@ -24,9 +24,9 @@ export default {
   buildings_help:
     'You can filter these tests (using the filter section located left-side) based on various characteristics of the buildings, such as construction materials, building geometry, and testing considerations.\n\nOnce you select a building from the list, you will be able to view detailed experimental results, including general information from the shake table tests.\n\nIn addition, by using the toggle "Show only buildings with numerical models" you can check the buildings for which a numerical model is available.',
   buildings_title: 'Shake Table Tests & Models',
-  buildings_count: 'no buildingds | 1 building | {count} buildings',
+  buildings_count: 'no building | 1 building | {count} buildings',
   models_count:
-    'no numerical models | 1 numerical model | {count} numerical models',
+    'no numerical model | 1 numerical model | {count} numerical models',
   clear_all_selections: 'Clear all selections',
   close: 'Close',
   cohesion: 'Cohesion (c)',
@@ -130,7 +130,7 @@ export default {
   nominal_pga_z: 'Nominal PGA Z-dir. [g]',
   numerical_model: 'Numerical model',
   numerical_models: 'Numerical models',
-  numerical_models_label: 'Available for downloading',
+  numerical_models_label: 'Numerical models available for downloading',
   open_measured_data: 'Open Measured Data',
   original_size: 'Original',
   other_experiments_of_reference: 'Other buildings from reference',
