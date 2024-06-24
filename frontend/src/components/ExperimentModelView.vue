@@ -58,6 +58,11 @@
       </div>
     </div>
 
+    <div v-if="threeDModelFiles.length > 0" class="text-grey-6 q-mt-md">
+      <q-icon name="info"></q-icon>
+      {{ $t('vtk_notice') }}
+    </div>
+
     <q-tabs
       v-model="tab"
       dense

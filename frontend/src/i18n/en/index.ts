@@ -192,6 +192,8 @@ export default {
   units: 'Units',
   view_model: 'View numerical model',
   view_test: 'View test',
+  vtk_notice:
+    'The codes for generating the .vtk files for visualizing the geometry of the equivalent frame model were developed by Jose Gallardo Briones at EESD.',
   show_vulnerability: 'Show vulnerability plots',
   wall_connections: 'Wall-to-wall connections',
   wall_leaves_nb_short: 'Wall-leaves',
