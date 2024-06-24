@@ -10,6 +10,7 @@ export type Settings = {
   vulnerabilities_tips: boolean | undefined;
   filter_tips: boolean | undefined;
   run_results_tips: boolean | undefined;
+  vtk_tips: boolean | undefined;
 };
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -24,6 +25,7 @@ export const useSettingsStore = defineStore('settings', () => {
       vulnerabilities_tips: false,
       filter_tips: false,
       run_results_tips: false,
+      vtk_tips: false,
     };
     const settingsSaved = LocalStorage.getItem(APP_COOKIE_NAME);
     // cookies.get() declares to return a string but apparently it automatically parses the JSON string to an object

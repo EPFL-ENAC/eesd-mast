@@ -192,6 +192,8 @@ export default {
   units: 'Units',
   view_model: 'View numerical model',
   view_test: 'View test',
+  vtk_help:
+    'The 3D model can be rotated by moving the cursor while the building is selected. Use two finger or mouse wheel to zoom in/out.',
   vtk_notice:
     'The codes for generating the .vtk files for visualizing the geometry of the equivalent frame model were developed by Jose Gallardo Briones at EESD.',
   show_vulnerability: 'Show vulnerability plots',
