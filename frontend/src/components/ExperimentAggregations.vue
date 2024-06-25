@@ -152,7 +152,7 @@ const showPieTips = ref(false);
 
 const tab = computed(() => (tabToggle.value ? 'vulnerabilities' : 'parallel'));
 const countLabel = computed(() => {
-  return `${t('buildings_count', { count: analysis.buildings_counts })} / ${t(
+  return `${t('buildings_count', { count: analysis.buildings_counts })}, ${t(
     'models_count',
     { count: analysis.models_counts }
   )}`;
