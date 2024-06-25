@@ -74,7 +74,7 @@
 
   <simple-dialog v-model="showCite" :title="$t('how_to_cite')">
     <div class="text-subtitle1 text-grey-8">
-      <q-markdown :src="CiteMd" class="epfl-md" />
+      <q-markdown :src="CiteMd" class="app-md" />
     </div>
   </simple-dialog>
 

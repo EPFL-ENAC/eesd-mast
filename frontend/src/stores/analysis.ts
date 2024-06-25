@@ -14,6 +14,7 @@ import { STONES, MIXED_MATERIAL } from 'src/utils/criteria';
 export const useAnalysisStore = defineStore('analysis', () => {
   const counts = ref<Counts>({
     experiments_count: 0,
+    models_count: 0,
     references_count: 0,
     run_results_count: 0,
   });

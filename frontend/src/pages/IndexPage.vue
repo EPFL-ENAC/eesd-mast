@@ -4,10 +4,14 @@
       <app-header url="/Website_Background_Title_Option1_blue.webp" />
       <metrics-banner />
       <experiment-aggregations />
-      <div class="q-ml-xl q-mr-xl q-mb-xl">
-        <div class="text-h6 q-mb-md">{{ $t('how_to_cite') }}</div>
-        <q-markdown :src="CiteMd" class="epfl-md" />
-      </div>
+      <q-card class="q-ma-xl">
+        <q-card-section>
+          <div class="text-h6">{{ $t('how_to_cite') }}</div>
+        </q-card-section>
+        <q-card-section>
+          <q-markdown :src="CiteMd" class="app-md" />
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
