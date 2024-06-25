@@ -156,8 +156,8 @@ function initChartOptions() {
         color: colors,
         avoidLabelOverlap: true,
         label: {
-          position: 'outer',
-          alignTo: 'edge',
+          // position: 'outer',
+          // alignTo: 'edge',
           margin: 0,
           fontWeight: 'bold',
           // fontSize: 14,
