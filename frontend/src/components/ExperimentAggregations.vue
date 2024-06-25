@@ -77,7 +77,7 @@
       </div>
     </div>
 
-    <div class="q-ml-lg q-mr-lg">
+    <div class="q-ml-xl q-mr-xl">
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="parallel" class="q-pa-none">
           <div class="row">
