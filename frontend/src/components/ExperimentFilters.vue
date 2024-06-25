@@ -44,6 +44,14 @@
       v-model:ticked="filters.selections"
     >
     </q-tree>
+    <div>
+      <run-results-fragilities-chart
+        :data="filters.runResultsFragilities"
+        :show-legend="false"
+        :show-empirical="false"
+        class="q-ml-xs q-mb-md"
+      />
+    </div>
   </div>
 </template>
 
@@ -67,6 +75,7 @@ import {
   TEST_SCALE,
   WALL_LEAVES_NB,
 } from 'src/utils/criteria';
+import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
@@ -160,4 +169,15 @@ const filterNodes = computed(() => [
     })),
   },
 ]);
+
+onMounted(() => {
+  filters.loadRunResultsFragilities();
+});
+
+watch(
+  () => filters.dbFilters,
+  () => {
+    filters.loadRunResultsFragilities();
+  }
+);
 </script>

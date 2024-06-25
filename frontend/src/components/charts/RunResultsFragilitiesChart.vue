@@ -14,7 +14,17 @@ import { getDgColor } from 'src/utils/colors';
 import VuePlotly from './VuePlotly.vue';
 
 const { t } = useI18n({ useScope: 'global' });
-const analysis = useAnalysisStore();
+
+interface Props {
+  data: RunResultFragility[];
+  showLegend: boolean;
+  showEmpirical: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showLegend: true,
+  showEmpirical: true,
+});
 
 const layout = {
   xaxis: {
@@ -30,10 +40,11 @@ const layout = {
   },
   margin: {
     l: 50, // Left margin
-    r: 50, // Right margin
+    r: 10, // Right margin
     b: 50, // Bottom margin
     t: 50, // Top margin
   },
+  showLegend: props.showLegend,
 };
 
 const config = {
@@ -58,29 +69,31 @@ const chartData = computed(() => {
     '5': {} as RunResultFragility,
   };
 
-  analysis.runResultsFragilities.forEach((line: RunResultFragility) => {
+  props.data.forEach((line: RunResultFragility) => {
     dgGroups[line.dg] = line;
   });
 
-  const probTraces: LineTrace[] = Object.keys(dgGroups)
-    .filter((key) => dgGroups[key].prob && dgGroups[key].thresh)
-    .map((key) => {
-      return {
-        y: dgGroups[key].prob,
-        x: dgGroups[key].thresh,
-        mode: 'markers',
-        marker: {
-          color: getDgColor(key),
-          size: 3,
-        },
-        line: {
-          color: getDgColor(key),
-        },
-        name: `DG${key} (empirical)`,
-        showlegend: true,
-        legendgroup: 'empirical',
-      };
-    });
+  const probTraces: LineTrace[] = props.showEmpirical
+    ? Object.keys(dgGroups)
+        .filter((key) => dgGroups[key].prob && dgGroups[key].thresh)
+        .map((key) => {
+          return {
+            y: dgGroups[key].prob,
+            x: dgGroups[key].thresh,
+            mode: 'markers',
+            marker: {
+              color: getDgColor(key),
+              size: 3,
+            },
+            line: {
+              color: getDgColor(key),
+            },
+            name: `DG${key} (empirical)`,
+            showlegend: props.showLegend,
+            legendgroup: 'empirical',
+          };
+        })
+    : [];
 
   const fittedTraces: LineTrace[] = Object.keys(dgGroups)
     .filter((key) => dgGroups[key].x && dgGroups[key].y)
@@ -97,6 +110,7 @@ const chartData = computed(() => {
           width: 2,
         },
         name: `DG${key} (fitted)`,
+        showlegend: props.showLegend,
         legendgroup: 'fitted',
       };
     });

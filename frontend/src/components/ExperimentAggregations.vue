@@ -89,13 +89,19 @@
         <q-tab-panel name="vulnerabilities" class="q-pa-none">
           <div class="row">
             <div class="col-12 col-md-6">
-              <run-results-vulnerabilities-chart class="q-ml-md q-mr-md" />
+              <run-results-vulnerabilities-chart
+                :data="analysis.runResultsVulnerabilities"
+                class="q-ml-md q-mr-md"
+              />
               <div class="q-ma-md q-pl-lg q-pr-md text-grey-9">
                 <q-markdown :src="VulnerabilitiesMd" no-line-numbers />
               </div>
             </div>
             <div class="col-12 col-md-6">
-              <run-results-fragilities-chart class="q-ml-md q-mr-md" />
+              <run-results-fragilities-chart
+                :data="analysis.runResultsFragilities"
+                class="q-ml-md q-mr-md"
+              />
               <div class="q-ma-md q-pl-lg q-pr-md text-grey-9">
                 <q-markdown :src="FragilitiesMd" no-line-numbers />
               </div>
