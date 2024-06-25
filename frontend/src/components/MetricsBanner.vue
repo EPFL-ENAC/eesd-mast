@@ -13,7 +13,7 @@
           </div>
           <div class="col-12 col-md-3 col-sm-12 text-center">
             <div class="text-h4">
-              {{ analysis.counts.models_count }}
+              {{ `${Math.floor(modelsPct)}%` }}
             </div>
             <div class="text-subtitle1">
               {{ $t('numerical_models_label') }}
@@ -48,6 +48,12 @@ export default defineComponent({
 import { useAnalysisStore } from 'src/stores/analysis';
 
 const analysis = useAnalysisStore();
+
+const modelsPct = computed(() => {
+  return analysis.counts.experiments_count > 0
+    ? (100 * analysis.counts.models_count) / analysis.counts.experiments_count
+    : 0;
+});
 
 onMounted(() => {
   analysis.loadCounts();
