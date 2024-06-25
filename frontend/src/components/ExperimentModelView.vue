@@ -84,6 +84,7 @@
       dense
       class="text-grey q-mt-xl"
       active-color="secondary"
+      active-bg-color="light-blue-1"
       indicator-color="secondary"
       align="justify"
     >
