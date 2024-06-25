@@ -1,4 +1,4 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount, ExpCount
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.runresults.models import RunResult
@@ -32,7 +32,7 @@ class ExperimentsService:
             results = await self.session.exec(query)
             rows = results.fetchall()
             # exclude 0 counts
-            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
+            counts = {row[0]: row[1] for row in rows if row[1] != 0}
             field_counts[field] = counts
 
         for field in ["model_files"]:
@@ -42,7 +42,7 @@ class ExperimentsService:
             rows = results.fetchall()
             print(rows)
             # exclude 0 counts
-            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
+            counts = {row[0]: row[1] for row in rows if row[1] != 0}
             field_counts[field] = counts
 
         return ExperimentFrequencies(**field_counts)
@@ -51,8 +51,8 @@ class ExperimentsService:
         """Get aggregations for the experiments matching filter"""
         fields = ["masonry_unit_material", "masonry_unit_type",
                   "diaphragm_material", "wall_leaves_nb", "storeys_nb",
-                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application"]
-        builder = QueryBuilder(Experiment, filter, [], [])
+                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application", "model_files"]
+        builder = QueryBuilder(ExpCount, filter, [], [])
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)
         rows = results.fetchall()

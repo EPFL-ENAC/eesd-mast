@@ -116,6 +116,7 @@ export default {
   modeling_approach: 'Modeling approach',
   modeling_assumptions: 'Modeling assumptions',
   model_files: 'OpenSees Files',
+  model_files_short: 'Num. model',
   mortar_type: 'Mortar Type',
   no: 'No',
   no_3d_model: 'No 3D Model',

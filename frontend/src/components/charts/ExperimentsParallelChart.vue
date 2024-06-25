@@ -88,12 +88,16 @@ const chartData = computed(() => {
       'test_scale',
       'simultaneous_excitations_nb',
       'retrofitting_application',
+      'model_files',
     ].forEach((field: string) => {
       parCatsData.dimensions.push({
         label: t(`${field}_short`),
         values: digestedCounts.map((line) => {
           if (field === 'test_scale') {
             return testScaleLabel(line[field]);
+          }
+          if (field === 'model_files') {
+            return line[field] === 1 ? 'Yes' : 'No';
           }
           const val = line[field as keyof typeof line];
           return val === null ? 'N/A' : val.toString();

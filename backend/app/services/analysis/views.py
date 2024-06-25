@@ -54,9 +54,9 @@ async def get_experiments_parallel_counts(
 
     # case with filter, mark selected ones
     resAll = await service.parallel_count({})
-    for parCount in res:
+    for parCountAll in resAll:
         # find parCount in resAll
-        for parCountAll in resAll:
+        for parCount in res:
             if parCountAll.masonry_unit_material == parCount.masonry_unit_material and \
                     parCountAll.masonry_unit_type == parCount.masonry_unit_type and \
                     parCountAll.diaphragm_material == parCount.diaphragm_material and \
@@ -64,7 +64,8 @@ async def get_experiments_parallel_counts(
                     parCountAll.storeys_nb == parCount.storeys_nb and \
                     parCountAll.test_scale == parCount.test_scale and \
                     parCountAll.simultaneous_excitations_nb == parCount.simultaneous_excitations_nb and \
-                    parCountAll.retrofitting_application == parCount.retrofitting_application:
+                    parCountAll.retrofitting_application == parCount.retrofitting_application and \
+                    parCountAll.model_files == parCountAll.model_files:
                 parCountAll.selected = True
                 break
     return resAll

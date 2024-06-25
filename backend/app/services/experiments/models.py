@@ -109,5 +109,21 @@ class ExperimentParallelCount(BaseModel):
     test_scale: float | None
     simultaneous_excitations_nb: int | None
     retrofitting_application: str | None
+    model_files: int | None
     count: int
     selected: bool | None = None
+
+
+class ExpCount(SQLModel, table=True):
+    __tablename__ = "expcount"
+
+    id: int = Field(primary_key=True)
+    masonry_unit_material: str | None = Field(default=None)
+    masonry_unit_type: str | None = Field(default=None)
+    diaphragm_material: str | None = Field(default=None)
+    wall_leaves_nb: int | None = Field(default=None)
+    storeys_nb: int | None = Field(default=None)
+    test_scale: float | None = Field(default=None)
+    simultaneous_excitations_nb: int | None = Field(default=None)
+    retrofitting_application: str | None = Field(default=None)
+    model_files: int | None = Field(default=None)
