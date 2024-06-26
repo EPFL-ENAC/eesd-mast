@@ -89,7 +89,7 @@ export interface ExperimentParallelCount {
   diaphragm_material: string | null;
   storeys_nb: number | null;
   test_scale: number | null;
-  model_files: number | null;
+  with_model: boolean | null;
   count: number;
   selected: boolean | null;
 }

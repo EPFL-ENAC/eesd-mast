@@ -117,7 +117,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dbFilters: { [Key: string]: any } = {};
     filters.value
-      .filter((filter) => with3dModel || filter.field !== 'model_files')
+      .filter(() => with3dModel)
       .forEach((filter) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let val: any = ['storeys_nb'].includes(filter.field)
@@ -134,9 +134,6 @@ export const useAnalysisStore = defineStore('analysis', () => {
         }
         if (filter.field === 'diaphragm_material' && filter.value === 'None') {
           val = null;
-        }
-        if (filter.field === 'model_files') {
-          val = { $exists: filter.value === 'Yes' };
         }
         if (Array.isArray(val)) {
           if (dbFilters[filter.field]) {

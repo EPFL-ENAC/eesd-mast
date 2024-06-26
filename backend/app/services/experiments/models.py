@@ -109,13 +109,13 @@ class ExperimentParallelCount(BaseModel):
     test_scale: float | None
     simultaneous_excitations_nb: int | None
     retrofitting_application: str | None
-    model_files: int | None
+    with_model: bool | None
     count: int
     selected: bool | None = None
 
 
-class ExpCount(SQLModel, table=True):
-    __tablename__ = "expcount"
+class ExperimentCounts(SQLModel, table=True):
+    __tablename__ = "experiment_counts"
 
     id: int = Field(primary_key=True)
     masonry_unit_material: str | None = Field(default=None)
@@ -126,4 +126,4 @@ class ExpCount(SQLModel, table=True):
     test_scale: float | None = Field(default=None)
     simultaneous_excitations_nb: int | None = Field(default=None)
     retrofitting_application: str | None = Field(default=None)
-    model_files: int | None = Field(default=None)
+    with_model: bool | None = Field(default=None)

@@ -394,9 +394,14 @@ function fetchFromServer(
   });
 }
 
-filters.$subscribe(() => {
-  tableRef.value?.requestServerInteraction();
-});
+watch(
+  [
+    () => filters.selections,
+    () => filters.referenceSelections,
+    () => filters.with3dModel,
+  ],
+  () => tableRef.value?.requestServerInteraction()
+);
 
 function onExperiment(selected: Experiment) {
   experiment.value = selected;

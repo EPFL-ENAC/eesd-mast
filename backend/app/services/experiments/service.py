@@ -1,4 +1,4 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount, ExpCount
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount, ExperimentCounts
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.runresults.models import RunResult
@@ -51,8 +51,8 @@ class ExperimentsService:
         """Get aggregations for the experiments matching filter"""
         fields = ["masonry_unit_material", "masonry_unit_type",
                   "diaphragm_material", "wall_leaves_nb", "storeys_nb",
-                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application", "model_files"]
-        builder = QueryBuilder(ExpCount, filter, [], [])
+                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application", "with_model"]
+        builder = QueryBuilder(ExperimentCounts, filter, [], [])
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)
         rows = results.fetchall()

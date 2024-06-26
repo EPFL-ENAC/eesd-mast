@@ -76,8 +76,6 @@ export const useFiltersStore = defineStore('filters', () => {
         filter.value === 'None'
       ) {
         selections.value.push(`${filter.field}:null`);
-      } else if (filter.field === 'model_files') {
-        with3dModel.value = filter.value === 'Yes';
       } else {
         selections.value.push(`${filter.field}:${filter.value}`);
       }

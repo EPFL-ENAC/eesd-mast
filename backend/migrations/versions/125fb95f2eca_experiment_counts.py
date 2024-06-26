@@ -1,4 +1,4 @@
-"""models_view
+"""experiment_counts
 
 Revision ID: 125fb95f2eca
 Revises: 141caa602606
@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # Create the view
     op.execute("""
-    CREATE VIEW expcount AS
+    CREATE VIEW experiment_counts AS
     SELECT 
       id,
       masonry_unit_material,
@@ -32,11 +32,11 @@ def upgrade() -> None:
       test_scale,
       simultaneous_excitations_nb,
       retrofitting_application,
-      (CASE WHEN (CAST(model_files AS VARCHAR) != 'null' AND model_files IS NOT NULL) THEN 1 ELSE 0 END) AS model_files
+      (CASE WHEN (CAST(model_files AS VARCHAR) != 'null' AND model_files IS NOT NULL) THEN True ELSE False END) AS with_model
     FROM experiment
     """)
 
 
 def downgrade() -> None:
     # Drop the view
-    op.execute("DROP VIEW expcount")
+    op.execute("DROP VIEW experiment_counts")

@@ -65,7 +65,7 @@ async def get_experiments_parallel_counts(
                     parCountAll.test_scale == parCount.test_scale and \
                     parCountAll.simultaneous_excitations_nb == parCount.simultaneous_excitations_nb and \
                     parCountAll.retrofitting_application == parCount.retrofitting_application and \
-                    parCountAll.model_files == parCountAll.model_files:
+                    parCountAll.with_model == parCountAll.with_model:
                 parCountAll.selected = True
                 break
     return resAll
