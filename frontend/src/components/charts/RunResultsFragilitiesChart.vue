@@ -17,12 +17,12 @@ const { t } = useI18n({ useScope: 'global' });
 
 interface Props {
   data: RunResultFragility[];
-  showLegend: boolean;
+  compact: boolean;
   showEmpirical: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showLegend: true,
+  compact: false,
   showEmpirical: true,
 });
 
@@ -30,21 +30,28 @@ const layout = {
   xaxis: {
     title: {
       text: t('pga_axis'),
+      font: {
+        size: props.compact ? 10 : undefined,
+      },
     },
     range: [0, 1],
   },
   yaxis: {
     title: {
       text: t('dg_pga_axis'),
+      font: {
+        size: props.compact ? 10 : undefined,
+      },
     },
   },
   margin: {
     l: 50, // Left margin
     r: 10, // Right margin
-    b: 50, // Bottom margin
+    b: props.compact ? 30 : 50, // Bottom margin
     t: 50, // Top margin
   },
-  showLegend: props.showLegend,
+  height: props.compact ? 300 : undefined,
+  showLegend: !props.compact,
 };
 
 const config = {
@@ -89,7 +96,7 @@ const chartData = computed(() => {
               color: getDgColor(key),
             },
             name: `DG${key} (empirical)`,
-            showlegend: props.showLegend,
+            showlegend: !props.compact,
             legendgroup: 'empirical',
           };
         })
@@ -110,7 +117,7 @@ const chartData = computed(() => {
           width: 2,
         },
         name: `DG${key} (fitted)`,
-        showlegend: props.showLegend,
+        showlegend: !props.compact,
         legendgroup: 'fitted',
       };
     });

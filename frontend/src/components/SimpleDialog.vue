@@ -1,6 +1,12 @@
 <template>
   <q-dialog :maximized="$q.screen.lt.sm" v-model="showDialog" @hide="onHide">
-    <q-card :style="$q.screen.lt.sm ? '' : 'width: 600px; max-width: 80vw'">
+    <q-card
+      :style="
+        $q.screen.lt.sm
+          ? ''
+          : `width: ${props.width ? props.width : 600}px; max-width: 80vw`
+      "
+    >
       <q-card-actions v-if="$q.screen.lt.sm" align="right">
         <q-btn flat icon="close" color="primary" v-close-popup />
       </q-card-actions>
@@ -30,6 +36,7 @@ interface Props {
   modelValue: boolean;
   title?: string;
   content?: string;
+  width?: number;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);

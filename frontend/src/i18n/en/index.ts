@@ -194,6 +194,7 @@ export default {
   top_displacement_mm: 'Top displacement (mm)',
   total_building_height: 'Total Building Height',
   units: 'Units',
+  view_details: 'View details',
   view_model: 'View numerical model',
   view_test: 'View test',
   vtk_help:

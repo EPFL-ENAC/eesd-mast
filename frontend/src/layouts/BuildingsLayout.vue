@@ -2,7 +2,10 @@
   <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
       <app-toolbar />
-      <app-header url="Website_Background_Title_Option2.webp" />
+      <app-header
+        v-if="withBanner"
+        url="Website_Background_Title_Option2.webp"
+      />
     </q-header>
 
     <q-drawer
@@ -52,6 +55,10 @@ const drawerOpen = ref(false);
 const miniState = ref(false);
 
 const isBuildings = computed(() => route.path === '/buildings');
+
+const withBanner = computed(
+  () => !Object.keys(route.query).includes('no-banner')
+);
 
 watch(
   () => isBuildings.value,

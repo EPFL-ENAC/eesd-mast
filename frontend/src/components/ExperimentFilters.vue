@@ -35,7 +35,7 @@
       </template>
     </q-select>
     <q-tree
-      class="col-12 col-sm-6 q-ml-md"
+      class="col-12 col-sm-6 q-ml-sm"
       :nodes="filterNodes"
       node-key="key"
       no-connectors
@@ -44,14 +44,34 @@
       v-model:ticked="filters.selections"
     >
     </q-tree>
-    <div>
+    <div class="q-mb-md">
       <run-results-fragilities-chart
         :data="filters.runResultsFragilities"
-        :show-legend="false"
+        :compact="true"
         :show-empirical="false"
-        class="q-ml-xs q-mb-md"
+        class="q-mb-sm"
       />
+      <div class="row justify-center">
+        <q-btn
+          dense
+          flat
+          no-caps
+          icon="zoom_in"
+          class="text-caption text-primary"
+          :label="$t('view_details')"
+          @click="onShowFragilities"
+        />
+      </div>
     </div>
+
+    <simple-dialog v-model="showFragilities" :width="800">
+      <div>
+        <run-results-fragilities-chart :data="filters.runResultsFragilities" />
+        <div class="q-ma-md q-pl-lg q-pr-md text-grey-9">
+          <q-markdown :src="FragilitiesMd" no-line-numbers />
+        </div>
+      </div>
+    </simple-dialog>
   </div>
 </template>
 
@@ -61,7 +81,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { computed } from 'vue';
 import { api } from 'src/boot/axios';
 import { Reference } from './models';
 import { testScaleLabel } from 'src/utils/numbers';
@@ -75,11 +94,15 @@ import {
   TEST_SCALE,
   WALL_LEAVES_NB,
 } from 'src/utils/criteria';
-import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
+import RunResultsFragilitiesChart from 'src/components/charts/RunResultsFragilitiesChart.vue';
+import SimpleDialog from 'src/components/SimpleDialog.vue';
+import FragilitiesMd from 'src/assets/fragilities.md';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
 const references = ref([]);
+const showFragilities = ref(false);
+
 function filterFn(val, update, abort) {
   const query = {
     filter: val ? JSON.stringify({ full_reference: val }) : undefined,
@@ -180,4 +203,8 @@ watch(
     filters.loadRunResultsFragilities();
   }
 );
+
+function onShowFragilities() {
+  showFragilities.value = true;
+}
 </script>
