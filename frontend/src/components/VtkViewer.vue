@@ -130,6 +130,9 @@ function initContext() {
       const actor = vtkActor.newInstance();
       actor.setMapper(mapper);
       // actor.getProperty().setColor(0.5, 1, 0); // RGB values between 0 and 1
+      actor.getProperty().setRepresentationToSurface();
+      actor.getProperty().setEdgeVisibility(true);
+      actor.getProperty().setEdgeColor(0.3, 0.3, 0.3);
 
       // Add the actor to the renderer
       renderer.addActor(actor);

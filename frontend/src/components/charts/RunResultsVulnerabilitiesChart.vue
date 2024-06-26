@@ -14,7 +14,6 @@ import { getDgColor } from 'src/utils/colors';
 import VuePlotly from './VuePlotly.vue';
 
 const { t } = useI18n({ useScope: 'global' });
-const analysis = useAnalysisStore();
 
 interface Props {
   data: RunResultVulnerability[];
