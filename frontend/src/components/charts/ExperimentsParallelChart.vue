@@ -20,8 +20,8 @@ const analysis = useAnalysisStore();
 
 const layout = {
   margin: {
-    l: 50, // Left margin
-    r: 50, // Right margin
+    l: 80, // Left margin
+    r: 30, // Right margin
     b: 50, // Bottom margin
     t: 50, // Top margin
   },
@@ -41,6 +41,11 @@ const chartData = computed(() => {
       shape: 'hspline',
     },
     labelfont: {
+      family: 'Roboto, Helvetica',
+      size: 14,
+      weight: 'bold',
+    },
+    tickfont: {
       family: 'Roboto, Helvetica',
       size: 16,
       weight: 'bold',
