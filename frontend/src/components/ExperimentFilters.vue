@@ -45,7 +45,7 @@
     >
     </q-tree>
     <div class="q-mb-md">
-      <div class="text-center text-bold q-mt-md">
+      <div class="text-center text-bold text-grey-7 q-mt-md">
         {{ $t('vulnerability_analysis') }}
       </div>
       <run-results-fragilities-chart
