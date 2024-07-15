@@ -6,9 +6,7 @@
       <experiment-aggregations />
       <q-card class="q-ma-xl">
         <q-card-section>
-          <div class="text-h6">{{ $t('how_to_cite') }}</div>
-        </q-card-section>
-        <q-card-section>
+          <div class="text-h6 q-mb-md">{{ $t('how_to_cite') }}</div>
           <q-markdown :src="CiteMd" class="app-md" />
         </q-card-section>
       </q-card>
