@@ -199,6 +199,7 @@ export default {
     'The 3D model can be rotated by moving the cursor while the building is selected. Use two finger or mouse wheel to zoom in/out.',
   vtk_notice:
     'The codes for generating the .vtk files for visualizing the geometry of the equivalent frame model (EFM) were developed by Jose Gallardo Briones at EESD.',
+  vulnerability_analysis: 'Vulnerability analysis',
   show_vulnerability: 'Show vulnerability plots',
   wall_connections: 'Wall-to-wall connections',
   wall_leaves_nb_short: 'Wall-leaves',

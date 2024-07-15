@@ -45,6 +45,9 @@
     >
     </q-tree>
     <div class="q-mb-md">
+      <div class="text-center text-bold q-mt-md">
+        {{ $t('vulnerability_analysis') }}
+      </div>
       <run-results-fragilities-chart
         :data="filters.runResultsFragilities"
         :compact="true"
@@ -66,6 +69,9 @@
 
     <simple-dialog v-model="showFragilities" :width="800">
       <div>
+        <div class="text-center text-h6">
+          {{ $t('vulnerability_analysis') }}
+        </div>
         <run-results-fragilities-chart :data="filters.runResultsFragilities" />
         <div class="q-ma-md q-pl-lg q-pr-md text-grey-9">
           <q-markdown :src="FragilitiesMd" no-line-numbers />

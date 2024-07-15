@@ -48,7 +48,7 @@ const layout = {
     l: 50, // Left margin
     r: 10, // Right margin
     b: props.compact ? 30 : 50, // Bottom margin
-    t: 50, // Top margin
+    t: props.compact ? 10 : 50, // Top margin
   },
   height: props.compact ? 300 : undefined,
   showLegend: !props.compact,
