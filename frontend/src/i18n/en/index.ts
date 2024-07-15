@@ -95,7 +95,7 @@ export default {
   last_estimated_fundamental_period: 'Last Estimated Fundamental Period',
   link_to_experimental_paper: 'Link to Experimental Paper',
   link_to_material_papers: 'Links to Material Characterization Papers',
-  link_to_open_measured_data: 'Link to Open Measured Data',
+  link_to_open_measured_data: 'Link to Digital Experimental Data',
   link_to_request_data: 'Link to Data',
   masonry_compressive_strength: 'Masonry Compressive Strength',
   masonry_unit_material_short: 'Masonry mat.',
@@ -160,7 +160,7 @@ export default {
   retrofitting_application_short: 'Retrofit',
   retrofitting_application: 'Retrofitting Application',
   retrofitting_type: 'Retrotifitting Type',
-  roof_material_geometry: 'Roof Material Geometry',
+  roof_material_geometry: 'Roof Material and Geometry',
   run_id: 'Run ID',
   run_results_counts_label: 'Experimental results and numerical models',
   run_results: 'Test Results',
@@ -180,8 +180,7 @@ export default {
   software_used: 'Software used',
   storeys_nb_short: 'Storeys',
   storeys_nb: 'Number of Storeys',
-  summary:
-    'A comprehensive database and collaborative resource for advancing seismic assessment of unreinforced masonry buildings',
+  summary: 'Summary',
   surface: 'Surface',
   tension_strength: 'Tension strength (ft)',
   test_motivation: 'Motivation of the test',
@@ -199,7 +198,7 @@ export default {
   vtk_help:
     'The 3D model can be rotated by moving the cursor while the building is selected. Use two finger or mouse wheel to zoom in/out.',
   vtk_notice:
-    'The codes for generating the .vtk files for visualizing the geometry of the equivalent frame model were developed by Jose Gallardo Briones at EESD.',
+    'The codes for generating the .vtk files for visualizing the geometry of the equivalent frame model (EFM) were developed by Jose Gallardo Briones at EESD.',
   show_vulnerability: 'Show vulnerability plots',
   wall_connections: 'Wall-to-wall connections',
   wall_leaves_nb_short: 'Wall-leaves',

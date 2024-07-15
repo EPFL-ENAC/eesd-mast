@@ -141,7 +141,7 @@
       indicator-color="secondary"
       align="justify"
     >
-      <q-tab name="details" :label="$t('details')" />
+      <q-tab name="summary" :label="$t('summary')" />
       <q-tab name="run_results" :label="$t('run_results')" />
       <q-tab name="files" :label="$t('test_files')" />
       <q-tab name="reference" :label="$t('reference')" />
@@ -150,7 +150,7 @@
     <q-separator />
 
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="details">
+      <q-tab-panel name="summary">
         <experiment-fields :experiment="selected" />
       </q-tab-panel>
 
@@ -199,7 +199,7 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
   experiment: undefined,
 });
 
-const tab = ref('details');
+const tab = ref('summary');
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 const hasPgaX = ref(true);
