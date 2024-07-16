@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   components: { VuePlotly },
   name: 'RunResultsVulnerabilitiesChart',
@@ -15,7 +14,12 @@ import { getDgColor } from 'src/utils/colors';
 import VuePlotly from './VuePlotly.vue';
 
 const { t } = useI18n({ useScope: 'global' });
-const analysis = useAnalysisStore();
+
+interface Props {
+  data: RunResultVulnerability[];
+}
+
+const props = defineProps<Props>();
 
 const layout = computed(() => {
   const groups = dgGroups.value;
@@ -115,7 +119,7 @@ const dgGroups = computed(() => {
     '5': [],
   };
 
-  analysis.runResultsVulnerabilities.forEach((line: RunResultVulnerability) => {
+  props.data.forEach((line: RunResultVulnerability) => {
     groups[line.dg] = line.pgas;
   });
 

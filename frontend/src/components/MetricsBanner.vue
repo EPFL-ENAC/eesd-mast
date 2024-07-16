@@ -3,7 +3,7 @@
     <q-card flat square class="bg-grey-9 text-white">
       <q-card-section>
         <div class="row">
-          <div class="col-12 col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-3 col-sm-12 text-center">
             <div class="text-h4">
               {{ analysis.counts.experiments_count }}
             </div>
@@ -11,13 +11,21 @@
               {{ $t('buildings_counts_label') }}
             </div>
           </div>
-          <div class="col-12 col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-3 col-sm-12 text-center">
+            <div class="text-h4">
+              {{ `${Math.floor(modelsPct)}%` }}
+            </div>
+            <div class="text-subtitle1">
+              {{ $t('numerical_models_label') }}
+            </div>
+          </div>
+          <div class="col-12 col-md-3 col-sm-12 text-center">
             <div class="text-h4">100+</div>
             <div class="text-subtitle1">
               {{ $t('references_counts_label') }}
             </div>
           </div>
-          <div class="col-12 col-md-4 col-sm-12 text-center">
+          <div class="col-12 col-md-3 col-sm-12 text-center">
             <div class="text-h4">
               {{ $t('downloadable') }}
             </div>
@@ -32,7 +40,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'MetricsBanner',
 });
@@ -41,6 +48,12 @@ export default defineComponent({
 import { useAnalysisStore } from 'src/stores/analysis';
 
 const analysis = useAnalysisStore();
+
+const modelsPct = computed(() => {
+  return analysis.counts.experiments_count > 0
+    ? (100 * analysis.counts.models_count) / analysis.counts.experiments_count
+    : 0;
+});
 
 onMounted(() => {
   analysis.loadCounts();

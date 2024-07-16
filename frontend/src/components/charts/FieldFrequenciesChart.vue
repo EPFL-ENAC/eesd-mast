@@ -1,12 +1,14 @@
 <template>
-  <div v-if="option.series" :style="`height: ${height}px; width: 90%;`">
+  <div v-if="option.series" :style="`height: ${height}px; width: 100%;`">
+    <div class="text-center q-mt-sm text-bold" style="font-size: 16px">
+      {{ $t(fieldTitle) }}
+    </div>
     <e-charts
       ref="chart"
       autoresize
       :init-options="initOptions"
       :option="option"
       :update-options="updateOptions"
-      class="q-ma-md"
       :loading="loading"
       @click="onClick"
     />
@@ -14,7 +16,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'FieldFrequenciesChart',
 });
@@ -65,6 +66,13 @@ const frequencies = computed(() => {
   return analysis.frequencies === null ? {} : analysis.frequencies[props.field];
 });
 
+const fieldTitle = computed(() => {
+  if (props.field === 'model_files') {
+    return 'numerical_model';
+  }
+  return props.field;
+});
+
 watch(
   () => props.field,
   () => {
@@ -101,6 +109,9 @@ function keyLabel(key: string) {
   if (props.field === 'test_scale') {
     return testScaleLabel(key);
   }
+  if (props.field === 'model_files') {
+    return key === '0' ? t('no') : t('yes');
+  }
   return key;
 }
 
@@ -123,10 +134,10 @@ function initChartOptions() {
   );
 
   const newOption: EChartsOption = {
-    title: {
-      text: `${t(props.field)}`,
-      left: 'center',
-    },
+    // title: {
+    //   text: `${t(props.field)}`,
+    //   left: 'center',
+    // },
     animation: false,
     height: props.height,
     tooltip: {
@@ -144,6 +155,13 @@ function initChartOptions() {
         radius: ['40%', '70%'],
         color: colors,
         avoidLabelOverlap: true,
+        label: {
+          // position: 'outer',
+          // alignTo: 'edge',
+          margin: 0,
+          fontWeight: 'bold',
+          // fontSize: 14,
+        },
         // label: {
         //   show: false,
         //   position: 'center',

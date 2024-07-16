@@ -36,7 +36,7 @@
       </q-chip>
     </div>
     <div v-if="reference_experiments.length > 1" class="q-mb-md">
-      <span class="text-caption on-left">
+      <span class="text-subtitle1 on-left">
         {{ $t('other_experiments_of_reference') }}
       </span>
       <span>
@@ -55,7 +55,7 @@
       </span>
     </div>
     <div v-if="selected.experimental_campaign_motivation">
-      <div class="text-caption">
+      <div class="text-subtitle1">
         {{ $t('test_motivation') }}
       </div>
       <div class="text-subtitle1 text-grey-8">
@@ -132,17 +132,16 @@
     </div>
 
     <div class="q-ma-md"></div>
-    <div class="q-ma-md"></div>
     <q-tabs
       v-model="tab"
       dense
       class="text-grey"
       active-color="secondary"
+      active-bg-color="light-blue-1"
       indicator-color="secondary"
       align="justify"
-      narrow-indicator
     >
-      <q-tab name="details" :label="$t('details')" />
+      <q-tab name="summary" :label="$t('summary')" />
       <q-tab name="run_results" :label="$t('run_results')" />
       <q-tab name="files" :label="$t('test_files')" />
       <q-tab name="reference" :label="$t('reference')" />
@@ -151,7 +150,7 @@
     <q-separator />
 
     <q-tab-panels v-model="tab" animated>
-      <q-tab-panel name="details">
+      <q-tab-panel name="summary">
         <experiment-fields :experiment="selected" />
       </q-tab-panel>
 
@@ -173,7 +172,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'ExperimentTestView',
 });
@@ -192,6 +190,7 @@ import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 
 const referencesStore = useReferencesStore();
+const runResultsStore = useRunResultsStore();
 
 interface ExperimentViewProps {
   experiment: Experiment;
@@ -200,7 +199,7 @@ const props = withDefaults(defineProps<ExperimentViewProps>(), {
   experiment: undefined,
 });
 
-const tab = ref('details');
+const tab = ref('summary');
 const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 const hasPgaX = ref(true);
@@ -250,6 +249,7 @@ function updateExperiment() {
         reference_experiments.value = res;
       });
     selected.value = props.experiment;
+    runResultsStore.initRunResults(props.experiment.id);
   }
 }
 

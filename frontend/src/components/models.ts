@@ -13,6 +13,7 @@ export interface Reference extends DBModel {
 
 export interface Experiment extends DBModel {
   reference_id: number;
+  reference: Reference | undefined;
   experiment_id: string | null;
   description: string | null;
   applied_excitation_directions: string[] | null;
@@ -65,6 +66,7 @@ export interface RunResultFileNodes {
 
 export interface Counts {
   experiments_count: number;
+  models_count: number;
   references_count: number;
   run_results_count: number;
 }
@@ -87,6 +89,7 @@ export interface ExperimentParallelCount {
   diaphragm_material: string | null;
   storeys_nb: number | null;
   test_scale: number | null;
+  with_model: boolean | null;
   count: number;
   selected: boolean | null;
 }

@@ -20,14 +20,14 @@ class ExperimentBase(SQLModel):
     applied_excitation_directions: List[str] | None = Field(
         sa_column=Column(ARRAY(String)), default=None)
     storeys_nb: int | None = Field(default=None)
-    building_height: int | None = Field(default=None)
-    total_building_height: int | None = Field(default=None)
+    building_height: float | None = Field(default=None)
+    total_building_height: float | None = Field(default=None)
     diaphragm_material: str | None = Field(default=None)
     roof_material_geometry: str | None = Field(default=None)
     masonry_unit_type: str | None = Field(default=None)
     masonry_unit_material: str | None = Field(default=None)
     mortar_type: str | None = Field(default=None)
-    masonry_compressive_strength: int | None = Field(default=None)
+    masonry_compressive_strength: float | None = Field(default=None)
     masonry_wall_thickness: List[int] | None = Field(
         sa_column=Column(ARRAY(Integer)), default=None)
     wall_leaves_nb: int | None = Field(default=None)
@@ -97,6 +97,7 @@ class ExperimentFrequencies(BaseModel):
     diaphragm_material: dict
     storeys_nb: dict
     test_scale: dict
+    model_files: dict
 
 
 class ExperimentParallelCount(BaseModel):
@@ -108,5 +109,21 @@ class ExperimentParallelCount(BaseModel):
     test_scale: float | None
     simultaneous_excitations_nb: int | None
     retrofitting_application: str | None
+    with_model: bool | None
     count: int
     selected: bool | None = None
+
+
+class ExperimentCounts(SQLModel, table=True):
+    __tablename__ = "experiment_counts"
+
+    id: int = Field(primary_key=True)
+    masonry_unit_material: str | None = Field(default=None)
+    masonry_unit_type: str | None = Field(default=None)
+    diaphragm_material: str | None = Field(default=None)
+    wall_leaves_nb: int | None = Field(default=None)
+    storeys_nb: int | None = Field(default=None)
+    test_scale: float | None = Field(default=None)
+    simultaneous_excitations_nb: int | None = Field(default=None)
+    retrofitting_application: str | None = Field(default=None)
+    with_model: bool | None = Field(default=None)

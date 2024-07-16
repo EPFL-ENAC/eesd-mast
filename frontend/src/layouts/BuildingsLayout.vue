@@ -1,9 +1,9 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-header bordered class="bg-white text-grey-10">
-      <app-toolbar @toggle="toggleDrawer" />
+      <app-toolbar />
       <app-header
-        v-if="isBuildings2"
+        v-if="withBanner"
         url="Website_Background_Title_Option2.webp"
       />
     </q-header>
@@ -55,7 +55,10 @@ const drawerOpen = ref(false);
 const miniState = ref(false);
 
 const isBuildings = computed(() => route.path === '/buildings');
-const isBuildings2 = computed(() => route.path === '/buildings2');
+
+const withBanner = computed(
+  () => !Object.keys(route.query).includes('no-banner')
+);
 
 watch(
   () => isBuildings.value,
@@ -63,8 +66,4 @@ watch(
     drawerOpen.value = isBuildings.value;
   }
 );
-
-function toggleDrawer() {
-  drawerOpen.value = !drawerOpen.value;
-}
 </script>

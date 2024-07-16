@@ -2,33 +2,31 @@ import { api } from 'src/boot/axios';
 import { defineStore } from 'pinia';
 import { RunResult } from 'src/components/models';
 
-interface State {
-  run_results: { [Key: number]: RunResult[] };
-}
+export const useRunResultsStore = defineStore('run_results', () => {
+  const run_results = ref([] as RunResult[]);
 
-export const useRunResultsStore = defineStore('run_results', {
-  state: (): State => ({
-    run_results: {},
-  }),
-  getters: {
-    fetchRunResults: (state) => {
-      return async (id: number): Promise<RunResult[]> => {
-        if (!state.run_results[id]) {
-          const query = {
-            experiment_id: id,
-          };
-          const resp = await api({
-            method: 'get',
-            url: '/run_results',
-            params: {
-              filter: JSON.stringify(query),
-            },
-          });
-          state.run_results[id] = resp.data;
-        }
-        return state.run_results[id];
-      };
-    },
-  },
-  actions: {},
+  const run_results_digest = computed(() => {
+    return run_results.value
+      .filter((run) => !['Initial', 'Final'].includes(run.run_id))
+      .sort((a, b) => (a.id < b.id ? -1 : 1)); // sort by (unique) id in the db
+  });
+
+  async function initRunResults(id: number) {
+    const query = {
+      experiment_id: id,
+    };
+    return api({
+      method: 'get',
+      url: '/run_results',
+      params: {
+        filter: JSON.stringify(query),
+      },
+    }).then((resp) => (run_results.value = resp.data));
+  }
+
+  return {
+    run_results,
+    run_results_digest,
+    initRunResults,
+  };
 });

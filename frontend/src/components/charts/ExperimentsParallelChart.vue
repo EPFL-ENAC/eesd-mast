@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   components: { VuePlotly },
   name: 'ExperimentsParallelChart',
@@ -21,8 +20,8 @@ const analysis = useAnalysisStore();
 
 const layout = {
   margin: {
-    l: 50, // Left margin
-    r: 50, // Right margin
+    l: 80, // Left margin
+    r: 30, // Right margin
     b: 50, // Bottom margin
     t: 50, // Top margin
   },
@@ -42,7 +41,14 @@ const chartData = computed(() => {
       shape: 'hspline',
     },
     labelfont: {
+      family: 'Roboto, Helvetica',
+      size: 14,
+      weight: 'bold',
+    },
+    tickfont: {
+      family: 'Roboto, Helvetica',
       size: 16,
+      weight: 'bold',
     },
   };
 
@@ -87,12 +93,16 @@ const chartData = computed(() => {
       'test_scale',
       'simultaneous_excitations_nb',
       'retrofitting_application',
+      'with_model',
     ].forEach((field: string) => {
       parCatsData.dimensions.push({
         label: t(`${field}_short`),
         values: digestedCounts.map((line) => {
           if (field === 'test_scale') {
             return testScaleLabel(line[field]);
+          }
+          if (field === 'with_model') {
+            return line[field] ? 'Yes' : 'No';
           }
           const val = line[field as keyof typeof line];
           return val === null ? 'N/A' : val.toString();

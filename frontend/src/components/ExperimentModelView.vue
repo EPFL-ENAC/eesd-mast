@@ -58,14 +58,35 @@
       </div>
     </div>
 
+    <div v-if="threeDModelFiles.length > 0">
+      <div class="text-grey-6 q-mt-md">
+        <q-icon name="info"></q-icon>
+        {{ $t('vtk_notice') }}
+      </div>
+      <q-tooltip
+        v-model="showVtkTip"
+        anchor="top middle"
+        self="top middle"
+        no-parent-event
+        class="bg-grey-7 text-white"
+      >
+        <div
+          class="q-pt-md q-pl-md q-pr-md"
+          style="width: 400px; font-size: medium"
+        >
+          <q-markdown :src="$t('vtk_help')" />
+        </div>
+      </q-tooltip>
+    </div>
+
     <q-tabs
       v-model="tab"
       dense
       class="text-grey q-mt-xl"
       active-color="secondary"
+      active-bg-color="light-blue-1"
       indicator-color="secondary"
       align="justify"
-      narrow-indicator
     >
       <q-tab name="details" :label="$t('modeling_assumptions')" />
       <q-tab name="files" :label="$t('model_files')" />
@@ -90,7 +111,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'ExperimentModelView',
 });
@@ -105,9 +125,11 @@ import ImageDialog from './ImageDialog.vue';
 import { Experiment, FileNode } from 'src/components/models';
 import { useReferencesStore } from 'src/stores/references';
 import { useNumericalModelsStore } from 'src/stores/numerical_models';
+import { Settings } from 'src/stores/settings';
 
 const referencesStore = useReferencesStore();
 const numericalModelsStore = useNumericalModelsStore();
+const settingsStore = useSettingsStore();
 
 interface ExperimentViewProps {
   experiment: Experiment;
@@ -121,6 +143,7 @@ const selected = ref();
 const reference_experiments = ref<Experiment[]>([]);
 const showImage = ref(false);
 const imageSrc = ref('');
+const showVtkTip = ref(false);
 
 const modelsSchemeUrlAlt = computed(() => {
   if (selected.value) {
@@ -179,8 +202,20 @@ function updateExperiment() {
       });
     selected.value = props.experiment;
     numericalModelsStore.fetchNumericalModel(props.experiment.id);
+    if (settingsStore.settings?.intro_shown) {
+      triggerVtkTips();
+    }
   }
 }
+
+watch(
+  () => settingsStore.settings,
+  () => {
+    if (settingsStore.settings?.intro_shown) {
+      triggerVtkTips();
+    }
+  }
+);
 
 const threeDModelFiles = computed(() => {
   if (selected.value.model_files && selected.value.model_files.children) {
@@ -194,5 +229,17 @@ const threeDModelFiles = computed(() => {
 function onShowImage(src: string) {
   imageSrc.value = src;
   showImage.value = true;
+}
+
+function triggerVtkTips() {
+  if (!showVtkTip.value && !settingsStore.settings?.vtk_tips) {
+    showVtkTip.value = true;
+    setTimeout(() => {
+      showVtkTip.value = false;
+      const settings = { ...settingsStore.settings } as Settings;
+      settings.vtk_tips = true;
+      settingsStore.saveSettings(settings);
+    }, 5000);
+  }
 }
 </script>

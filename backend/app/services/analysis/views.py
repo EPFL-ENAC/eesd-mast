@@ -18,11 +18,12 @@ async def get_general_counts(
     """Get some counts about the database"""
     exp_service = ExperimentsService(session)
     exp_count = await exp_service.count()
+    mod_count = await exp_service.count(True)
     ref_service = ReferencesService(session)
     ref_count = await ref_service.count()
     runres_service = RunResultsService(session)
     runres_count = await runres_service.count()
-    return Counts(experiments_count=exp_count, references_count=ref_count, run_results_count=runres_count)
+    return Counts(experiments_count=exp_count, models_count=mod_count, references_count=ref_count, run_results_count=runres_count)
 
 
 @router.get("/experiments/frequencies", response_model=ExperimentFrequencies)
@@ -53,9 +54,9 @@ async def get_experiments_parallel_counts(
 
     # case with filter, mark selected ones
     resAll = await service.parallel_count({})
-    for parCount in res:
+    for parCountAll in resAll:
         # find parCount in resAll
-        for parCountAll in resAll:
+        for parCount in res:
             if parCountAll.masonry_unit_material == parCount.masonry_unit_material and \
                     parCountAll.masonry_unit_type == parCount.masonry_unit_type and \
                     parCountAll.diaphragm_material == parCount.diaphragm_material and \
@@ -63,7 +64,8 @@ async def get_experiments_parallel_counts(
                     parCountAll.storeys_nb == parCount.storeys_nb and \
                     parCountAll.test_scale == parCount.test_scale and \
                     parCountAll.simultaneous_excitations_nb == parCount.simultaneous_excitations_nb and \
-                    parCountAll.retrofitting_application == parCount.retrofitting_application:
+                    parCountAll.retrofitting_application == parCount.retrofitting_application and \
+                    parCountAll.with_model == parCountAll.with_model:
                 parCountAll.selected = True
                 break
     return resAll

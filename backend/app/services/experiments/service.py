@@ -1,4 +1,4 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount
+from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount, ExperimentCounts
 from app.services.references.models import Reference, ReferenceRead
 from app.services.runresults.service import RunResultsService
 from app.services.runresults.models import RunResult
@@ -7,7 +7,7 @@ from app.services.numericalmodels.models import NumericalModel
 from app.services.files.s3client import s3_client
 from app.utils.query import QueryBuilder
 from sqlmodel import select
-from sqlalchemy.sql import text, func
+from sqlalchemy.sql import text
 from fastapi import HTTPException
 from app.db import AsyncSession
 
@@ -17,10 +17,11 @@ class ExperimentsService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def count(self) -> int:
+    async def count(self, withModel: bool = None) -> int:
         """Count all experiments"""
-        count = (await self.session.exec(text("select count(id) from experiment"))).scalar()
-        return count
+        if withModel:
+            return (await self.session.exec(text("select count(id) from experiment where cast(model_files as varchar) != 'null' and model_files is not null"))).scalar()
+        return (await self.session.exec(text("select count(id) from experiment"))).scalar()
 
     async def frequencies(self, filter: dict | str) -> ExperimentFrequencies:
         """Get aggregations for the experiments matching filter"""
@@ -31,7 +32,17 @@ class ExperimentsService:
             results = await self.session.exec(query)
             rows = results.fetchall()
             # exclude 0 counts
-            counts = {row[0]: row[1] for row in rows if row[1] is not 0}
+            counts = {row[0]: row[1] for row in rows if row[1] != 0}
+            field_counts[field] = counts
+
+        for field in ["model_files"]:
+            builder = QueryBuilder(Experiment, filter, [], [])
+            query = builder.build_frequencies_exists_query(field)
+            results = await self.session.exec(query)
+            rows = results.fetchall()
+            print(rows)
+            # exclude 0 counts
+            counts = {row[0]: row[1] for row in rows if row[1] != 0}
             field_counts[field] = counts
 
         return ExperimentFrequencies(**field_counts)
@@ -40,8 +51,8 @@ class ExperimentsService:
         """Get aggregations for the experiments matching filter"""
         fields = ["masonry_unit_material", "masonry_unit_type",
                   "diaphragm_material", "wall_leaves_nb", "storeys_nb",
-                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application"]
-        builder = QueryBuilder(Experiment, filter, [], [])
+                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application", "with_model"]
+        builder = QueryBuilder(ExperimentCounts, filter, [], [])
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)
         rows = results.fetchall()

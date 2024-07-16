@@ -18,7 +18,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'PgaChart',
 });
@@ -66,36 +65,21 @@ const emit = defineEmits<{
 const { t } = useI18n({ useScope: 'global' });
 const runResultsStore = useRunResultsStore();
 
-const runResults = ref<RunResult[]>([]);
 const chart = shallowRef(null);
 const option = ref<EChartsOption>({});
 const loading = ref(false);
 const showIncNote = ref(false);
 
 watch(
-  () => props.experiment,
+  () => runResultsStore.run_results_digest,
   () => {
     initChartOptions();
   }
 );
 
-onMounted(() => {
-  initChartOptions();
-});
-
 function initChartOptions() {
   option.value = {};
-  if (!props.experiment) {
-    return;
-  }
-  runResultsStore
-    .fetchRunResults(props.experiment.id)
-    .then((res: RunResult[]) => {
-      runResults.value = res.filter(
-        (run) => !['Initial', 'Final'].includes(run.run_id)
-      );
-      buildOptions();
-    });
+  buildOptions();
 }
 
 function buildOptions() {
@@ -105,7 +89,9 @@ function buildOptions() {
   const reported = `reported_t1_${props.direction}`;
   const visibleColumns = [nominal, actual, reported].filter(
     (col) =>
-      runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
+      runResultsStore.run_results_digest.filter(
+        (run: RunResult) => run[col] !== null
+      ).length > 0
   );
   let pgaColumn = visibleColumns.includes(actual) ? actual : nominal;
   const periodColumn = reported;
@@ -118,7 +104,7 @@ function buildOptions() {
     return;
   }
 
-  const datasetPGA: number[][] = runResults.value
+  const datasetPGA: number[][] = runResultsStore.run_results_digest
     .filter(
       (result) => result[pgaColumn] !== null && result[periodColumn] !== null
     )

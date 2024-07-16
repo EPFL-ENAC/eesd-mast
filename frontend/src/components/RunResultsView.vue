@@ -1,12 +1,22 @@
 <template>
   <div>
     <q-table
-      :rows="runResults"
+      :rows="runResultsStore.run_results_digest"
       :columns="visibleColummns"
       row-key="run_id"
       hide-pagination
       :rows-per-page-options="[0]"
     >
+      <template v-slot:top-right>
+        <q-btn
+          :label="$t('export')"
+          no-caps
+          icon="download"
+          color="secondary"
+          flat
+          @click="exportData"
+        />
+      </template>
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width v-if="hasFiles()" />
@@ -35,7 +45,7 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%" class="q-pa-none">
-            <div class="text-left">
+            <div class="justify-left">
               <q-expansion-item
                 v-if="getRunFiles(props.row.run_id).top_displacement_histories"
                 :label="$t('top_displacement_histories')"
@@ -126,20 +136,33 @@
         </q-tr>
       </template>
     </q-table>
+    <q-tooltip
+      v-model="showChartsTip"
+      anchor="center middle"
+      self="center middle"
+      no-parent-event
+      class="bg-grey-7 text-white"
+    >
+      <div
+        class="q-pt-md q-pl-md q-pr-md"
+        style="width: 400px; font-size: medium"
+      >
+        <q-markdown :src="$t('echarts_zoom_help')" />
+      </div>
+    </q-tooltip>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'RunResultsView',
 });
 </script>
 <script setup lang="ts">
+import { exportFile } from 'quasar';
 import { useI18n } from 'vue-i18n';
-import { withDefaults, onMounted, ref, watch } from 'vue';
+import { withDefaults, ref } from 'vue';
 import { cdnUrl } from 'src/boot/axios';
-import { useRunResultsStore } from 'src/stores/run_results';
 import {
   Experiment,
   RunResult,
@@ -147,8 +170,10 @@ import {
 } from 'src/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import { toMaxDecimals, toFixed } from 'src/utils/numbers';
+import { Settings } from 'src/stores/settings';
 
 const { t } = useI18n({ useScope: 'global' });
+const settingsStore = useSettingsStore();
 
 interface RunResultsViewProps {
   experiment: Experiment;
@@ -158,8 +183,8 @@ const props = withDefaults(defineProps<RunResultsViewProps>(), {
 });
 
 const runResultsStore = useRunResultsStore();
-const runResults = ref();
 const displayed = ref<string[]>([]);
+const showChartsTip = ref(false);
 
 const columns = [
   'run_id',
@@ -200,30 +225,16 @@ const columns = [
 const visibleColummns = computed(() => {
   return columns.filter(
     (col) =>
-      runResults.value?.filter((run: RunResult) => run[col.name] !== null)
-        .length > 0
+      runResultsStore.run_results_digest.filter(
+        (run: RunResult) => run[col.name] !== null
+      ).length > 0
   );
 });
-
-watch(() => props.experiment, updateRunResults);
-
-onMounted(updateRunResults);
-
-function updateRunResults() {
-  if (props.experiment) {
-    runResultsStore
-      .fetchRunResults(props.experiment.id)
-      .then((res: RunResult[]) => {
-        runResults.value = res.filter(
-          (run) => !['Initial', 'Final'].includes(run.run_id)
-        );
-      });
-  }
-}
 
 function loadRunFiles(run_id: number) {
   if (!displayed.value.includes(run_id.toString())) {
     displayed.value.push(run_id.toString());
+    triggerChartsTip();
   }
 }
 
@@ -274,6 +285,43 @@ function getRunFiles(run_id: number): RunResultFileNodes {
   }
 
   return nodes;
+}
+
+function triggerChartsTip() {
+  if (!showChartsTip.value && !settingsStore.settings?.run_results_tips) {
+    showChartsTip.value = true;
+    setTimeout(() => {
+      showChartsTip.value = false;
+      settingsStore.saveSettings({ run_results_tips: true } as Settings);
+    }, 5000);
+  }
+}
+
+function exportData() {
+  const colNames = visibleColummns.value.map((col) => col.name);
+  const lines = runResultsStore.run_results_digest.map((run: RunResult) =>
+    colNames.map((col) => run[col]).join(',')
+  );
+  const colLabels = visibleColummns.value.map((col) => col.label);
+  lines.unshift(colLabels.join(','));
+
+  const baseName = props.experiment.reference
+    ? props.experiment.reference.reference
+        .replaceAll(' ', '_')
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('.', '')
+    : props.experiment.reference_id;
+
+  const status = exportFile(
+    `${baseName}_TestSummary.csv`,
+    lines.join('\r\n'),
+    'text/csv'
+  );
+
+  if (status !== true) {
+    console.error(status);
+  }
 }
 </script>
 

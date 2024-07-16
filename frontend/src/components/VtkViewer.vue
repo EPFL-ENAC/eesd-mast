@@ -32,7 +32,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'VtkViewer',
 });
@@ -49,6 +48,8 @@ import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
 
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
+import vtkRenderWindow from '@kitware/vtk.js/Rendering/Core/RenderWindow';
+import vtkRenderer from '@kitware/vtk.js/Rendering/Core/Renderer';
 
 export interface VtkViewerProps {
   file: FileNode | undefined;
@@ -70,8 +71,13 @@ const representationOptions = [
   { label: t('surface'), value: 2 },
 ];
 const representation = ref(representationOptions[1]);
-const vtkContainer = ref(null);
-const context = ref(null);
+const vtkContainer = ref();
+const context = ref<{
+  renderWindow: vtkRenderWindow;
+  renderer: vtkRenderer;
+  actor: vtkActor;
+  mapper: vtkMapper;
+}>();
 
 function applyRepresentation() {
   if (context.value) {
@@ -98,6 +104,7 @@ function initContext() {
     // Create a renderer
     const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
       container: vtkContainer.value,
+      background: [0.9, 0.9, 0.9],
     });
     const renderer = fullScreenRenderer.getRenderer();
     const renderWindow = fullScreenRenderer.getRenderWindow();
@@ -122,13 +129,25 @@ function initContext() {
       // Create an actor and set its mapper
       const actor = vtkActor.newInstance();
       actor.setMapper(mapper);
-      actor.getProperty().setColor(0.5, 1, 0); // RGB values between 0 and 1
+      // actor.getProperty().setColor(0.5, 1, 0); // RGB values between 0 and 1
+      actor.getProperty().setRepresentationToSurface();
+      actor.getProperty().setEdgeVisibility(true);
+      actor.getProperty().setEdgeColor(0.3, 0.3, 0.3);
 
       // Add the actor to the renderer
       renderer.addActor(actor);
 
+      // Access the camera and set the view angle
+      const camera = renderer.getActiveCamera();
+
+      // Adjust the camera
+      //camera.setPosition(0, 0, 0);
+      camera.setFocalPoint(20, 20, -10);
+      camera.setViewUp(0, 0, 1);
+
       // Initialize the rendering process
       renderer.resetCamera();
+
       renderWindow.render();
 
       context.value = {
@@ -146,7 +165,7 @@ function cleanContext() {
     const { actor, mapper } = context.value;
     actor.delete();
     mapper.delete();
-    context.value = null;
+    context.value = undefined;
   }
 }
 

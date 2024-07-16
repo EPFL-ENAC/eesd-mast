@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'DgChart',
 });
@@ -56,35 +55,20 @@ const props = withDefaults(defineProps<DgChartProps>(), {
 const { t } = useI18n({ useScope: 'global' });
 const runResultsStore = useRunResultsStore();
 
-const runResults = ref<RunResult[]>([]);
 const chart = shallowRef(null);
 const option = ref<EChartsOption>({});
 const loading = ref(false);
 
 watch(
-  () => props.experiment,
+  () => runResultsStore.run_results_digest,
   () => {
     initChartOptions();
   }
 );
 
-onMounted(() => {
-  initChartOptions();
-});
-
 function initChartOptions() {
   option.value = {};
-  if (!props.experiment) {
-    return;
-  }
-  runResultsStore
-    .fetchRunResults(props.experiment.id)
-    .then((res: RunResult[]) => {
-      runResults.value = res.filter(
-        (run) => !['Initial', 'Final'].includes(run.run_id)
-      );
-      buildOptions();
-    });
+  buildOptions();
 }
 
 function buildOptions() {
@@ -149,7 +133,9 @@ function makePgaSeries(direction: string) {
   const actual = `actual_pga_${direction}`;
   const visibleColumns = [nominal, actual, 'dg_reported', 'dg_derived'].filter(
     (col) =>
-      runResults.value.filter((run: RunResult) => run[col] !== null).length > 0
+      runResultsStore.run_results_digest.filter(
+        (run: RunResult) => run[col] !== null
+      ).length > 0
   );
   let pgaColumn = visibleColumns.includes(actual) ? actual : nominal;
   const dgColumn = visibleColumns.includes('dg_reported')
@@ -163,7 +149,7 @@ function makePgaSeries(direction: string) {
     return [];
   }
 
-  const datasetDG = runResults.value
+  const datasetDG = runResultsStore.run_results_digest
     .filter((result) => result[dgColumn] !== null && result[pgaColumn] !== null)
     .map((result) => {
       return [result[dgColumn], result[pgaColumn]];

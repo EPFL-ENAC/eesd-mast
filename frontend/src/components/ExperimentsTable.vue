@@ -1,140 +1,73 @@
 <template>
   <div>
-    <q-table
-      flat
-      :grid="view === 'grid'"
-      ref="tableRef"
-      :rows="rows"
-      :columns="columns"
-      row-key="id"
-      :rows-per-page-options="[12, 24, 48, 0]"
-      v-model:pagination="pagination"
-      :loading="loading"
-      :filter="filter"
-      binary-state-sort
-      @request="onRequest"
-      @row-click="onRowClick"
-    >
-      <template v-slot:top-left>
-        <span class="text-h6">{{ $t('buildings_title') }}</span>
-        <q-btn flat round icon="help_outline" class="on-right text-grey-8">
-          <q-popup-proxy class="bg-grey-7 text-white">
-            <div class="q-ma-md" style="width: 400px">
-              <q-markdown :src="$t('buildings_help')" />
-            </div>
-          </q-popup-proxy>
-        </q-btn>
-        <q-toggle
-          v-model="filters.with3dModel"
-          :label="$t('show_numerical_models')"
-          color="secondary"
-          keep-color
-          icon="house_siding"
-          size="70px"
-        />
-      </template>
-      <template v-slot:top-right>
-        <q-btn
-          v-if="!filters.with3dModel"
-          :label="$t('download_test_files')"
-          no-caps
-          icon="download"
-          color="secondary"
-          flat
-          class="on-left"
-          @click="downloadFiles"
-        />
-        <q-input
-          dense
-          clearable
-          debounce="300"
-          v-model="filter"
-          :placeholder="$t('search')"
-          class="on-left"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        <div>
-          <q-btn-group flat :class="$q.screen.lt.sm ? 'q-mt-md' : ''">
-            <q-btn
-              flat
-              icon="grid_view"
-              :class="view === 'grid' ? 'bg-grey-4' : ''"
-              @click="toggleView('grid')"
+    <q-page style="padding-top: 40px">
+      <q-table
+        flat
+        :grid="view === 'grid'"
+        ref="tableRef"
+        :rows="rows"
+        :columns="columns"
+        row-key="id"
+        :rows-per-page-options="[12, 24, 48, 0]"
+        v-model:pagination="pagination"
+        :loading="loading"
+        :filter="filter"
+        binary-state-sort
+        @request="onRequest"
+        @row-click="onRowClick"
+      >
+        <template v-slot:top-left> </template>
+        <template v-slot:top-right> </template>
+        <template v-slot:body-cell-scheme="props">
+          <q-td :props="props">
+            <q-img
+              v-if="props.value"
+              :src="`${cdnUrl}${props.value.path}`"
+              spinner-color="grey-6"
+              width="100px"
             />
-            <q-btn
-              flat
-              icon="view_list"
-              :class="view === 'table' ? 'bg-grey-4' : ''"
-              @click="toggleView('table')"
+          </q-td>
+        </template>
+        <template v-slot:body-cell-models="props">
+          <q-td :props="props">
+            <q-img
+              v-if="hasModels(props.row)"
+              :src="getModelsSchemeUrl(props.row)"
+              spinner-color="grey-6"
+              width="100px"
             />
-          </q-btn-group>
-        </div>
-      </template>
-      <template v-slot:body-cell-scheme="props">
-        <q-td :props="props">
-          <q-img
-            v-if="props.value"
-            :src="`${cdnUrl}${props.value.path}`"
-            spinner-color="grey-6"
-            width="100px"
-          />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-models="props">
-        <q-td :props="props">
-          <q-img
-            v-if="hasModels(props.row)"
-            :src="getModelsSchemeUrl(props.row)"
-            spinner-color="grey-6"
-            width="100px"
-          />
-        </q-td>
-      </template>
-      <template v-slot:item="props">
-        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-2">
-          <q-card flat bordered class="q-ma-md">
-            <q-card-section
-              class="q-pa-none"
-              style="cursor: pointer"
-              @click="onExperiment(props.row)"
-            >
-              <q-img
-                :src="
-                  filters.with3dModel
-                    ? getModelsSchemeUrl(props.row)
-                    : props.row.scheme
-                    ? `${cdnUrl}${props.row.scheme.path}`
-                    : '/no-image.png'
-                "
-                :alt="`${props.row.description} [${props.row.reference}]`"
-                spinner-color="grey-6"
-                height="250px"
+          </q-td>
+        </template>
+        <template v-slot:item="props">
+          <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <q-card flat bordered class="q-ma-md">
+              <q-card-section
+                class="q-pa-none"
+                style="cursor: pointer"
+                @click="onExperiment(props.row)"
               >
-                <div
-                  v-if="!filters.with3dModel && hasModels(props.row)"
-                  class="absolute-top text-right"
+                <q-img
+                  :src="
+                    filters.with3dModel
+                      ? getModelsSchemeUrl(props.row)
+                      : props.row.scheme
+                      ? `${cdnUrl}${props.row.scheme.path}`
+                      : '/no-image.png'
+                  "
+                  :alt="`${props.row.description} [${props.row.reference}]`"
+                  spinner-color="grey-6"
+                  height="250px"
                 >
-                  <q-icon
-                    name="house_siding"
-                    class="bg-secondary text-white"
-                    size="sm"
-                  />
-                </div>
-                <div class="absolute-bottom text-center">
-                  <div class="text-subtitle2">
-                    {{ props.row.reference.reference }}
+                  <div
+                    v-if="!filters.with3dModel && hasModels(props.row)"
+                    class="absolute-top text-right"
+                  >
+                    <q-icon
+                      name="house_siding"
+                      class="bg-secondary text-white"
+                      size="sm"
+                    />
                   </div>
-                  <div class="text-caption">
-                    {{ props.row.description }}
-                    <span v-if="props.row.experiment_id">
-                      - {{ props.row.experiment_id }}
-                    </span>
-                  </div>
-                </div>
-                <template v-slot:error>
                   <div class="absolute-bottom text-center">
                     <div class="text-subtitle2">
                       {{ props.row.reference.reference }}
@@ -146,59 +79,140 @@
                       </span>
                     </div>
                   </div>
-                </template>
-              </q-img>
-            </q-card-section>
-          </q-card>
-        </div>
-      </template>
+                  <template v-slot:error>
+                    <div class="absolute-bottom text-center">
+                      <div class="text-subtitle2">
+                        {{ props.row.reference.reference }}
+                      </div>
+                      <div class="text-caption">
+                        {{ props.row.description }}
+                        <span v-if="props.row.experiment_id">
+                          - {{ props.row.experiment_id }}
+                        </span>
+                      </div>
+                    </div>
+                  </template>
+                </q-img>
+              </q-card-section>
+            </q-card>
+          </div>
+        </template>
 
-      <template v-slot:body-cell-full_reference="props">
-        <q-td :props="props">
-          <div
-            style="overflow-wrap: break-word; width: 500px"
-            class="ellipsis"
-            :title="props.value"
+        <template v-slot:body-cell-full_reference="props">
+          <q-td :props="props">
+            <div
+              style="overflow-wrap: break-word; width: 500px"
+              class="ellipsis"
+              :title="props.value"
+            >
+              {{ props.value }}
+            </div>
+            <div>
+              <q-chip
+                v-if="props.row.reference.link_to_experimental_paper"
+                icon="article"
+                color="accent"
+                text-color="white"
+                size="sm"
+                class="q-ml-none"
+              >
+                <a
+                  :href="props.row.reference.link_to_experimental_paper"
+                  target="_blank"
+                  style="text-decoration: none; color: white"
+                >
+                  {{ $t('paper') }}
+                </a>
+              </q-chip>
+              <q-chip
+                v-if="props.row.reference.link_to_request_data"
+                icon="grid_on"
+                color="grey-7"
+                text-color="white"
+                size="sm"
+              >
+                <a
+                  :href="props.row.reference.link_to_request_data"
+                  target="_blank"
+                  style="text-decoration: none; color: white"
+                >
+                  {{ $t('data') }}
+                </a>
+              </q-chip>
+            </div>
+          </q-td>
+        </template>
+      </q-table>
+      <q-page-sticky expand position="top">
+        <q-toolbar class="bg-white q-pl-md q-pr-md">
+          <span class="text-h6">{{ $t('buildings_title') }}</span>
+          <q-btn
+            flat
+            round
+            size="lg"
+            icon="help_outline"
+            class="on-right text-primary"
           >
-            {{ props.value }}
-          </div>
+            <q-tooltip v-model="showFilterTips" class="bg-grey-7 text-white">
+              <div
+                class="q-pt-md q-pl-md q-pr-md"
+                style="width: 400px; font-size: medium"
+              >
+                <q-markdown :src="$t('buildings_help')" />
+              </div>
+            </q-tooltip>
+          </q-btn>
+          <q-toggle
+            v-model="filters.with3dModel"
+            :label="$t('show_numerical_models')"
+            left-label
+            color="secondary"
+            keep-color
+            icon="house_siding"
+            size="70px"
+          />
+          <q-space />
+          <q-btn
+            v-if="!filters.with3dModel"
+            :label="$t('download_test_files')"
+            no-caps
+            icon="download"
+            color="secondary"
+            flat
+            class="on-left"
+            @click="downloadFiles"
+          />
+          <q-input
+            dense
+            clearable
+            debounce="300"
+            v-model="filter"
+            :placeholder="$t('search')"
+            class="on-left"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
           <div>
-            <q-chip
-              v-if="props.row.reference.link_to_experimental_paper"
-              icon="article"
-              color="accent"
-              text-color="white"
-              size="sm"
-              class="q-ml-none"
-            >
-              <a
-                :href="props.row.reference.link_to_experimental_paper"
-                target="_blank"
-                style="text-decoration: none; color: white"
-              >
-                {{ $t('paper') }}
-              </a>
-            </q-chip>
-            <q-chip
-              v-if="props.row.reference.link_to_request_data"
-              icon="grid_on"
-              color="grey-7"
-              text-color="white"
-              size="sm"
-            >
-              <a
-                :href="props.row.reference.link_to_request_data"
-                target="_blank"
-                style="text-decoration: none; color: white"
-              >
-                {{ $t('data') }}
-              </a>
-            </q-chip>
+            <q-btn-group flat :class="$q.screen.lt.sm ? 'q-mt-md' : ''">
+              <q-btn
+                flat
+                icon="grid_view"
+                :class="view === 'grid' ? 'bg-grey-4' : ''"
+                @click="toggleView('grid')"
+              />
+              <q-btn
+                flat
+                icon="view_list"
+                :class="view === 'table' ? 'bg-grey-4' : ''"
+                @click="toggleView('table')"
+              />
+            </q-btn-group>
           </div>
-        </q-td>
-      </template>
-    </q-table>
-
+        </q-toolbar>
+      </q-page-sticky>
+    </q-page>
     <q-dialog
       v-model="showExperiment"
       :maximized="$q.screen.lt.md"
@@ -228,14 +242,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'ExperimentsTable',
 });
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { getSettings, saveSettings } from 'src/utils/settings';
+import { Settings } from 'src/stores/settings';
 import { ref, onMounted } from 'vue';
 import { api, baseUrl, cdnUrl } from 'src/boot/axios';
 import { FileNode, Experiment, Reference } from 'src/components/models';
@@ -248,7 +261,13 @@ import { useFiltersStore } from 'src/stores/filters';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();
-const view = ref(getSettings().experiments_view);
+const settingsStore = useSettingsStore();
+
+const view = ref(
+  settingsStore.settings && settingsStore.settings.experiments_view
+    ? settingsStore.settings.experiments_view
+    : 'grid'
+);
 const tableRef = ref();
 const rows = ref([]);
 const filter = ref('');
@@ -262,6 +281,7 @@ const pagination = ref({
 });
 const showExperiment = ref(false);
 const experiment = ref<Experiment>();
+const showFilterTips = ref(false);
 
 const columns = [
   {
@@ -374,9 +394,14 @@ function fetchFromServer(
   });
 }
 
-filters.$subscribe(() => {
-  tableRef.value?.requestServerInteraction();
-});
+watch(
+  [
+    () => filters.selections,
+    () => filters.referenceSelections,
+    () => filters.with3dModel,
+  ],
+  () => tableRef.value?.requestServerInteraction()
+);
 
 function onExperiment(selected: Experiment) {
   experiment.value = selected;
@@ -385,13 +410,23 @@ function onExperiment(selected: Experiment) {
 
 onMounted(() => {
   tableRef.value?.requestServerInteraction();
+  if (settingsStore.settings?.intro_shown) {
+    triggerFilterTips();
+  }
 });
+
+watch(
+  () => settingsStore.settings,
+  () => {
+    if (settingsStore.settings?.intro_shown) {
+      triggerFilterTips();
+    }
+  }
+);
 
 function toggleView(newView: string) {
   view.value = newView;
-  const settings = getSettings();
-  settings.experiments_view = view.value;
-  saveSettings(settings);
+  settingsStore.saveSettings({ experiments_view: view.value } as Settings);
 }
 
 function hasModels(row: Experiment) {
@@ -428,5 +463,15 @@ function downloadFiles() {
 
 function onReferenceExperimentSelection(selected: Experiment) {
   experiment.value = selected;
+}
+
+function triggerFilterTips() {
+  if (!showFilterTips.value && !settingsStore.settings?.filter_tips) {
+    showFilterTips.value = true;
+    setTimeout(() => {
+      showFilterTips.value = false;
+      settingsStore.saveSettings({ filter_tips: true } as Settings);
+    }, 5000);
+  }
 }
 </script>
