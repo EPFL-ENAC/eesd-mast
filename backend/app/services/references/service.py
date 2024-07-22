@@ -21,7 +21,12 @@ class ReferencesService:
         """Get a reference by id or short name"""
         sel = select(Reference)
         if isinstance(reference_id, str):
-            sel = sel.where(Reference.reference == reference_id)
+            # try to cast to an int and if it fails it is the reference short name
+            try:
+                ref_id = int(reference_id)
+                sel = sel.where(Reference.id == ref_id)
+            except Exception as e:
+                sel = sel.where(Reference.reference == reference_id)
         else:
             sel = sel.where(Reference.id == reference_id)
         res = await self.session.exec(sel)
