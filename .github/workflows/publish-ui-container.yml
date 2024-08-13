@@ -11,7 +11,7 @@ on:
       - v*
 
 env:
-  IMAGE_NAME: mast-api
+  IMAGE_NAME: mast-ui
 
 jobs:
   # Push image to GitHub Packages.

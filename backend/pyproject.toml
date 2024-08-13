@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mast-api"
-version = "1.0.0"
+version = "1.0.1"
 description = "MAsonryShake-Table API"
 license = "GPL-3.0-or-later"
 authors = ["Yannick Marcon <yannick.marcon@epfl.ch>"]
