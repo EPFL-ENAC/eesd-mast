@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A comprehensive database and collaborative resource for advancing seismic assessment of unreinforced masonry buildings",
   "productName": "Masonry Shake Table Database",
   "author": "ymarcon <yannick.marcon@epfl.ch>",
