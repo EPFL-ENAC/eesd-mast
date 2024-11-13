@@ -10,7 +10,7 @@ export default {
   actual_pga_z: 'Actual PGA Z-dir. [g]',
   aggregations_title: 'Features of the buildings included in the database',
   aggregations_hint: 'Select a category to filter tested buildings',
-  app_title: 'Masonry Shake Table Database',
+  app_title: 'Masonry shake table database',
   app_subtitle:
     'Open database of shake table tests and numerical models of URM buildings',
   applied_excitation_directions: 'Applied Excitation Directions',
