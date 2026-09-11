@@ -13,7 +13,7 @@
     "build": "quasar build"
   },
   "dependencies": {
-    "@kitware/vtk.js": "^29.4.3",
+    "@kitware/vtk.js": "^36.14.2",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "echarts": "^5.4.3",
