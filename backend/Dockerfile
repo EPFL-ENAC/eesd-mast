@@ -1,4 +1,4 @@
-FROM python:3.11.7-bullseye
+FROM python:3.11.7-bookworm
 ENV POETRY_VERSION=1.7.1
 RUN pip install "poetry==$POETRY_VERSION"
 ENV PYTHONPATH="$PYTHONPATH:/app"
