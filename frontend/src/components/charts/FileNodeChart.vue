@@ -31,8 +31,8 @@ import {
   DataZoomComponent,
 } from 'echarts/components';
 import Papa from 'papaparse';
-import { api, cdnUrl } from 'src/boot/axios';
-import { FileNode } from 'src/components/models';
+import { api, cdnUrl } from '@/boot/axios';
+import { FileNode } from '@/components/models';
 
 use([
   SVGRenderer,

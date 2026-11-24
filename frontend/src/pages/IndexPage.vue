@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import AppHeader from 'src/components/AppHeader.vue';
-import MetricsBanner from 'src/components/MetricsBanner.vue';
-import ExperimentAggregations from 'src/components/ExperimentAggregations.vue';
-import CiteMd from 'src/assets/cite.md';
+import AppHeader from '@/components/AppHeader.vue';
+import MetricsBanner from '@/components/MetricsBanner.vue';
+import ExperimentAggregations from '@/components/ExperimentAggregations.vue';
+import CiteMd from '@/assets/cite.md';
 </script>

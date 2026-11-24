@@ -22,8 +22,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { api, baseUrl } from 'src/boot/axios';
-import ExperimentModelView from 'components/ExperimentModelView.vue';
+import { api, baseUrl } from '@/boot/axios';
+import ExperimentModelView from '@/components/ExperimentModelView.vue';
 
 const route = useRoute();
 const router = useRouter();

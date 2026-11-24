@@ -162,15 +162,15 @@ export default defineComponent({
 import { exportFile } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { withDefaults, ref } from 'vue';
-import { cdnUrl } from 'src/boot/axios';
+import { cdnUrl } from '@/boot/axios';
 import {
   Experiment,
   RunResult,
   RunResultFileNodes,
-} from 'src/components/models';
+} from '@/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
-import { toMaxDecimals, toFixed } from 'src/utils/numbers';
-import { Settings } from 'src/stores/settings';
+import { toMaxDecimals, toFixed } from '@/utils/numbers';
+import { Settings } from '@/stores/settings';
 
 const { t } = useI18n({ useScope: 'global' });
 const settingsStore = useSettingsStore();

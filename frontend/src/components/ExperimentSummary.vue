@@ -119,9 +119,9 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
-import { cdnUrl } from 'src/boot/axios';
-import { FileNode, Experiment } from 'src/components/models';
-import { useReferencesStore } from 'src/stores/references';
+import { cdnUrl } from '@/boot/axios';
+import { FileNode, Experiment } from '@/components/models';
+import { useReferencesStore } from '@/stores/references';
 
 const referencesStore = useReferencesStore();
 

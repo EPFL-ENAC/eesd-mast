@@ -1,9 +1,7 @@
 Welcome to this web-based platform dedicated to shake table tests conducted on unreinforced masonry buildings!
 
-Here you will be able to explore our comprehensive repository and discover valuable data and insights derived from experimental tests.
+This database of shake table tests conducted on full URM buildings aims to contribute with an open-access web-based interactive platform that serves as the first centralized database for this type of test.
 
-Whether you are delving into seismic performance assessment or structural dynamics, our database offers a unique perspective on the seismic behavior of unreinforced masonry structures under diverse conditions.
+The platform is organized in a consistent format, making it easy to obtain specific information and test results. Furthermore, you will be able to download relevant data and ready-to-use numerical models for modeling validation and uncertainty quantification studies in the seismic assessment of URM buildings.
 
-Join us on our mission to bolster earthquake resilience and deepen our understanding of these important structures, paving the way for safer communities and more resilient infrastructure.
-
-_Welcome aboard!_
+Thanks for your interest and please join us on our mission to bolster earthquake resilience and deepen our understanding of these amazing structures, paving the way for safer communities and more resilient infrastructure.
