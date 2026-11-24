@@ -1,15 +1,14 @@
+from fastapi import APIRouter, Body, Depends, Query, Response, Security
 
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
-from app.db import get_session, AsyncSession
 from app.auth import get_api_key
-from app.services.numericalmodels.service import NumericalModelsService
+from app.db import AsyncSession, get_session
 from app.services.numericalmodels.models import (
     NumericalModel,
     NumericalModelCreate,
     NumericalModelRead,
     NumericalModelUpdate,
 )
-from logging import debug
+from app.services.numericalmodels.service import NumericalModelsService
 
 router = APIRouter()
 
@@ -38,9 +37,7 @@ async def get_numerical_models(
     service = NumericalModelsService(session)
     start, end, total_count, numerical_models = await service.find(filter, sort, range)
 
-    response.headers[
-        "Content-Range"
-    ] = f"numerical_models {start}-{end}/{total_count}"
+    response.headers["Content-Range"] = f"numerical_models {start}-{end}/{total_count}"
     return numerical_models
 
 
@@ -52,7 +49,9 @@ async def create_numerical_model(
 ) -> NumericalModelRead:
     """Create a numerical model"""
     service = NumericalModelsService(session)
-    numerical_model = await service.create(NumericalModel.model_validate(numerical_model))
+    numerical_model = await service.create(
+        NumericalModel.model_validate(numerical_model)
+    )
     return numerical_model
 
 
@@ -61,7 +60,7 @@ async def update_numerical_model(
     numerical_model_id: int,
     numerical_model_update: NumericalModelUpdate,
     session: AsyncSession = Depends(get_session),
-    api_key: str = Security(get_api_key)
+    api_key: str = Security(get_api_key),
 ) -> NumericalModelRead:
     """Update a numerical model"""
     service = NumericalModelsService(session)

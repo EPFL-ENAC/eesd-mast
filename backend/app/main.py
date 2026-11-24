@@ -1,16 +1,19 @@
-from fastapi import FastAPI, status, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import config
-from app.db import get_session, AsyncSession
-from app.services.files.views import router as files_router
-from app.services.references.views import router as references_router
-from app.services.experiments.views import router as experiments_router
-from app.services.runresults.views import router as run_results_router
-from app.services.numericalmodels.views import router as numerical_models_router
-from app.services.analysis.views import router as analysis_router
-from app.services.experiments_download.views import router as experiments_download_router
 from pydantic import BaseModel
 from sqlalchemy.sql import text
+
+from app.config import config
+from app.db import AsyncSession, get_session
+from app.services.analysis.views import router as analysis_router
+from app.services.experiments.views import router as experiments_router
+from app.services.experiments_download.views import (
+    router as experiments_download_router,
+)
+from app.services.files.views import router as files_router
+from app.services.numericalmodels.views import router as numerical_models_router
+from app.services.references.views import router as references_router
+from app.services.runresults.views import router as run_results_router
 
 app = FastAPI(root_path=config.PATH_PREFIX)
 

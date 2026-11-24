@@ -1,12 +1,15 @@
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
+from fastapi import APIRouter, Depends, Query, Response
 
-from app.db import get_session, AsyncSession
+from app.db import AsyncSession, get_session
 from app.services.analysis.models import Counts
+from app.services.experiments.models import (
+    ExperimentFrequencies,
+    ExperimentParallelCount,
+)
 from app.services.experiments.service import ExperimentsService
 from app.services.references.service import ReferencesService
+from app.services.runresults.models import RunResultFragility, RunResultVulnerability
 from app.services.runresults.service import RunResultsService
-from app.services.experiments.models import ExperimentFrequencies, ExperimentParallelCount
-from app.services.runresults.models import RunResultVulnerability, RunResultFragility
 
 router = APIRouter()
 
@@ -23,7 +26,12 @@ async def get_general_counts(
     ref_count = await ref_service.count()
     runres_service = RunResultsService(session)
     runres_count = await runres_service.count()
-    return Counts(experiments_count=exp_count, models_count=mod_count, references_count=ref_count, run_results_count=runres_count)
+    return Counts(
+        experiments_count=exp_count,
+        models_count=mod_count,
+        references_count=ref_count,
+        run_results_count=runres_count,
+    )
 
 
 @router.get("/experiments/frequencies", response_model=ExperimentFrequencies)
@@ -38,7 +46,9 @@ async def get_experiments_frequencies(
     return res
 
 
-@router.get("/experiments/parallel-counts", response_model=list[ExperimentParallelCount])
+@router.get(
+    "/experiments/parallel-counts", response_model=list[ExperimentParallelCount]
+)
 async def get_experiments_parallel_counts(
     response: Response,
     filter: str = Query(None),
@@ -57,15 +67,19 @@ async def get_experiments_parallel_counts(
     for parCountAll in resAll:
         # find parCount in resAll
         for parCount in res:
-            if parCountAll.masonry_unit_material == parCount.masonry_unit_material and \
-                    parCountAll.masonry_unit_type == parCount.masonry_unit_type and \
-                    parCountAll.diaphragm_material == parCount.diaphragm_material and \
-                    parCountAll.wall_leaves_nb == parCount.wall_leaves_nb and \
-                    parCountAll.storeys_nb == parCount.storeys_nb and \
-                    parCountAll.test_scale == parCount.test_scale and \
-                    parCountAll.simultaneous_excitations_nb == parCount.simultaneous_excitations_nb and \
-                    parCountAll.retrofitting_application == parCount.retrofitting_application and \
-                    parCountAll.with_model == parCountAll.with_model:
+            if (
+                parCountAll.masonry_unit_material == parCount.masonry_unit_material
+                and parCountAll.masonry_unit_type == parCount.masonry_unit_type
+                and parCountAll.diaphragm_material == parCount.diaphragm_material
+                and parCountAll.wall_leaves_nb == parCount.wall_leaves_nb
+                and parCountAll.storeys_nb == parCount.storeys_nb
+                and parCountAll.test_scale == parCount.test_scale
+                and parCountAll.simultaneous_excitations_nb
+                == parCount.simultaneous_excitations_nb
+                and parCountAll.retrofitting_application
+                == parCount.retrofitting_application
+                and parCountAll.with_model == parCountAll.with_model
+            ):
                 parCountAll.selected = True
                 break
     return resAll

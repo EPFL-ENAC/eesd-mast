@@ -1,6 +1,16 @@
-from sqlmodel import SQLModel, Field, ARRAY, UniqueConstraint, Column, Integer, String, JSON
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel, ConfigDict
+from sqlmodel import (
+    ARRAY,
+    JSON,
+    Column,
+    Field,
+    Integer,
+    SQLModel,
+    String,
+    UniqueConstraint,
+)
 
 
 class ExperimentBase(SQLModel):
@@ -18,7 +28,8 @@ class ExperimentBase(SQLModel):
     test_scale: float | None = Field(default=None)
     simultaneous_excitations_nb: int | None = Field(default=None)
     applied_excitation_directions: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     storeys_nb: int | None = Field(default=None)
     building_height: float | None = Field(default=None)
     total_building_height: float | None = Field(default=None)
@@ -29,7 +40,8 @@ class ExperimentBase(SQLModel):
     mortar_type: str | None = Field(default=None)
     masonry_compressive_strength: float | None = Field(default=None)
     masonry_wall_thickness: List[int] | None = Field(
-        sa_column=Column(ARRAY(Integer)), default=None)
+        sa_column=Column(ARRAY(Integer)), default=None
+    )
     wall_leaves_nb: int | None = Field(default=None)
     internal_walls: bool | None = Field(default=None)
     mechanical_connectors: str | None = Field(default=None)
@@ -37,36 +49,39 @@ class ExperimentBase(SQLModel):
     retrofitted: bool | None = Field(default=None)
     retrofitting_application: str | None = Field(default=None)
     retrofitting_type: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     first_estimated_fundamental_period: float | None = Field(default=None)
     last_estimated_fundamental_period: float | None = Field(default=None)
     max_horizontal_pga: float | None = Field(default=None)
     max_estimated_dg: float | None = Field(default=None)
     material_characterizations: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     associated_test_types: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     material_characterization_refs: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     digitalized_data: bool = Field(default=False)
     experimental_results_reported: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     open_measured_data: bool = Field(default=False)
     link_to_open_measured_data: str | None = Field(default=None)
     crack_types_observed: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
+        sa_column=Column(ARRAY(String)), default=None
+    )
     experimental_campaign_motivation: str | None = Field(default=None)
     publication_year: int | None = Field(default=None)
     link_to_material_papers: List[str] | None = Field(
-        sa_column=Column(ARRAY(String)), default=None)
-
-    reference_id: int = Field(
-        foreign_key="reference.id", index=True
+        sa_column=Column(ARRAY(String)), default=None
     )
 
-    model_config = ConfigDict(
-        protected_namespaces=()
-    )
+    reference_id: int = Field(foreign_key="reference.id", index=True)
+
+    model_config = ConfigDict(protected_namespaces=())
 
 
 class Experiment(ExperimentBase, table=True):

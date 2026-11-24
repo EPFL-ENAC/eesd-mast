@@ -1,18 +1,18 @@
 """init
 
 Revision ID: c29a01976a4d
-Revises: 
+Revises:
 Create Date: 2023-11-27 11:11:11
 
 """
+
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'c29a01976a4d'
+revision: str = "c29a01976a4d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,12 +31,29 @@ def upgrade() -> None:
         sa.Column("link_to_experimental_paper", sa.String(), nullable=True),
         sa.Column("corresponding_author_name", sa.String(), nullable=True),
         sa.Column("corresponding_author_email", sa.String(), nullable=True),
-
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_reference_ref"), "reference", ["reference"], unique=False),
-    op.create_index(op.f("ix_reference_name"), "reference", ["corresponding_author_name"], unique=False),
-    op.create_index(op.f("ix_reference_email"), "reference", ["corresponding_author_email"], unique=False),
+    (
+        op.create_index(
+            op.f("ix_reference_ref"), "reference", ["reference"], unique=False
+        ),
+    )
+    (
+        op.create_index(
+            op.f("ix_reference_name"),
+            "reference",
+            ["corresponding_author_name"],
+            unique=False,
+        ),
+    )
+    (
+        op.create_index(
+            op.f("ix_reference_email"),
+            "reference",
+            ["corresponding_author_email"],
+            unique=False,
+        ),
+    )
     op.create_table(
         "experiment",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -45,7 +62,9 @@ def upgrade() -> None:
         sa.Column("experiment_id", sa.String, index=True),
         sa.Column("test_scale", sa.Float(), nullable=True),
         sa.Column("simultaneous_excitations_nb", sa.Integer(), nullable=True),
-        sa.Column("applied_excitation_directions", sa.ARRAY(sa.String()), nullable=True),
+        sa.Column(
+            "applied_excitation_directions", sa.ARRAY(sa.String()), nullable=True
+        ),
         sa.Column("storeys_nb", sa.Integer(), nullable=True),
         sa.Column("building_height", sa.Integer(), nullable=True),
         sa.Column("total_building_height", sa.Integer(), nullable=True),
@@ -69,19 +88,27 @@ def upgrade() -> None:
         sa.Column("max_estimated_dg", sa.Float(), nullable=True),
         sa.Column("material_characterizations", sa.ARRAY(sa.String()), nullable=True),
         sa.Column("associated_test_types", sa.ARRAY(sa.String()), nullable=True),
-        sa.Column("material_characterization_refs", sa.ARRAY(sa.String()), nullable=True),
+        sa.Column(
+            "material_characterization_refs", sa.ARRAY(sa.String()), nullable=True
+        ),
         sa.Column("digitalized_data", sa.Boolean(), default=False),
-        sa.Column("experimental_results_reported", sa.ARRAY(sa.String()), nullable=True),
+        sa.Column(
+            "experimental_results_reported", sa.ARRAY(sa.String()), nullable=True
+        ),
         sa.Column("open_measured_data", sa.Boolean(), default=False),
         sa.Column("link_to_open_measured_data", sa.String(), nullable=True),
         sa.Column("crack_types_observed", sa.ARRAY(sa.String()), nullable=True),
         sa.Column("experimental_campaign_motivation", sa.String(), nullable=True),
         sa.Column("reference_id", sa.Integer(), nullable=True),
-        
-        sa.ForeignKeyConstraint(["reference_id"], ["reference.id"],),
+        sa.ForeignKeyConstraint(
+            ["reference_id"],
+            ["reference.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_experiment_description"), "experiment", ["description"], unique=False)
+    op.create_index(
+        op.f("ix_experiment_description"), "experiment", ["description"], unique=False
+    )
     op.create_index(op.f("ix_experiment_id"), "experiment", ["id"], unique=False)
     op.create_table(
         "runresult",
@@ -103,8 +130,10 @@ def upgrade() -> None:
         sa.Column("reported_t1_x", sa.Float(), nullable=True),
         sa.Column("reported_t1_y", sa.Float(), nullable=True),
         sa.Column("experiment_id", sa.Integer(), nullable=True),
-
-        sa.ForeignKeyConstraint(["experiment_id"], ["experiment.id"],),
+        sa.ForeignKeyConstraint(
+            ["experiment_id"],
+            ["experiment.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_runresult_id"), "runresult", ["id"], unique=False)

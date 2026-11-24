@@ -1,32 +1,53 @@
-from app.services.runresults.models import RunResult, RunResultUpdate, RunResultVulnerability, RunResultFragility
-from app.services.experiments.models import Experiment
-from app.utils.query import QueryBuilder
-from sqlmodel import select, join, not_
-from sqlalchemy.sql import text
-from fastapi import HTTPException
-from app.db import AsyncSession
-from scipy.stats import lognorm
-import statsmodels.api as sm
 import numpy as np
+import statsmodels.api as sm
+from fastapi import HTTPException
+from scipy.stats import lognorm
+from sqlalchemy.sql import text
+from sqlmodel import join, not_, select
+
+from app.db import AsyncSession
+from app.services.experiments.models import Experiment
+from app.services.runresults.models import (
+    RunResult,
+    RunResultFragility,
+    RunResultUpdate,
+    RunResultVulnerability,
+)
+from app.utils.query import QueryBuilder
 
 
 class RunResultsService:
-
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
         """Count all run results"""
-        count = (await self.session.exec(text("select count(id) from runresult"))).scalar()
+        count = (
+            await self.session.exec(text("select count(id) from runresult"))
+        ).scalar()
         return count
 
     async def vulnerability(self, filter: dict | str) -> list[RunResultVulnerability]:
         """Get vulnerabilities from all run results"""
-        query = select(RunResult.actual_pga_x, RunResult.actual_pga_y, RunResult.nominal_pga_x, RunResult.nominal_pga_y, RunResult.dg_derived, RunResult.dg_reported) \
-            .select_from(join(RunResult, Experiment)) \
-            .where(RunResult.actual_pga_x.isnot(None) | RunResult.actual_pga_y.isnot(None) | RunResult.nominal_pga_x.isnot(None) | RunResult.nominal_pga_y.isnot(None)) \
-            .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None)) \
-            .where(not_(RunResult.run_id.in_(['Initial', 'Final'])))
+        query = (
+            select(
+                RunResult.actual_pga_x,
+                RunResult.actual_pga_y,
+                RunResult.nominal_pga_x,
+                RunResult.nominal_pga_y,
+                RunResult.dg_derived,
+                RunResult.dg_reported,
+            )
+            .select_from(join(RunResult, Experiment))
+            .where(
+                RunResult.actual_pga_x.isnot(None)
+                | RunResult.actual_pga_y.isnot(None)
+                | RunResult.nominal_pga_x.isnot(None)
+                | RunResult.nominal_pga_y.isnot(None)
+            )
+            .where(RunResult.dg_derived.isnot(None) | RunResult.dg_reported.isnot(None))
+            .where(not_(RunResult.run_id.in_(["Initial", "Final"])))
+        )
 
         builder = QueryBuilder(Experiment, filter, [], [])
         query = builder.build_filter_query(query)
@@ -38,7 +59,9 @@ class RunResultsService:
             dg = result.dg_derived if result.dg_derived else result.dg_reported
             pga = result.actual_pga_x if result.actual_pga_x else result.nominal_pga_x
             if pga is None:
-                pga = result.actual_pga_y if result.actual_pga_y else result.nominal_pga_y
+                pga = (
+                    result.actual_pga_y if result.actual_pga_y else result.nominal_pga_y
+                )
             if dg not in data:
                 data[dg] = []
             data[dg].append(pga)
@@ -49,7 +72,9 @@ class RunResultsService:
 
         return vulnerabilities
 
-    def fragility(self, vulnerabilities: list[RunResultVulnerability]) -> list[RunResultFragility]:
+    def fragility(
+        self, vulnerabilities: list[RunResultVulnerability]
+    ) -> list[RunResultFragility]:
         """Compute fragility curves from vulnerabilities
 
         Args:
@@ -67,11 +92,13 @@ class RunResultsService:
             # Compute the probability of exceedance for each damage grade
             p_exceed = []
             grade_pgas = list(
-                map(lambda vul: vul.pgas, [v for v in vulnerabilities if v.dg == i]))
+                map(lambda vul: vul.pgas, [v for v in vulnerabilities if v.dg == i])
+            )
             if len(grade_pgas):
                 for pga in PGA_thresh:
-                    p_exceed.append(np.sum(grade_pgas <= pga) /
-                                    np.sum(~np.isnan(grade_pgas)))
+                    p_exceed.append(
+                        np.sum(grade_pgas <= pga) / np.sum(~np.isnan(grade_pgas))
+                    )
 
                 # Fit a lognormal CDF to the data
                 b, theta, beta = self.probit(PGA_thresh, p_exceed)
@@ -80,8 +107,15 @@ class RunResultsService:
                 data = lognorm.cdf(x, beta, scale=theta)
 
                 # Store the results
-                fragilities.append(RunResultFragility(
-                    dg=i, thresh=PGA_thresh.tolist(), prob=p_exceed, x=x.tolist(), y=data.tolist()))
+                fragilities.append(
+                    RunResultFragility(
+                        dg=i,
+                        thresh=PGA_thresh.tolist(),
+                        prob=p_exceed,
+                        x=x.tolist(),
+                        y=data.tolist(),
+                    )
+                )
 
         return fragilities
 
@@ -109,8 +143,7 @@ class RunResultsService:
         Y = p_exceed
 
         # , max_iter=100) #, cov_type='HC3')
-        model = sm.GLM(Y, X, family=sm.families.Binomial(
-            sm.families.links.probit()))
+        model = sm.GLM(Y, X, family=sm.families.Binomial(sm.families.links.probit()))
         # model = sm.GLM(Y, X, family=sm.families.Gaussian(sm.families.links.log())) #, cov_type='HC3')
         result = model.fit()
 
@@ -136,7 +169,9 @@ class RunResultsService:
 
         return run_result
 
-    async def find(self, filter: dict | str, sort: list | str, range: list | str) -> list[int, int, int, RunResult]:
+    async def find(
+        self, filter: dict | str, sort: list | str, range: list | str
+    ) -> list[int, int, int, RunResult]:
         """Get all run results matching filter and range"""
         builder = QueryBuilder(RunResult, filter, sort, range)
 
@@ -194,12 +229,16 @@ class RunResultsService:
 
     async def get_by_experiment(self, experiment_id: int) -> list[RunResult]:
         """Delete all run results by experiment id"""
-        start, stop, total_count, run_results = await self.find(filter={"experiment_id": experiment_id}, sort=None, range=None)
+        start, stop, total_count, run_results = await self.find(
+            filter={"experiment_id": experiment_id}, sort=None, range=None
+        )
         return run_results
 
     async def delete_by_experiment(self, experiment_id: int) -> None:
         """Delete all run results by experiment id"""
-        start, stop, total_count, run_results = await self.find(filter={"experiment_id": experiment_id}, sort=None, range=None)
+        start, stop, total_count, run_results = await self.find(
+            filter={"experiment_id": experiment_id}, sort=None, range=None
+        )
         if run_results:
             [await self.session.delete(run_result) for run_result in run_results]
             await self.session.commit()

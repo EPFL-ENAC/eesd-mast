@@ -1,20 +1,22 @@
-from app.services.references.models import Reference, ReferenceUpdate, ReferenceRead
-from app.services.experiments.service import ExperimentsService
-from app.utils.query import QueryBuilder
-from sqlmodel import select
-from sqlalchemy.sql import text
 from fastapi import HTTPException
+from sqlalchemy.sql import text
+from sqlmodel import select
+
 from app.db import AsyncSession
+from app.services.experiments.service import ExperimentsService
+from app.services.references.models import Reference, ReferenceRead, ReferenceUpdate
+from app.utils.query import QueryBuilder
 
 
 class ReferencesService:
-
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self) -> int:
         """Count all run results"""
-        count = (await self.session.exec(text("select count(id) from reference"))).scalar()
+        count = (
+            await self.session.exec(text("select count(id) from reference"))
+        ).scalar()
         return count
 
     async def get(self, reference_id: int | str) -> Reference:
@@ -25,7 +27,7 @@ class ReferencesService:
             try:
                 ref_id = int(reference_id)
                 sel = sel.where(Reference.id == ref_id)
-            except Exception as e:
+            except Exception:
                 sel = sel.where(Reference.reference == reference_id)
         else:
             sel = sel.where(Reference.id == reference_id)
@@ -36,7 +38,9 @@ class ReferencesService:
 
         return reference
 
-    async def find(self, filter: dict | str, sort: list | str, range: list | str) -> list[int, int, int, Reference]:
+    async def find(
+        self, filter: dict | str, sort: list | str, range: list | str
+    ) -> list[int, int, int, Reference]:
         """Get all references matching filter and range"""
         builder = QueryBuilder(Reference, filter, sort, range)
 
@@ -61,7 +65,9 @@ class ReferencesService:
         await self.session.refresh(reference)
         return reference
 
-    async def patch(self, reference_id: int, reference: ReferenceUpdate) -> ReferenceRead:
+    async def patch(
+        self, reference_id: int, reference: ReferenceUpdate
+    ) -> ReferenceRead:
         """Update a reference"""
         res = await self.session.exec(
             select(Reference).where(Reference.id == reference_id)

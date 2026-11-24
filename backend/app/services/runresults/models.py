@@ -1,5 +1,5 @@
-from sqlmodel import SQLModel, Field, UniqueConstraint
 from pydantic import BaseModel
+from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
 class RunResultBase(SQLModel):
@@ -20,9 +20,7 @@ class RunResultBase(SQLModel):
     reported_t1_x: float | None = Field(default=None)
     reported_t1_y: float | None = Field(default=None)
 
-    experiment_id: int = Field(
-        default=None, foreign_key="experiment.id", index=True
-    )
+    experiment_id: int = Field(default=None, foreign_key="experiment.id", index=True)
 
 
 class RunResult(RunResultBase, table=True):

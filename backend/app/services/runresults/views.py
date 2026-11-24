@@ -1,15 +1,14 @@
+from fastapi import APIRouter, Body, Depends, Query, Response, Security
 
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
-from app.db import get_session, AsyncSession
 from app.auth import get_api_key
-from app.services.runresults.service import RunResultsService
+from app.db import AsyncSession, get_session
 from app.services.runresults.models import (
     RunResult,
     RunResultCreate,
     RunResultRead,
     RunResultUpdate,
 )
-from logging import debug
+from app.services.runresults.service import RunResultsService
 
 router = APIRouter()
 
@@ -38,9 +37,7 @@ async def get_run_results(
     service = RunResultsService(session)
     start, end, total_count, run_results = await service.find(filter, sort, range)
 
-    response.headers[
-        "Content-Range"
-    ] = f"run_results {start}-{end}/{total_count}"
+    response.headers["Content-Range"] = f"run_results {start}-{end}/{total_count}"
     return run_results
 
 
@@ -61,7 +58,7 @@ async def update_run_result(
     run_result_id: int,
     run_result_update: RunResultUpdate,
     session: AsyncSession = Depends(get_session),
-    api_key: str = Security(get_api_key)
+    api_key: str = Security(get_api_key),
 ) -> RunResultRead:
     """Update a run result"""
     service = RunResultsService(session)
