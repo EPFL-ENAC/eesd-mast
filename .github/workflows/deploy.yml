@@ -1,0 +1,21 @@
+# https://github.com/EPFL-ENAC/epfl-enac-build-push-deploy-action#readme
+name: deploy
+
+'on':
+  push:
+    branches: [dev]
+    tags: ['v*.*.*']
+
+jobs:
+  deploy:
+    uses: EPFL-ENAC/epfl-enac-build-push-deploy-action/.github/workflows/deploy.yml@v4.2.0
+    secrets:
+      token: ${{ secrets.CD_TOKEN }}
+    with:
+      org: epfl-eesd
+      repo: mast
+      build_context: '["./backend", "./frontend"]'
+      # The frontend bakes its API URL at build time: tags deploy to prod, dev to dev.
+      build_args: |
+        API_URL=${{ github.ref_type == 'tag' && 'https://masonrydb.epfl.ch' || 'https://mast-dev.epfl.ch' }}
+        API_PATH=/api

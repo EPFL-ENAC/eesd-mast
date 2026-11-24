@@ -1,33 +1,32 @@
 import datetime
-import zipfile
-import tempfile
-import shutil
 import os
 import re
+import shutil
+import tempfile
+import zipfile
+from pathlib import Path
 from urllib.parse import unquote
 
-from pathlib import Path
-
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
+from fastapi import APIRouter, Body, Depends, Query, Response, Security
 from fastapi.datastructures import UploadFile
-from fastapi.param_functions import File
 from fastapi.exceptions import HTTPException
+from fastapi.param_functions import File
 
-from app.db import get_session, AsyncSession
 from app.auth import get_api_key
-from app.services.files.size import size_checker
-from app.utils.mimetype import zip_mimetypes, image_mimetypes
-from app.utils.file_nodes import FileNode
-from app.services.files.s3client import s3_client
-from app.services.experiments.service import ExperimentsService
+from app.db import AsyncSession, get_session
 from app.services.experiments.models import (
     Experiment,
     ExperimentCreate,
     ExperimentRead,
     ExperimentUpdate,
 )
-from app.services.runresults.models import RunResultRead
+from app.services.experiments.service import ExperimentsService
+from app.services.files.s3client import s3_client
+from app.services.files.size import size_checker
 from app.services.numericalmodels.models import NumericalModelRead
+from app.services.runresults.models import RunResultRead
+from app.utils.file_nodes import FileNode
+from app.utils.mimetype import image_mimetypes, zip_mimetypes
 
 router = APIRouter()
 
@@ -55,7 +54,7 @@ def unzip_to_temp_directory(zip_file_path):
 def list_files_recursively(directory, relative=False):
     paths = []
     path = Path(directory)
-    for file_path in path.rglob('*'):
+    for file_path in path.rglob("*"):
         if file_path.is_file():
             if relative:
                 paths.append(str(file_path.relative_to(directory)))
@@ -70,7 +69,7 @@ async def write_files_recursively(directory, files):
         if file["is_file"]:
             body, content_type = await s3_client.get_file(unquote(file["path"]))
             if body:
-                with open(file_path, 'wb') as f:
+                with open(file_path, "wb") as f:
                     f.write(body)
             else:
                 pass
@@ -103,9 +102,7 @@ async def get_experiments(
     service = ExperimentsService(session)
     start, end, total_count, experiments = await service.find(filter, sort, range)
 
-    response.headers[
-        "Content-Range"
-    ] = f"experiments {start}-{end}/{total_count}"
+    response.headers["Content-Range"] = f"experiments {start}-{end}/{total_count}"
     return experiments
 
 
@@ -126,7 +123,7 @@ async def update_experiment(
     experiment_id: int,
     experiment_update: ExperimentUpdate,
     session: AsyncSession = Depends(get_session),
-    api_key: str = Security(get_api_key)
+    api_key: str = Security(get_api_key),
 ) -> ExperimentRead:
     """Update an experiment by id"""
     service = ExperimentsService(session)
@@ -134,13 +131,15 @@ async def update_experiment(
     return experiment
 
 
-@router.get("/{experiment_id}/plan-files",
-            status_code=200,
-            description="-- Download experiment plan assets as a zip archive --")
+@router.get(
+    "/{experiment_id}/plan-files",
+    status_code=200,
+    description="-- Download experiment plan assets as a zip archive --",
+)
 async def get_experiment_plan_files(
-        experiment_id: int,
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
@@ -149,12 +148,16 @@ async def get_experiment_plan_files(
         try:
             # Create a temporary directory
             folder_name = f"{experiment.building_id}-{experiment.plan_files['name']}"
-            zip_file_path, temp_dir = await make_temp_zip(folder_name, experiment.plan_files)
+            zip_file_path, temp_dir = await make_temp_zip(
+                folder_name, experiment.plan_files
+            )
 
             with open(zip_file_path, "rb") as file:
                 content = file.read()
 
-            response.headers["Content-Disposition"] = f"attachment; filename={folder_name}.zip"
+            response.headers["Content-Disposition"] = (
+                f"attachment; filename={folder_name}.zip"
+            )
             response.headers["Content-Type"] = "application/zip"
             response.status_code = 200
             response.body = content
@@ -164,17 +167,18 @@ async def get_experiment_plan_files(
             # Clean up the temporary file
             shutil.rmtree(temp_dir)
     else:
-        raise HTTPException(
-            status_code=404, detail="Plan files not found")
+        raise HTTPException(status_code=404, detail="Plan files not found")
 
 
-@router.get("/{experiment_id}/model-files",
-            status_code=200,
-            description="-- Download experiment numerical model assets as a zip archive --")
+@router.get(
+    "/{experiment_id}/model-files",
+    status_code=200,
+    description="-- Download experiment numerical model assets as a zip archive --",
+)
 async def get_experiment_model_files(
-        experiment_id: int,
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
@@ -184,12 +188,16 @@ async def get_experiment_model_files(
         try:
             # Create a temporary directory
             folder_name = f"{experiment.building_id}-{experiment.model_files['name']}"
-            zip_file_path, temp_dir = await make_temp_zip(folder_name, experiment.model_files)
+            zip_file_path, temp_dir = await make_temp_zip(
+                folder_name, experiment.model_files
+            )
 
             with open(zip_file_path, "rb") as file:
                 content = file.read()
 
-            response.headers["Content-Disposition"] = f"attachment; filename={base_name}_EFMmodel.zip"
+            response.headers["Content-Disposition"] = (
+                f"attachment; filename={base_name}_EFMmodel.zip"
+            )
             response.headers["Content-Type"] = "application/zip"
             response.status_code = 200
             response.body = content
@@ -199,17 +207,18 @@ async def get_experiment_model_files(
             # Clean up the temporary file
             shutil.rmtree(temp_dir)
     else:
-        raise HTTPException(
-            status_code=404, detail="Numerical model files not found")
+        raise HTTPException(status_code=404, detail="Numerical model files not found")
 
 
-@router.get("/{experiment_id}/test-files",
-            status_code=200,
-            description="-- Download experiment test assets as a zip archive --")
+@router.get(
+    "/{experiment_id}/test-files",
+    status_code=200,
+    description="-- Download experiment test assets as a zip archive --",
+)
 async def get_experiment_test_files(
-        experiment_id: int,
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+    experiment_id: int,
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
@@ -219,12 +228,16 @@ async def get_experiment_test_files(
         try:
             # Create a temporary directory
             folder_name = f"{experiment.building_id}-{experiment.test_files['name']}"
-            zip_file_path, temp_dir = await make_temp_zip(folder_name, experiment.test_files)
+            zip_file_path, temp_dir = await make_temp_zip(
+                folder_name, experiment.test_files
+            )
 
             with open(zip_file_path, "rb") as file:
                 content = file.read()
 
-            response.headers["Content-Disposition"] = f"attachment; filename={base_name}_Test.zip"
+            response.headers["Content-Disposition"] = (
+                f"attachment; filename={base_name}_Test.zip"
+            )
             response.headers["Content-Type"] = "application/zip"
             response.status_code = 200
             response.body = content
@@ -239,26 +252,25 @@ async def get_experiment_test_files(
 
 def nomalize_base_name(text: str):
     base_name = text
-    base_name = base_name.replace(' ', '_')
-    base_name = re.sub('[\.\(\)]', '', base_name, flags=re.IGNORECASE)
+    base_name = base_name.replace(" ", "_")
+    base_name = re.sub("[\.\(\)]", "", base_name, flags=re.IGNORECASE)
     return base_name
 
 
-@router.post("/{experiment_id}/scheme",
-             status_code=200,
-             dependencies=[Depends(size_checker)])
+@router.post(
+    "/{experiment_id}/scheme", status_code=200, dependencies=[Depends(size_checker)]
+)
 async def upload_experiment_scheme_file(
-        experiment_id: int,
-        files: UploadFile = File(
-            description="Experiment scheme file (image) upload"),
-        session: AsyncSession = Depends(get_session),
-        api_key: str = Security(get_api_key)):
+    experiment_id: int,
+    files: UploadFile = File(description="Experiment scheme file (image) upload"),
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
 
     if files.content_type not in image_mimetypes:
-        raise HTTPException(
-            status_code=415, detail="Only images are allowed")
+        raise HTTPException(status_code=415, detail="Only images are allowed")
 
     if experiment.scheme:
         await service.delete_scheme_file(experiment_id)
@@ -268,38 +280,40 @@ async def upload_experiment_scheme_file(
 
     # update experiment
     # create file tree
-    node = FileNode(name=file["name"], path=file["path"], size=file["size"], is_file=True,
-                    alt_name=(file["alt_name"]
-                              if "alt_name" in file else None),
-                    alt_path=(file["alt_path"]
-                              if "alt_path" in file else None),
-                    alt_size=(file["alt_size"] if "alt_size" in file else None))
+    node = FileNode(
+        name=file["name"],
+        path=file["path"],
+        size=file["size"],
+        is_file=True,
+        alt_name=(file["alt_name"] if "alt_name" in file else None),
+        alt_path=(file["alt_path"] if "alt_path" in file else None),
+        alt_size=(file["alt_size"] if "alt_size" in file else None),
+    )
     experiment_update = ExperimentUpdate(
-        scheme=node.to_dict(), reference_id=experiment.reference_id)
+        scheme=node.to_dict(), reference_id=experiment.reference_id
+    )
     experiment = await service.patch(experiment_id, experiment_update)
 
     return experiment
 
 
-@router.post("/{experiment_id}/plan-files",
-             status_code=200,
-             dependencies=[Depends(size_checker)])
-async def upload_experiment_models(
-        experiment_id: int,
-        files: UploadFile = File(
-            description="Experiment plans (zip archive) upload"),
-        session: AsyncSession = Depends(get_session),
-        api_key: str = Security(get_api_key)):
+@router.post(
+    "/{experiment_id}/plan-files", status_code=200, dependencies=[Depends(size_checker)]
+)
+async def upload_experiment_plans(
+    experiment_id: int,
+    files: UploadFile = File(description="Experiment plans (zip archive) upload"),
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
 
     if experiment.plan_files:
-        raise HTTPException(
-            status_code=400, detail="Experiment already has plans")
+        raise HTTPException(status_code=400, detail="Experiment already has plans")
 
     if files.content_type not in zip_mimetypes:
-        raise HTTPException(
-            status_code=415, detail="Only zip archives are allowed")
+        raise HTTPException(status_code=415, detail="Only zip archives are allowed")
 
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
@@ -311,7 +325,10 @@ async def upload_experiment_models(
     s3_folder = f"experiments/{experiment_id}/{unique_name}"
     # list files recursively from source directory
     file_relative_paths = list_files_recursively(source_dir, relative=True)
-    files = [await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder) for file_path in file_relative_paths]
+    files = [
+        await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder)
+        for file_path in file_relative_paths
+    ]
 
     # clean up
     shutil.rmtree(temp_dir)
@@ -322,31 +339,32 @@ async def upload_experiment_models(
     for file in files:
         root_node.add_file(file)
     experiment_update = ExperimentUpdate(
-        plan_files=root_node.to_dict(), reference_id=experiment.reference_id)
+        plan_files=root_node.to_dict(), reference_id=experiment.reference_id
+    )
     experiment = await service.patch(experiment_id, experiment_update)
 
     return experiment
 
 
-@router.post("/{experiment_id}/model-files",
-             status_code=200,
-             dependencies=[Depends(size_checker)])
+@router.post(
+    "/{experiment_id}/model-files",
+    status_code=200,
+    dependencies=[Depends(size_checker)],
+)
 async def upload_experiment_models(
-        experiment_id: int,
-        files: UploadFile = File(
-            description="Experiment models (zip archive) upload"),
-        session: AsyncSession = Depends(get_session),
-        api_key: str = Security(get_api_key)):
+    experiment_id: int,
+    files: UploadFile = File(description="Experiment models (zip archive) upload"),
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
 
     if experiment.model_files:
-        raise HTTPException(
-            status_code=400, detail="Experiment already has models")
+        raise HTTPException(status_code=400, detail="Experiment already has models")
 
     if files.content_type not in zip_mimetypes:
-        raise HTTPException(
-            status_code=415, detail="Only zip archives are allowed")
+        raise HTTPException(status_code=415, detail="Only zip archives are allowed")
 
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
@@ -358,7 +376,10 @@ async def upload_experiment_models(
     s3_folder = f"experiments/{experiment_id}/{unique_name}"
     # list files recursively from source directory
     file_relative_paths = list_files_recursively(source_dir, relative=True)
-    files = [await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder) for file_path in file_relative_paths]
+    files = [
+        await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder)
+        for file_path in file_relative_paths
+    ]
 
     # clean up
     shutil.rmtree(temp_dir)
@@ -369,31 +390,30 @@ async def upload_experiment_models(
     for file in files:
         root_node.add_file(file)
     experiment_update = ExperimentUpdate(
-        model_files=root_node.to_dict(), reference_id=experiment.reference_id)
+        model_files=root_node.to_dict(), reference_id=experiment.reference_id
+    )
     experiment = await service.patch(experiment_id, experiment_update)
 
     return experiment
 
 
-@router.post("/{experiment_id}/test-files",
-             status_code=200,
-             dependencies=[Depends(size_checker)])
+@router.post(
+    "/{experiment_id}/test-files", status_code=200, dependencies=[Depends(size_checker)]
+)
 async def upload_experiment_files(
-        experiment_id: int,
-        files: UploadFile = File(
-            description="Experiment files (zip archive) upload"),
-        session: AsyncSession = Depends(get_session),
-        api_key: str = Security(get_api_key)):
+    experiment_id: int,
+    files: UploadFile = File(description="Experiment files (zip archive) upload"),
+    session: AsyncSession = Depends(get_session),
+    api_key: str = Security(get_api_key),
+):
     service = ExperimentsService(session)
     experiment = await service.get(experiment_id)
 
     if experiment.test_files:
-        raise HTTPException(
-            status_code=400, detail="Experiment already has files")
+        raise HTTPException(status_code=400, detail="Experiment already has files")
 
     if files.content_type not in zip_mimetypes:
-        raise HTTPException(
-            status_code=415, detail="Only zip archives are allowed")
+        raise HTTPException(status_code=415, detail="Only zip archives are allowed")
 
     # unzip to temp directory
     temp_dir = unzip_to_temp_directory(files.file._file)
@@ -405,7 +425,10 @@ async def upload_experiment_files(
     s3_folder = f"experiments/{experiment_id}/{unique_name}"
     # list files recursively from source directory
     file_relative_paths = list_files_recursively(source_dir, relative=True)
-    files = [await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder) for file_path in file_relative_paths]
+    files = [
+        await s3_client.upload_local_file(source_dir, file_path, s3_folder=s3_folder)
+        for file_path in file_relative_paths
+    ]
 
     # clean up
     shutil.rmtree(temp_dir)
@@ -416,7 +439,8 @@ async def upload_experiment_files(
     for file in files:
         root_node.add_file(file)
     experiment_update = ExperimentUpdate(
-        test_files=root_node.to_dict(), reference_id=experiment.reference_id)
+        test_files=root_node.to_dict(), reference_id=experiment.reference_id
+    )
     experiment = await service.patch(experiment_id, experiment_update)
 
     return experiment
@@ -465,7 +489,7 @@ async def delete_experiment_numerical_model(
 
 
 @router.delete("/{experiment_id}/plan-files")
-async def delete_experiment_models(
+async def delete_experiment_plans(
     experiment_id: int,
     session: AsyncSession = Depends(get_session),
     api_key: str = Security(get_api_key),
@@ -543,5 +567,5 @@ async def make_temp_zip(folder_name: str, root_node: dict):
     await write_files_recursively(folder_path, root_node["children"])
     # Create a ZipFile Object
     zip_file_path = os.path.join(temp_dir, f"{folder_name}.zip")
-    shutil.make_archive(Path(folder_path), 'zip', Path(folder_path))
+    shutil.make_archive(Path(folder_path), "zip", Path(folder_path))
     return zip_file_path, temp_dir

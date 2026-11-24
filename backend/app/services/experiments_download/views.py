@@ -1,41 +1,28 @@
 import datetime
-import zipfile
-import tempfile
-import shutil
 import os
+import shutil
+import tempfile
+from pathlib import Path
 from urllib.parse import unquote
 
-from pathlib import Path
+from fastapi import APIRouter, Depends, Query, Response
 
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
-from fastapi.datastructures import UploadFile
-from fastapi.param_functions import File
-from fastapi.exceptions import HTTPException
-
-from app.db import get_session, AsyncSession
-from app.auth import get_api_key
-from app.services.files.size import size_checker
-from app.utils.mimetype import zip_mimetypes, image_mimetypes
-from app.utils.file_nodes import FileNode
-from app.services.files.s3client import s3_client
+from app.db import AsyncSession, get_session
 from app.services.experiments.service import ExperimentsService
-from app.services.experiments.models import (
-    Experiment,
-    ExperimentCreate,
-    ExperimentRead,
-    ExperimentUpdate,
-)
+from app.services.files.s3client import s3_client
 
 router = APIRouter()
 
 
-@router.get("/plan-files",
-            status_code=200,
-            description="-- Download experiments plan assets as a zip archive --")
-async def download_experiments_models(
-        filter: str = Query(None),
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+@router.get(
+    "/plan-files",
+    status_code=200,
+    description="-- Download experiments plan assets as a zip archive --",
+)
+async def download_experiments_plans(
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     return await download_experiments_data(
         type="plan",
@@ -45,13 +32,15 @@ async def download_experiments_models(
     )
 
 
-@router.get("/model-files",
-            status_code=200,
-            description="-- Download experiments numerical model assets as a zip archive --")
+@router.get(
+    "/model-files",
+    status_code=200,
+    description="-- Download experiments numerical model assets as a zip archive --",
+)
 async def download_experiments_models(
-        filter: str = Query(None),
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     return await download_experiments_data(
         type="model",
@@ -61,13 +50,15 @@ async def download_experiments_models(
     )
 
 
-@router.get("/test-files",
-            status_code=200,
-            description="-- Download experiments test assets as a zip archive --")
+@router.get(
+    "/test-files",
+    status_code=200,
+    description="-- Download experiments test assets as a zip archive --",
+)
 async def download_experiments_files(
-        filter: str = Query(None),
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
 ):
     return await download_experiments_data(
         type="test",
@@ -78,10 +69,11 @@ async def download_experiments_files(
 
 
 async def download_experiments_data(
-        type: str,
-        filter: str = Query(None),
-        session: AsyncSession = Depends(get_session),
-        response: Response = Response(),) -> Response:
+    type: str,
+    filter: str = Query(None),
+    session: AsyncSession = Depends(get_session),
+    response: Response = Response(),
+) -> Response:
     service = ExperimentsService(session)
     start, end, total_count, experiments = await service.find(filter, None, None)
 
@@ -96,29 +88,40 @@ async def download_experiments_data(
     try:
         for experiment in experiments:
             exp: dict = experiment.dict()
-            if exp[type_field] and exp[type_field]["children"] and len(exp[type_field]["children"]) > 0:
+            if (
+                exp[type_field]
+                and exp[type_field]["children"]
+                and len(exp[type_field]["children"]) > 0
+            ):
                 # pad building_id up to 3 digits
                 exp_folder_name = f"{experiment.building_id}"
-                exp_folder_name = '{:0>3}'.format(exp_folder_name)
+                exp_folder_name = "{:0>3}".format(exp_folder_name)
                 # add reference name to folder name
-                ref_name = f"{experiment.reference.reference}".replace(
-                    " ", "_").replace("(", "").replace(")", "").replace("_et_al.", "")
+                ref_name = (
+                    f"{experiment.reference.reference}".replace(" ", "_")
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("_et_al.", "")
+                )
                 exp_folder_name = f"{exp_folder_name}_{ref_name}"
                 # make experiment folder path
-                experiment_folder_path = os.path.join(
-                    folder_path, exp_folder_name)
+                experiment_folder_path = os.path.join(folder_path, exp_folder_name)
                 os.makedirs(experiment_folder_path)
                 # write files recursively
-                await write_files_recursively(experiment_folder_path, exp[type_field]["children"])
+                await write_files_recursively(
+                    experiment_folder_path, exp[type_field]["children"]
+                )
 
         # Create a ZipFile Object
         zip_file_path = os.path.join(temp_dir, f"{folder_name}.zip")
-        shutil.make_archive(Path(folder_path), 'zip', Path(folder_path))
+        shutil.make_archive(Path(folder_path), "zip", Path(folder_path))
 
         with open(zip_file_path, "rb") as file:
             content = file.read()
 
-        response.headers["Content-Disposition"] = f"attachment; filename={folder_name}.zip"
+        response.headers["Content-Disposition"] = (
+            f"attachment; filename={folder_name}.zip"
+        )
         response.headers["Content-Type"] = "application/zip"
         response.status_code = 200
         response.body = content
@@ -134,7 +137,7 @@ async def write_files_recursively(directory, files):
         if file["is_file"]:
             body, content_type = await s3_client.get_file(unquote(file["path"]))
             if body:
-                with open(file_path, 'wb') as f:
+                with open(file_path, "wb") as f:
                     f.write(body)
             else:
                 pass

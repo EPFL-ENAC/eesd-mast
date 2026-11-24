@@ -1,43 +1,58 @@
-from sqlmodel import SQLModel, select
-from sqlalchemy import func, text, or_, and_, cast, String, case
 import json
+
+from sqlalchemy import String, and_, case, cast, func, or_, text
+from sqlmodel import SQLModel, select
 
 
 class QueryBuilder:
-
-    def __init__(self, model: SQLModel, filter: dict | str, sort: list | str, range: list | str):
+    def __init__(
+        self, model: SQLModel, filter: dict | str, sort: list | str, range: list | str
+    ):
         self.model = model
-        self.filter = json.loads(filter) if filter and type(
-            filter) == str else (filter if filter else {})
-        self.sort = json.loads(sort) if sort and type(
-            sort) == str else (sort if sort else [])
-        self.range = json.loads(range) if range and type(
-            range) == str else (range if range else [])
+        self.filter = (
+            json.loads(filter)
+            if filter and isinstance(filter, str)
+            else (filter if filter else {})
+        )
+        self.sort = (
+            json.loads(sort)
+            if sort and isinstance(sort, str)
+            else (sort if sort else [])
+        )
+        self.range = (
+            json.loads(range)
+            if range and isinstance(range, str)
+            else (range if range else [])
+        )
 
     def build_count_query(self):
         return self._apply_filter(select(func.count(self.model.id)))
 
     def build_frequencies_query(self, field: str):
         column = getattr(self.model, field)
-        query_ = select(column, func.count().label("count")).order_by(text("count DESC")).group_by(
-            text(field))
+        query_ = (
+            select(column, func.count().label("count"))
+            .order_by(text("count DESC"))
+            .group_by(text(field))
+        )
         return self._apply_filter(query_)
 
     def build_frequencies_exists_query(self, field: str):
         column = getattr(self.model, field)
         case_expr = case(
-            (and_(column.isnot(None), cast(column, String) != 'null'), 1),
-            else_=0)
-        query_ = select(case_expr.label(field), func.count().label(
-            'count')).order_by(text("count DESC")).group_by(case_expr)
+            (and_(column.isnot(None), cast(column, String) != "null"), 1), else_=0
+        )
+        query_ = (
+            select(case_expr.label(field), func.count().label("count"))
+            .order_by(text("count DESC"))
+            .group_by(case_expr)
+        )
         return self._apply_filter(query_)
 
     def build_parallel_count_query(self, fields: list[str]):
-        columns = [getattr(self.model, field)
-                   for field in fields]
+        columns = [getattr(self.model, field) for field in fields]
         selected_columns = columns + [func.count().label("count")]
-        query_ = select(*selected_columns).group_by(*
-                                                    columns).order_by(*columns)
+        query_ = select(*selected_columns).group_by(*columns).order_by(*columns)
         return self._apply_filter(query_)
 
     def build_query(self, total_count):
@@ -56,26 +71,32 @@ class QueryBuilder:
                 if isinstance(value, list):
                     if len(value) == 1 and value[0] is None:
                         query_ = self._apply_filter_value(
-                            query_, field, column, value[0])
+                            query_, field, column, value[0]
+                        )
                     elif None in value:
                         noNoneValues = [v for v in value if v is not None]
                         query_ = query_.where(
-                            or_(column.is_(None), column.in_(noNoneValues)))
+                            or_(column.is_(None), column.in_(noNoneValues))
+                        )
                     elif field == "test_scale":
                         # test_scale is a float field, but when the first criteria is 1,
                         # the query parameters are passed as integers, then force
                         # the values to be floats
-                        query_ = query_.where(column.in_(
-                            [float(val) for val in value]))
+                        query_ = query_.where(column.in_([float(val) for val in value]))
                     else:
                         query_ = query_.where(column.in_(value))
                 else:
-                    query_ = self._apply_filter_value(
-                        query_, field, column, value)
+                    query_ = self._apply_filter_value(query_, field, column, value)
         return query_
 
     def _apply_filter_value(self, query_, field, column, value):
-        if field == "id" or field == "reference_id" or field == "experiment_id" or field == "building_id" or isinstance(value, int):
+        if (
+            field == "id"
+            or field == "reference_id"
+            or field == "experiment_id"
+            or field == "building_id"
+            or isinstance(value, int)
+        ):
             query_ = query_.where(column == value)
         elif value is None:
             query_ = query_.where(column.is_(None))
@@ -86,13 +107,15 @@ class QueryBuilder:
         return query_
 
     def _apply_filter_object(self, query_, field, column, value):
-        if '$exists' in value:
-            if value['$exists']:
+        if "$exists" in value:
+            if value["$exists"]:
                 query_ = query_.where(
-                    and_(column.isnot(None), cast(column, String) != 'null'))
-            elif not value['$exists']:
+                    and_(column.isnot(None), cast(column, String) != "null")
+                )
+            elif not value["$exists"]:
                 query_ = query_.where(
-                    or_(column.is_(None), cast(column, String) == 'null'))
+                    or_(column.is_(None), cast(column, String) == "null")
+                )
         return query_
 
     def _apply_sort(self, query_):

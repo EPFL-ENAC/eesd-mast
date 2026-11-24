@@ -1,32 +1,52 @@
-from app.services.experiments.models import Experiment, ExperimentRead, ExperimentUpdate, ExperimentFrequencies, ExperimentParallelCount, ExperimentCounts
-from app.services.references.models import Reference, ReferenceRead
-from app.services.runresults.service import RunResultsService
-from app.services.runresults.models import RunResult
-from app.services.numericalmodels.service import NumericalModelsService
-from app.services.numericalmodels.models import NumericalModel
-from app.services.files.s3client import s3_client
-from app.utils.query import QueryBuilder
-from sqlmodel import select
-from sqlalchemy.sql import text
 from fastapi import HTTPException
+from sqlalchemy.sql import text
+from sqlmodel import select
+
 from app.db import AsyncSession
+from app.services.experiments.models import (
+    Experiment,
+    ExperimentCounts,
+    ExperimentFrequencies,
+    ExperimentParallelCount,
+    ExperimentRead,
+    ExperimentUpdate,
+)
+from app.services.files.s3client import s3_client
+from app.services.numericalmodels.models import NumericalModel
+from app.services.numericalmodels.service import NumericalModelsService
+from app.services.references.models import Reference, ReferenceRead
+from app.services.runresults.models import RunResult
+from app.services.runresults.service import RunResultsService
+from app.utils.query import QueryBuilder
 
 
 class ExperimentsService:
-
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def count(self, withModel: bool = None) -> int:
         """Count all experiments"""
         if withModel:
-            return (await self.session.exec(text("select count(id) from experiment where cast(model_files as varchar) != 'null' and model_files is not null"))).scalar()
-        return (await self.session.exec(text("select count(id) from experiment"))).scalar()
+            return (
+                await self.session.exec(
+                    text(
+                        "select count(id) from experiment where cast(model_files as varchar) != 'null' and model_files is not null"
+                    )
+                )
+            ).scalar()
+        return (
+            await self.session.exec(text("select count(id) from experiment"))
+        ).scalar()
 
     async def frequencies(self, filter: dict | str) -> ExperimentFrequencies:
         """Get aggregations for the experiments matching filter"""
         field_counts = {}
-        for field in ["masonry_unit_material", "diaphragm_material", "storeys_nb", "test_scale"]:
+        for field in [
+            "masonry_unit_material",
+            "diaphragm_material",
+            "storeys_nb",
+            "test_scale",
+        ]:
             builder = QueryBuilder(Experiment, filter, [], [])
             query = builder.build_frequencies_query(field)
             results = await self.session.exec(query)
@@ -49,15 +69,26 @@ class ExperimentsService:
 
     async def parallel_count(self, filter: dict | str) -> list[ExperimentParallelCount]:
         """Get aggregations for the experiments matching filter"""
-        fields = ["masonry_unit_material", "masonry_unit_type",
-                  "diaphragm_material", "wall_leaves_nb", "storeys_nb",
-                  "test_scale", "simultaneous_excitations_nb", "retrofitting_application", "with_model"]
+        fields = [
+            "masonry_unit_material",
+            "masonry_unit_type",
+            "diaphragm_material",
+            "wall_leaves_nb",
+            "storeys_nb",
+            "test_scale",
+            "simultaneous_excitations_nb",
+            "retrofitting_application",
+            "with_model",
+        ]
         builder = QueryBuilder(ExperimentCounts, filter, [], [])
         query = builder.build_parallel_count_query(fields)
         results = await self.session.exec(query)
         rows = results.fetchall()
 
-        return [ExperimentParallelCount(**dict(zip(fields + ["count"], row))) for row in rows]
+        return [
+            ExperimentParallelCount(**dict(zip(fields + ["count"], row)))
+            for row in rows
+        ]
 
     async def get(self, experiment_id: int) -> ExperimentRead:
         """Get an experiment by id"""
@@ -71,8 +102,7 @@ class ExperimentsService:
 
         # Get reference
         res = await self.session.exec(
-            select(Reference).where(
-                Reference.id == experiment.reference_id)
+            select(Reference).where(Reference.id == experiment.reference_id)
         )
         reference = res.one_or_none()
         reference_reference = ReferenceRead.model_validate(reference)
@@ -81,7 +111,9 @@ class ExperimentsService:
 
         return experiment
 
-    async def find(self, filter: dict | str, sort: list | str, range: list | str) -> list[int, int, int, ExperimentRead]:
+    async def find(
+        self, filter: dict | str, sort: list | str, range: list | str
+    ) -> list[int, int, int, ExperimentRead]:
         """Get all experiments matching filter and range"""
         builder = QueryBuilder(Experiment, filter, sort, range)
 
@@ -97,23 +129,23 @@ class ExperimentsService:
         results = await self.session.exec(query)
         experiments = results.all()
         # Cast to ExperimentRead
-        experiments = [ExperimentRead.model_validate(
-            experiment) for experiment in experiments]
+        experiments = [
+            ExperimentRead.model_validate(experiment) for experiment in experiments
+        ]
 
         # Reference IDs
         reference_ids = [experiment.reference_id for experiment in experiments]
         res = await self.session.exec(
-            select(Reference).where(
-                Reference.id.in_(reference_ids))
+            select(Reference).where(Reference.id.in_(reference_ids))
         )
         references = res.all()
-        reference_dict = {
-            reference.id: reference for reference in references}
+        reference_dict = {reference.id: reference for reference in references}
 
         # Add reference short name to each experiment
         for experiment in experiments:
             experiment.reference = ReferenceRead.model_validate(
-                reference_dict[experiment.reference_id])
+                reference_dict[experiment.reference_id]
+            )
 
         return [start, end, total_count, experiments]
 
@@ -124,7 +156,9 @@ class ExperimentsService:
         await self.session.refresh(experiment)
         return experiment
 
-    async def patch(self, experiment_id: int, experiment: ExperimentUpdate) -> ExperimentRead:
+    async def patch(
+        self, experiment_id: int, experiment: ExperimentUpdate
+    ) -> ExperimentRead:
         """Updates an experiment"""
         res = await self.session.exec(
             select(Experiment).where(Experiment.id == experiment_id)
@@ -152,15 +186,15 @@ class ExperimentsService:
         if experiment:
             # Delete associated files
             if experiment.scheme:
-                await s3_client.delete_file(experiment.scheme['path'])
+                await s3_client.delete_file(experiment.scheme["path"])
             if experiment.plan_files:
-                key = experiment.plan_files['name']
+                key = experiment.plan_files["name"]
                 await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
             if experiment.model_files:
-                key = experiment.model_files['name']
+                key = experiment.model_files["name"]
                 await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
             if experiment.test_files:
-                key = experiment.test_files['name']
+                key = experiment.test_files["name"]
                 await s3_client.delete_files(f"experiments/{experiment_id}/{key}")
             # Delete run results and numerical models
             if recursive:
@@ -202,7 +236,7 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.scheme:
-            name = experiment.scheme['name']
+            name = experiment.scheme["name"]
             s3_file = f"experiments/{experiment_id}/{name}"
             deleted = await s3_client.delete_file(s3_file)
             if deleted:
@@ -217,7 +251,7 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.plan_files:
-            key = experiment.plan_files['name']
+            key = experiment.plan_files["name"]
             s3_folder = f"experiments/{experiment_id}/{key}"
             deleted = await s3_client.delete_files(s3_folder)
             if deleted:
@@ -232,7 +266,7 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.model_files:
-            key = experiment.model_files['name']
+            key = experiment.model_files["name"]
             s3_folder = f"experiments/{experiment_id}/{key}"
             deleted = await s3_client.delete_files(s3_folder)
             if deleted:
@@ -247,15 +281,19 @@ class ExperimentsService:
         experiment = res.one_or_none()
 
         if experiment and experiment.test_files:
-            key = experiment.test_files['name']
+            key = experiment.test_files["name"]
             s3_folder = f"experiments/{experiment_id}/{key}"
             deleted = await s3_client.delete_files(s3_folder)
             if deleted:
                 experiment.test_files = None
                 await self.session.commit()
 
-    async def delete_by_reference(self, reference_id: int, recursive: bool = False) -> None:
+    async def delete_by_reference(
+        self, reference_id: int, recursive: bool = False
+    ) -> None:
         """Delete all experiments by reference id"""
-        start, stop, total_count, experiments = await self.find(filter={"reference_id": reference_id}, sort=None, range=None)
+        start, stop, total_count, experiments = await self.find(
+            filter={"reference_id": reference_id}, sort=None, range=None
+        )
         if experiments:
             [await self.delete(experiment.id, recursive) for experiment in experiments]

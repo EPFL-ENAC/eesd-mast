@@ -1,6 +1,7 @@
-from fastapi import Depends, Security, APIRouter, Query, Response, Body
-from app.db import get_session, AsyncSession
+from fastapi import APIRouter, Body, Depends, Query, Response, Security
+
 from app.auth import get_api_key
+from app.db import AsyncSession, get_session
 from app.services.references.models import (
     Reference,
     ReferenceCreate,
@@ -36,9 +37,7 @@ async def get_references(
     service = ReferencesService(session)
     start, end, total_count, references = await service.find(filter, sort, range)
 
-    response.headers[
-        "Content-Range"
-    ] = f"references {start}-{end}/{total_count}"
+    response.headers["Content-Range"] = f"references {start}-{end}/{total_count}"
     return references
 
 
@@ -59,7 +58,7 @@ async def update_reference(
     reference_id: int,
     reference_update: ReferenceUpdate,
     session: AsyncSession = Depends(get_session),
-    api_key: str = Security(get_api_key)
+    api_key: str = Security(get_api_key),
 ) -> ReferenceRead:
     service = ReferencesService(session)
     reference = await service.patch(reference_id, reference_update)

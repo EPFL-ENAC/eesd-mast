@@ -1,19 +1,24 @@
 env_path=../.env
 
 install:
-	poetry install
+	uv sync
 
 run:
-	poetry run dotenv -f "$(env_path)" run uvicorn app.main:app --reload
+	uv run --env-file "$(env_path)" uvicorn app.main:app --reload
 
 lint:
-	poetry run pre-commit run --all-files
+	uv run ruff check .
+	uv run ruff format --check .
+
+format:
+	uv run ruff check --fix .
+	uv run ruff format .
 
 db-upgrade:
-	poetry run dotenv -f "$(env_path)" run alembic upgrade head
+	uv run --env-file "$(env_path)" alembic upgrade head
 
 db-downgrade:
-	poetry run dotenv -f "$(env_path)" run alembic downgrade -1
+	uv run --env-file "$(env_path)" alembic downgrade -1
 
 db-revision:
-	poetry run dotenv -f "$(env_path)" run alembic revision --autogenerate -m "$(name)"
+	uv run --env-file "$(env_path)" alembic revision --autogenerate -m "$(name)"

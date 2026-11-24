@@ -1,43 +1,42 @@
-[tool.poetry]
+[project]
 name = "mast-api"
 version = "1.0.1"
 description = "MAsonryShake-Table API"
 license = "GPL-3.0-or-later"
-authors = ["Yannick Marcon <yannick.marcon@epfl.ch>"]
+authors = [{ name = "Yannick Marcon", email = "yannick.marcon@epfl.ch" }]
 readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.165.0,<0.166",
+    "uvicorn>=0.54.0,<0.55",
+    "sqlmodel>=0.0.50,<0.1",
+    "asyncpg>=0.31.0,<0.32",
+    "alembic>=1.12.1,<2",
+    "psycopg2>=2.9.2,<3",
+    "chardet>=5.0.0,<6",
+    "python-dateutil>=2.8.2,<3",
+    "python-multipart>=0.0.34,<0.0.35",
+    "requests>=2.34.2,<3",
+    "pillow>=13.0.0,<14",
+    "pandas>=2.1.3,<3",
+    "openpyxl>=3.1.2,<4",
+    "aiobotocore>=2.8.0,<3",
+    "vtk>=9.3.0,<10",
+    "statsmodels>=0.14.2,<0.15",
+    "pydantic-settings>=2.2.1,<3",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.11,<4.0"
-fastapi = "^0.165.0"
-uvicorn = "^0.54.0"
-sqlmodel = "^0.0.18"
-asyncpg = "^0.29.0"
-alembic = "^1.12.1"
-psycopg2 = "^2.9.2"
-chardet = "^5.0.0"
-python-dateutil = "^2.8.2"
-python-multipart = "^0.0.34"
-requests = "^2.34.2"
-Pillow = "^13.0.0"
-pandas = "^2.1.3"
-openpyxl = "^3.1.2"
-aiobotocore = "^2.8.0"
-vtk = "^9.3.0"
-statsmodels = "^0.14.2"
-pydantic-settings = "^2.2.1"
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0,<10",
+    "ruff>=0.14",
+]
 
-[tool.poetry.dev-dependencies]
-pytest = "^9.2.0"
-pre-commit = "^3.0.4"
-flake8 = "^6.0.0"
-black = "^26.10.1"
-python-dotenv = "^1.2.4"
-sqlalchemy = {extras = ["mypy"], version = "^2.0.4"}
+[tool.uv]
+package = false
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff]
+target-version = "py314"
 
-[tool.isort]
-profile = "black"
-
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

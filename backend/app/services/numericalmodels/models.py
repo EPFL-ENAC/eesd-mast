@@ -1,5 +1,4 @@
-from sqlmodel import SQLModel, Field, UniqueConstraint
-from typing import Dict, Optional
+from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
 class NumericalModelBase(SQLModel):
@@ -51,9 +50,7 @@ class NumericalModelBase(SQLModel):
     softening_coeff: float | None = Field(default=None)
     softening_coeff_comment: str | None = Field(default=None)
 
-    experiment_id: int = Field(
-        default=None, foreign_key="experiment.id", index=True
-    )
+    experiment_id: int = Field(default=None, foreign_key="experiment.id", index=True)
 
 
 class NumericalModel(NumericalModelBase, table=True):

@@ -1,0 +1,42 @@
+name: backend
+
+'on':
+  push:
+    branches: [main, dev]
+    paths: ['backend/**', '.github/workflows/backend.yml']
+  pull_request:
+    paths: ['backend/**', '.github/workflows/backend.yml']
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check --output-format=github .
+      - run: uv run ruff format --check .
+      - name: Import app
+        env:
+          DB_HOST: localhost
+          DB_PORT: '5432'
+          DB_USER: ci
+          DB_PASSWORD: ci
+          DB_NAME: ci
+          DB_PREFIX: postgresql+asyncpg
+          API_KEYS: ci
+          S3_ENDPOINT_PROTOCOL: https://
+          S3_ENDPOINT_HOSTNAME: localhost
+          S3_ACCESS_KEY_ID: ci
+          S3_SECRET_ACCESS_KEY: ci
+          S3_REGION: ci
+          S3_BUCKET: ci
+          S3_PATH_PREFIX: ci/
+        run: uv run python -c "import app.main"
