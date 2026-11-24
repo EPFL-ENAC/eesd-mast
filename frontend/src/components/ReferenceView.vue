@@ -12,8 +12,8 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults, onMounted, ref, watch } from 'vue';
-import { useReferencesStore } from 'src/stores/references';
-import { Experiment, Reference } from 'src/components/models';
+import { useReferencesStore } from '@/stores/references';
+import { Experiment, Reference } from '@/components/models';
 import FieldsList, { FieldItem } from './FieldsList.vue';
 
 export interface ReferenceViewProps {

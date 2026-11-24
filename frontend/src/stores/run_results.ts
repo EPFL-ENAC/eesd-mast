@@ -1,6 +1,6 @@
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { defineStore } from 'pinia';
-import { RunResult } from 'src/components/models';
+import { RunResult } from '@/components/models';
 
 export const useRunResultsStore = defineStore('run_results', () => {
   const run_results = ref([] as RunResult[]);

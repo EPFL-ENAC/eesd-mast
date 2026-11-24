@@ -44,10 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import AppToolbar from 'src/components/AppToolbar.vue';
-import AppHeader from 'src/components/AppHeader.vue';
-import BuildingsPage from 'src/pages/BuildingsPage.vue';
-import ExperimentFilters from 'src/components/ExperimentFilters.vue';
+import AppToolbar from '@/components/AppToolbar.vue';
+import AppHeader from '@/components/AppHeader.vue';
+import BuildingsPage from '@/pages/BuildingsPage.vue';
+import ExperimentFilters from '@/components/ExperimentFilters.vue';
 
 const route = useRoute();
 

@@ -23,8 +23,8 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
-import { FileNode } from 'src/components/models';
+import { api } from '@/boot/axios';
+import { FileNode } from '@/components/models';
 
 export interface FileNodeTxtProps {
   node: FileNode;

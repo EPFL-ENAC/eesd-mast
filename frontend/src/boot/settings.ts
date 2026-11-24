@@ -1,7 +1,7 @@
-import { boot } from 'quasar/wrappers';
-import { useSettingsStore } from 'src/stores/settings';
+import { defineBoot } from '#q-app';
+import { useSettingsStore } from '@/stores/settings';
 
-export default boot(() => {
+export default defineBoot(() => {
   const settingsStore = useSettingsStore();
   settingsStore.initSettings();
 });

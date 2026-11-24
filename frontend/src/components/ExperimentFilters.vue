@@ -87,9 +87,9 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { Reference } from './models';
-import { testScaleLabel } from 'src/utils/numbers';
+import { testScaleLabel } from '@/utils/numbers';
 import {
   DIAPHRAGM_MATERIAL,
   MASONRY_UNIT_MATERIAL,
@@ -99,10 +99,10 @@ import {
   STOREYS_NB,
   TEST_SCALE,
   WALL_LEAVES_NB,
-} from 'src/utils/criteria';
-import RunResultsFragilitiesChart from 'src/components/charts/RunResultsFragilitiesChart.vue';
-import SimpleDialog from 'src/components/SimpleDialog.vue';
-import FragilitiesMd from 'src/assets/fragilities.md';
+} from '@/utils/criteria';
+import RunResultsFragilitiesChart from '@/components/charts/RunResultsFragilitiesChart.vue';
+import SimpleDialog from '@/components/SimpleDialog.vue';
+import FragilitiesMd from '@/assets/fragilities.md';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();

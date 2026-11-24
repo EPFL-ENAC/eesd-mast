@@ -1,4 +1,4 @@
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { defineStore } from 'pinia';
 import {
   ExperimentFrequencies,
@@ -7,9 +7,9 @@ import {
   RunResultFragility,
   Counts,
   FieldValue,
-} from 'src/components/models';
-import { QueryParams } from 'src/utils/pagination';
-import { STONES, MIXED_MATERIAL } from 'src/utils/criteria';
+} from '@/components/models';
+import { QueryParams } from '@/utils/pagination';
+import { STONES, MIXED_MATERIAL } from '@/utils/criteria';
 
 export const useAnalysisStore = defineStore('analysis', () => {
   const counts = ref<Counts>({

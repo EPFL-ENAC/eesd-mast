@@ -31,8 +31,8 @@ import {
   GridComponent,
   DataZoomComponent,
 } from 'echarts/components';
-import { Experiment, RunResult } from 'src/components/models';
-import { useRunResultsStore } from 'src/stores/run_results';
+import { Experiment, RunResult } from '@/components/models';
+import { useRunResultsStore } from '@/stores/run_results';
 
 use([
   SVGRenderer,

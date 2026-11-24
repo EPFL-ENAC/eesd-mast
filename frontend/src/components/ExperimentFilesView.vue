@@ -172,10 +172,10 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { baseUrl, cdnUrl } from 'src/boot/axios';
+import { baseUrl, cdnUrl } from '@/boot/axios';
 import { withDefaults, computed, ref, watch } from 'vue';
 
-import { Experiment, FileNode } from 'src/components/models';
+import { Experiment, FileNode } from '@/components/models';
 import FileNodeChart from './charts/FileNodeChart.vue';
 import FileNodeMarkdown from './FileNodeMarkdown.vue';
 import FileNodeTxt from './FileNodeTxt.vue';

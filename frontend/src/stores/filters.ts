@@ -1,9 +1,9 @@
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { defineStore } from 'pinia';
-import { FieldValue, Reference } from 'src/components/models';
-import { STONES, MIXED_MATERIAL } from 'src/utils/criteria';
-import { RunResultFragility } from 'src/components/models';
-import { QueryParams } from 'src/utils/pagination';
+import { FieldValue, Reference } from '@/components/models';
+import { STONES, MIXED_MATERIAL } from '@/utils/criteria';
+import { RunResultFragility } from '@/components/models';
+import { QueryParams } from '@/utils/pagination';
 
 interface RefenceSelection {
   label: string;

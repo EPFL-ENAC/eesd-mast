@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers';
+import { defineBoot } from '#q-app';
 import axios, { AxiosInstance } from 'axios';
 
 declare module '@vue/runtime-core' {
@@ -10,13 +10,13 @@ declare module '@vue/runtime-core' {
 
 const cdnUrl = 'https://enacit4r-cdn.epfl.ch/';
 
-const baseUrl = `${process.env.API_URL}${process.env.API_PATH}`;
+const baseUrl = `${import.meta.env.API_URL}${import.meta.env.API_PATH}`;
 
 const api = axios.create({
   baseURL: baseUrl,
 });
 
-export default boot(({ app }) => {
+export default defineBoot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;

@@ -12,8 +12,8 @@ export default defineComponent({
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
-import { Experiment } from 'src/components/models';
-import { testScaleLabel, makeLiteralLabel } from 'src/utils/numbers';
+import { Experiment } from '@/components/models';
+import { testScaleLabel, makeLiteralLabel } from '@/utils/numbers';
 
 const { t } = useI18n({ useScope: 'global' });
 

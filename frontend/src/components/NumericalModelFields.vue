@@ -15,7 +15,7 @@ export default defineComponent({
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
 import FieldsList, { FieldItem } from './FieldsList.vue';
-import { NumericalModel } from 'src/components/models';
+import { NumericalModel } from '@/components/models';
 
 interface NumericalModelFieldsProps {
   numerical_model: NumericalModel;

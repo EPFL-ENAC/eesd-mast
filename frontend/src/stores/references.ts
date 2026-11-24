@@ -1,6 +1,6 @@
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { defineStore } from 'pinia';
-import { Reference, Experiment } from 'src/components/models';
+import { Reference, Experiment } from '@/components/models';
 
 interface State {
   references: { [Key: number]: Reference };

@@ -45,7 +45,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import { useAnalysisStore } from 'src/stores/analysis';
+import { useAnalysisStore } from '@/stores/analysis';
 
 const analysis = useAnalysisStore();
 
