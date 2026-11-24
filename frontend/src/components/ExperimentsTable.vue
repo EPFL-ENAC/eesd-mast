@@ -248,16 +248,16 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { Settings } from 'src/stores/settings';
+import { Settings } from '@/stores/settings';
 import { ref, onMounted } from 'vue';
-import { api, baseUrl, cdnUrl } from 'src/boot/axios';
-import { FileNode, Experiment, Reference } from 'src/components/models';
-import ExperimentSummary from 'src/components/ExperimentSummary.vue';
+import { api, baseUrl, cdnUrl } from '@/boot/axios';
+import { FileNode, Experiment, Reference } from '@/components/models';
+import ExperimentSummary from '@/components/ExperimentSummary.vue';
 import {
   makePaginationRequestHandler,
   QueryParams,
-} from 'src/utils/pagination';
-import { useFiltersStore } from 'src/stores/filters';
+} from '@/utils/pagination';
+import { useFiltersStore } from '@/stores/filters';
 
 const { t } = useI18n({ useScope: 'global' });
 const filters = useFiltersStore();

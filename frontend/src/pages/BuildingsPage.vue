@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import ExperimentsTable from 'components/ExperimentsTable.vue';
+import ExperimentsTable from '@/components/ExperimentsTable.vue';
 </script>

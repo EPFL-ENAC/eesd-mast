@@ -164,14 +164,14 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import OverViewMd from 'src/assets/overview.md';
-import CiteMd from 'src/assets/cite.md';
-import AcknowledgementsMd from 'src/assets/acknowledgements.md';
+import OverViewMd from '@/assets/overview.md';
+import CiteMd from '@/assets/cite.md';
+import AcknowledgementsMd from '@/assets/acknowledgements.md';
 import EssentialLink, {
   EssentialLinkProps,
-} from 'components/EssentialLink.vue';
-import SimpleDialog from 'src/components/SimpleDialog.vue';
-import { Settings } from 'src/stores/settings';
+} from '@/components/EssentialLink.vue';
+import SimpleDialog from '@/components/SimpleDialog.vue';
+import { Settings } from '@/stores/settings';
 
 const route = useRoute();
 const settingsStore = useSettingsStore();

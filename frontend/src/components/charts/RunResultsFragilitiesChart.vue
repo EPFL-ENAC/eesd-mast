@@ -10,7 +10,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { RunResultFragility } from '../models';
-import { getDgColor } from 'src/utils/colors';
+import { getDgColor } from '@/utils/colors';
 import VuePlotly from './VuePlotly.vue';
 
 const { t } = useI18n({ useScope: 'global' });

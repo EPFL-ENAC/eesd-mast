@@ -129,7 +129,7 @@
 
 <script lang="ts">
 import { FieldValue } from './models';
-import { testScaleLabel } from 'src/utils/numbers';
+import { testScaleLabel } from '@/utils/numbers';
 export default defineComponent({
   name: 'ExperimentAggregations',
 });
@@ -140,11 +140,11 @@ import FieldFrequenciesChart from './charts/FieldFrequenciesChart.vue';
 import ExperimentsParallelChart from './charts/ExperimentsParallelChart.vue';
 import RunResultsVulnerabilitiesChart from './charts/RunResultsVulnerabilitiesChart.vue';
 import RunResultsFragilitiesChart from './charts/RunResultsFragilitiesChart.vue';
-import { useAnalysisStore } from 'src/stores/analysis';
-import { isStone, isMixedMaterial } from 'src/utils/criteria';
-import VulnerabilitiesMd from 'src/assets/vulnerabilities.md';
-import FragilitiesMd from 'src/assets/fragilities.md';
-import { Settings } from 'src/stores/settings';
+import { useAnalysisStore } from '@/stores/analysis';
+import { isStone, isMixedMaterial } from '@/utils/criteria';
+import VulnerabilitiesMd from '@/assets/vulnerabilities.md';
+import FragilitiesMd from '@/assets/fragilities.md';
+import { Settings } from '@/stores/settings';
 
 const router = useRouter();
 const settingsStore = useSettingsStore();

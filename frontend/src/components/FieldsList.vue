@@ -50,14 +50,14 @@
 </template>
 
 <script lang="ts">
-import { toMaxDecimals } from 'src/utils/numbers';
+import { toMaxDecimals } from '@/utils/numbers';
 export default defineComponent({
   name: 'FieldsList',
 });
 </script>
 <script setup lang="ts">
 import { withDefaults } from 'vue';
-import { DBModel, Experiment, Reference } from 'src/components/models';
+import { DBModel, Experiment, Reference } from '@/components/models';
 
 export interface FieldItem<T extends DBModel> {
   field: string;

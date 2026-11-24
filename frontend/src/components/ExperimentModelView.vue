@@ -117,15 +117,15 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { withDefaults, ref, onMounted } from 'vue';
-import { cdnUrl } from 'src/boot/axios';
+import { cdnUrl } from '@/boot/axios';
 import VtkViewer from './VtkViewer.vue';
 import ExperimentFilesView from './ExperimentFilesView.vue';
 import NumericalModelFields from './NumericalModelFields.vue';
 import ImageDialog from './ImageDialog.vue';
-import { Experiment, FileNode } from 'src/components/models';
-import { useReferencesStore } from 'src/stores/references';
-import { useNumericalModelsStore } from 'src/stores/numerical_models';
-import { Settings } from 'src/stores/settings';
+import { Experiment, FileNode } from '@/components/models';
+import { useReferencesStore } from '@/stores/references';
+import { useNumericalModelsStore } from '@/stores/numerical_models';
+import { Settings } from '@/stores/settings';
 
 const referencesStore = useReferencesStore();
 const numericalModelsStore = useNumericalModelsStore();

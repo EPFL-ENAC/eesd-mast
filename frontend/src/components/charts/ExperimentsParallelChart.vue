@@ -11,9 +11,9 @@ export default defineComponent({
 <script setup lang="ts">
 import { ExperimentParallelCount } from '../models';
 import VuePlotly from './VuePlotly.vue';
-import { testScaleLabel } from 'src/utils/numbers';
-import { getFieldValueColor } from 'src/utils/colors';
-import { isStone, isMixedMaterial } from 'src/utils/criteria';
+import { testScaleLabel } from '@/utils/numbers';
+import { getFieldValueColor } from '@/utils/colors';
+import { isStone, isMixedMaterial } from '@/utils/criteria';
 
 const { t } = useI18n({ useScope: 'global' });
 const analysis = useAnalysisStore();

@@ -38,7 +38,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { cdnUrl } from 'src/boot/axios';
+import { cdnUrl } from '@/boot/axios';
 import { FileNode } from './models';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';

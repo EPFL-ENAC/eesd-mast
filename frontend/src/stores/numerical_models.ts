@@ -1,6 +1,6 @@
-import { api } from 'src/boot/axios';
+import { api } from '@/boot/axios';
 import { defineStore } from 'pinia';
-import { NumericalModel } from 'src/components/models';
+import { NumericalModel } from '@/components/models';
 
 interface State {
   numerical_model: NumericalModel;

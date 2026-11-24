@@ -34,10 +34,10 @@ import {
   TooltipComponent,
   LegendComponent,
 } from 'echarts/components';
-import { testScaleLabel, testScaleValue } from 'src/utils/numbers';
-import { getFieldValueColor } from 'src/utils/colors';
-import { FieldValue } from 'src/components/models';
-import { useAnalysisStore } from 'src/stores/analysis';
+import { testScaleLabel, testScaleValue } from '@/utils/numbers';
+import { getFieldValueColor } from '@/utils/colors';
+import { FieldValue } from '@/components/models';
+import { useAnalysisStore } from '@/stores/analysis';
 
 const analysis = useAnalysisStore();
 use([SVGRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent]);
